@@ -68,8 +68,8 @@ letter                  [a-zA-Z]
 \'(?:[^\'\\]|\\\'|\\[^'])\'                              { printf("detected token of type CHARACTER_LITERAL : %s\n", yytext); token_count++; return CHARACTER_LITERAL; }
 \"(?:[^\"\\]|\\\"|\\[^"])*\"                             { printf("detected token of type STRING_LITERAL : %s\n", yytext); token_count++; return STRING_LITERAL; }
 ("true"|"false")                                         { printf("detected token of type BOOLEAN_LITERAL : %s\n", yytext); token_count++; return BOOLEAN_LITERAL; }
-"/*"([^*]|\*+[^*/])*\*+"/"                               { printf("detected token of type COMMENT : %s\n", yytext); token_count++; return COMMENT; }
-"//".*                                                   { printf("detected token of type COMMENT : %s\n", yytext); token_count++; return COMMENT; }
+"/*"([^*]|\*+[^*/])*\*+"/"                               { ; }
+"//".*                                                   { ; }
 ({letter}|_)({digit}|{letter}|_){0,14}                 { printf("detected token of type IDENTIFIER : %s\n", yytext); if(strcmp(yytext, "main") == 0){ return RESERVED_IDENTIFIER; } token_count++; return IDENTIFIER; }
 [ \t]*                                                   { ; }
 [\n]                                                     { line_count++; yylineno++; }

@@ -1,10 +1,12 @@
 /* This is a test source file for token detection */
 /**/
 
+
 int main() {
     int x = 10;
     float y = 3.14;
     string name = "Test";
+
 
     if (x > 5) {
         print("x is greater than 5");
