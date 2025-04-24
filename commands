@@ -1,3 +1,4 @@
 bison -d bas.y
 flex bas.l
 gcc lexer.c lex.yy.c -o lexer
+./lexer source_file1
