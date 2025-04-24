@@ -1,6 +1,5 @@
 /* This is a test source file for token detection */
 /**/
-import "stdio";
 
 int main() {
     int x = 10;

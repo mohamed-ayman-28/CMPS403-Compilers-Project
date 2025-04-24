@@ -8,17 +8,10 @@ void func() { return; }
 
 if (x == 10) {
     print(x);
-} else if (x != 20) {
-    input(y);
 } else {
     // do nothing
 }
 
-try {
-    throw;
-} catch {
-    print("caught");
-}
 
 for (int i = 0; i < 10; i++) {
     x += i;
@@ -49,16 +42,15 @@ switch (x) {
     default: break;
 }
 
-repeat {
+do {
     x--;
-} until (x == 0);
+} while (x == 0);
 
 /* Types and identifiers */
 const int CONSTANT = 42;
-global float GLOBAL_VAR = 0.5;
-import mymodule;
-delete object;
-new Type();
+float GLOBAL_VAR = 0.5;
+object;
+Type();
 x is y;
 x and y or z;
 not flag;
@@ -77,12 +69,11 @@ not flag;
 '\''
 true
 false
-null
 //#
 
 /*Operators and punctuation*/
 { } ( ) [ ]
-. , * + - / % ++ -- = == != <= >= < > | & ^ ! ? : ; 
+, * + - / % ++ -- = == != <= >= < > | & ^ ! : ; 
 
 /* This is a comment */
 

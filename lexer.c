@@ -6,6 +6,7 @@ extern int yylineno;
 extern char* yytext;
 extern FILE* yyin;
 
+
 int main(int argc, char** argv){
     if(argc < 2){
         printf("Missing input file\n");

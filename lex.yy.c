@@ -351,8 +351,8 @@ static void yynoreturn yy_fatal_error ( const char* msg  );
 	(yy_hold_char) = *yy_cp; \
 	*yy_cp = '\0'; \
 	(yy_c_buf_p) = yy_cp;
-#define YY_NUM_RULES 74
-#define YY_END_OF_BUFFER 75
+#define YY_NUM_RULES 63
+#define YY_END_OF_BUFFER 64
 /* This struct is not used in this scanner,
    but its presence is necessary. */
 struct yy_trans_info
@@ -360,30 +360,27 @@ struct yy_trans_info
 	flex_int32_t yy_verify;
 	flex_int32_t yy_nxt;
 	};
-static const flex_int16_t yy_accept[198] =
+static const flex_int16_t yy_accept[178] =
     {   0,
-       71,   71,   75,   73,   71,   72,   60,   73,   47,   58,
-       73,   36,   37,   43,   44,   42,   45,   40,   46,    3,
-        3,   62,   63,   55,   50,   56,   61,   70,   38,   39,
-       59,   70,   70,   70,   70,   70,   70,   70,   70,   70,
-       70,   70,   70,   70,   70,   70,   70,   70,   34,   57,
-       35,   71,   52,    0,   65,    0,    0,    0,   48,    0,
-        3,   49,    0,   69,   41,    0,    0,    0,    0,    3,
-       53,   51,   54,   70,   70,   70,   70,   70,   70,   70,
-       70,   70,   70,   70,   70,   13,   70,   70,   30,   70,
-       70,   70,   32,   70,   70,   70,   70,   70,   70,   70,
+       60,   60,   64,   62,   60,   61,   51,   62,   38,   49,
+       62,   28,   29,   34,   35,   33,   36,   37,    1,    1,
+       52,   53,   46,   41,   47,   59,   30,   31,   50,   59,
+       59,   59,   59,   59,   59,   59,   59,   59,   59,   59,
+       59,   59,   59,   26,   48,   27,   60,   43,    0,   55,
+        0,    0,    0,   39,   40,    0,    1,    0,   58,   32,
+        0,    0,    0,    0,    1,   44,   42,   45,   59,   59,
+       59,   59,   59,   59,   59,   59,   20,   59,   59,   59,
+       59,   11,   59,   59,   24,   59,   59,   59,   59,   59,
+       59,   54,   32,    0,    0,    0,    0,    1,    0,    0,
 
-       70,   70,   64,   41,    0,    0,    0,    0,    3,    0,
-        0,   69,   41,    4,    5,    6,   31,   70,   70,   70,
-       70,   70,   70,   70,   70,   19,   70,   70,   70,    7,
-       29,   33,   70,   70,   70,   70,   70,   70,   70,   70,
-       16,   70,   70,   70,   41,    4,    5,    6,   68,   11,
-       70,   10,   70,   70,   14,   70,   70,   70,   70,   70,
-       67,   70,   70,   70,   70,   70,   70,   66,   70,   12,
-       70,   17,   27,   70,    0,    8,   70,   70,    2,    1,
-       70,   70,   70,   70,   18,   23,   20,   28,    0,   26,
-       25,   22,   24,    9,   21,   15,    0
-
+       58,   32,    2,    3,    4,   59,   23,   59,   59,   59,
+       59,   59,   59,   59,   59,   59,   13,    5,   25,   59,
+       59,   59,   59,   59,   59,   32,    2,    3,    4,   57,
+       59,    9,   59,   16,    8,   59,   59,   59,   12,   59,
+       59,   59,   59,   59,   56,   10,   59,   59,   18,   22,
+       59,   59,   56,    6,   59,   59,   59,   14,   59,   59,
+       59,   21,    7,   15,   59,   59,   17,   59,   19,   59,
+       59,   59,   59,   59,   59,   59,    0
     } ;
 
 static const YY_CHAR yy_ec[256] =
@@ -391,17 +388,17 @@ static const YY_CHAR yy_ec[256] =
         1,    1,    1,    1,    1,    1,    1,    1,    2,    3,
         1,    1,    1,    1,    1,    1,    1,    1,    1,    1,
         1,    1,    1,    1,    1,    1,    1,    1,    1,    1,
-        1,    4,    5,    6,    1,    1,    7,    8,    9,   10,
-       11,   12,   13,   14,   15,   16,   17,   18,   19,   20,
-       20,   20,   20,   20,   20,   20,   20,   21,   22,   23,
-       24,   25,   26,    1,   27,   27,   27,   27,   27,   27,
-       27,   27,   27,   27,   27,   27,   27,   27,   28,   27,
-       27,   27,   27,   27,   27,   27,   27,   29,   27,   27,
-       30,   31,   32,   33,   34,    1,   35,   36,   37,   38,
+        1,    2,    4,    5,    1,    1,    6,    7,    8,    9,
+       10,   11,   12,   13,   14,   15,   16,   17,   18,   19,
+       19,   19,   19,   19,   19,   19,   19,   20,   21,   22,
+       23,   24,    1,    1,   25,   25,   25,   25,   25,   25,
+       25,   25,   25,   25,   25,   25,   25,   25,   26,   25,
+       25,   25,   25,   25,   25,   25,   25,   27,   25,   25,
+       28,   29,   30,   31,   32,    1,   33,   34,   35,   36,
 
-       39,   40,   41,   42,   43,   27,   27,   44,   45,   46,
-       47,   48,   27,   49,   50,   51,   52,   53,   54,   29,
-       55,   27,   56,   57,   58,    1,    1,    1,    1,    1,
+       37,   38,   39,   40,   41,   25,   42,   43,   25,   44,
+       45,   25,   25,   46,   47,   48,   49,   50,   51,   27,
+       25,   25,   52,   53,   54,    1,    1,    1,    1,    1,
         1,    1,    1,    1,    1,    1,    1,    1,    1,    1,
         1,    1,    1,    1,    1,    1,    1,    1,    1,    1,
         1,    1,    1,    1,    1,    1,    1,    1,    1,    1,
@@ -418,152 +415,146 @@ static const YY_CHAR yy_ec[256] =
         1,    1,    1,    1,    1
     } ;
 
-static const YY_CHAR yy_meta[59] =
+static const YY_CHAR yy_meta[55] =
     {   0,
-        1,    1,    2,    1,    1,    1,    1,    1,    3,    1,
-        1,    1,    1,    1,    1,    1,    1,    4,    4,    4,
+        1,    1,    2,    1,    1,    1,    1,    3,    1,    1,
         1,    1,    1,    1,    1,    1,    4,    4,    4,    1,
-        1,    1,    1,    4,    4,    4,    4,    4,    4,    4,
+        1,    1,    1,    1,    4,    4,    4,    1,    1,    1,
+        1,    4,    4,    4,    4,    4,    4,    4,    4,    4,
         4,    4,    4,    4,    4,    4,    4,    4,    4,    4,
-        4,    4,    4,    4,    4,    1,    1,    1
+        4,    1,    1,    1
     } ;
 
-static const flex_int16_t yy_base[203] =
+static const flex_int16_t yy_base[196] =
     {   0,
-        0,    0,  291,  292,   57,  292,  266,   54,  292,  292,
-      258,  292,  292,  292,   49,  292,   55,  292,   54,   60,
-       74,  292,  292,  264,  263,  262,  292,    0,  292,  292,
-      292,  239,  237,   30,  244,  238,   51,  237,   59,   61,
-      231,  230,  239,   30,   61,  231,  229,  233,  292,  292,
-      292,  110,  292,   85,  292,    0,  265,  264,  292,   99,
-      104,  292,  260,    0,  111,  118,  121,  124,   45,  129,
-      292,  292,  292,    0,  233,  223,  218,  233,  221,  222,
-      215,  220,  216,  213,  214,    0,  212,  102,    0,  205,
-      207,  213,    0,  213,  103,  206,  211,  204,  100,  201,
+        0,    0,  266,  267,  263,  267,  241,   50,  267,  267,
+      234,  267,  267,  267,  250,  267,   42,   46,   48,   53,
+      267,  267,  238,  237,  236,    0,  267,  267,  267,  214,
+       31,   40,   41,  214,   51,   20,  211,  209,  217,   39,
+      207,  207,  211,  267,  267,  267,  248,  267,   76,  267,
+        0,  241,  240,  267,  267,   80,   85,  236,    0,   91,
+       98,  101,  104,   71,  109,  267,  267,  267,    0,  210,
+      200,  207,  196,  209,  197,  202,    0,  192,  195,  192,
+      190,    0,  187,  186,    0,  185,  186,  190,  181,  188,
+      187,  267,  112,  117,  120,  123,   74,  128,  216,  133,
 
-      208,  207,  292,  138,  143,  146,  149,   64,  154,  237,
-       85,    0,  157,  160,  163,  107,    0,  204,  210,  197,
-      195,  205,  204,  192,  206,    0,  204,  192,  186,    0,
-        0,    0,  193,  190,  196,  182,  190,  181,  184,  191,
-        0,  186,  190,  183,  166,  169,  172,  114,  292,    0,
-      184,    0,  174,  173,  219,  183,  170,  185,  170,  167,
-        0,  166,  181,  166,  168,  176,  158,    0,  167,    0,
-      171,    0,    0,  170,  163,    0,  155,  120,    0,    0,
-      109,   75,   70,   64,    0,    0,    0,    0,   61,    0,
-        0,    0,    0,    0,    0,  292,  292,  192,  196,   83,
+        0,  133,  136,  139,   94,    0,    0,  183,  192,  187,
+      177,  112,  189,  184,  173,  186,    0,    0,    0,  169,
+      176,  168,  178,  178,  170,  144,  147,  150,  153,  267,
+        0,    0,  170,    0,    0,  163,  169,  160,    0,  171,
+      159,  160,  161,  169,    0,    0,  166,    0,    0,    0,
+      158,  158,    0,    0,  156,  160,  158,    0,    0,  148,
+      148,    0,    0,    0,    0,  158,    0,    0,    0,    0,
+        0,    0,    0,    0,    0,  267,  267,  171,  175,  190,
+      179,  183,  189,  188,  187,  186,  185,  184,  181,  174,
+      144,  129,   97,   79,   65
 
-      200,  204
     } ;
 
-static const flex_int16_t yy_def[203] =
+static const flex_int16_t yy_def[196] =
     {   0,
-      197,    1,  197,  197,  197,  197,  197,  198,  197,  197,
-      199,  197,  197,  197,  197,  197,  197,  197,  197,  197,
-      197,  197,  197,  197,  197,  197,  197,  200,  197,  197,
-      197,  200,  200,  200,  200,  200,  200,  200,  200,  200,
-      200,  200,  200,  200,  200,  200,  200,  200,  197,  197,
-      197,  197,  197,  198,  197,  198,  197,  199,  197,  197,
-      197,  197,  201,  202,  197,  197,  197,  197,  197,  197,
-      197,  197,  197,  200,  200,  200,  200,  200,  200,  200,
-      200,  200,  200,  200,  200,  200,  200,  200,  200,  200,
-      200,  200,  200,  200,  200,  200,  200,  200,  200,  200,
+      177,    1,  177,  177,  177,  177,  177,  178,  177,  177,
+      179,  177,  177,  177,  177,  177,  177,  177,  177,  177,
+      177,  177,  177,  177,  177,  180,  177,  177,  177,  180,
+      180,  180,  180,  180,  180,  180,  180,  180,  180,  180,
+      180,  180,  180,  177,  177,  177,  177,  177,  178,  177,
+      178,  177,  179,  177,  177,  177,  177,  181,  182,  177,
+      177,  177,  177,  177,  177,  177,  177,  177,  183,  183,
+      183,  183,  183,  183,  183,  183,  183,  183,  183,  183,
+      183,  183,  183,  183,  183,  183,  183,  183,  183,  183,
+      183,  177,  177,  177,  177,  177,  177,  177,  181,  181,
 
-      200,  200,  197,  197,  197,  197,  197,  197,  197,  201,
-      201,  202,  197,  197,  197,  197,  200,  200,  200,  200,
-      200,  200,  200,  200,  200,  200,  200,  200,  200,  200,
-      200,  200,  200,  200,  200,  200,  200,  200,  200,  200,
-      200,  200,  200,  200,  197,  197,  197,  197,  197,  200,
-      200,  200,  200,  200,  200,  200,  200,  200,  200,  200,
-      200,  200,  200,  200,  200,  200,  200,  200,  200,  200,
-      200,  200,  200,  200,  197,  200,  200,  200,  200,  200,
-      200,  200,  200,  200,  200,  200,  200,  200,  197,  200,
-      200,  200,  200,  200,  200,  197,    0,  197,  197,  197,
+      182,  177,  177,  177,  177,  184,  184,  184,  184,  184,
+      184,  184,  184,  184,  184,  184,  184,  184,  184,  184,
+      184,  184,  184,  184,  184,  177,  177,  177,  177,  177,
+      185,  185,  185,  185,  185,  185,  185,  185,  185,  185,
+      185,  185,  185,  185,  185,  185,  185,  186,  186,  186,
+      186,  186,  186,  186,  186,  186,  186,  186,  187,  187,
+      187,  187,  187,  187,  188,  188,  188,  189,  189,  190,
+      191,  192,  193,  194,  195,  177,    0,  177,  177,  177,
+      177,  177,  177,  177,  177,  177,  177,  177,  177,  177,
+      177,  177,  177,  177,  177
 
-      197,  197
     } ;
 
-static const flex_int16_t yy_nxt[351] =
+static const flex_int16_t yy_nxt[322] =
     {   0,
-        4,    5,    6,    5,    7,    8,    9,   10,   11,   12,
-       13,   14,   15,   16,   17,   18,   19,   20,   21,   21,
-       22,   23,   24,   25,   26,   27,   28,   28,   28,   29,
-        4,   30,   31,    4,   32,   33,   34,   35,   36,   37,
-       38,   28,   39,   28,   28,   40,   41,   42,   43,   44,
-       45,   46,   47,   48,   28,   49,   50,   51,   52,   55,
-       52,   59,  116,  116,   77,   63,   60,   61,   61,   62,
-       64,   78,   60,   61,   61,   65,   79,   66,   66,   66,
-       96,  148,  148,   97,   56,   82,   74,   67,   68,   65,
-       55,   70,   70,   70,   83,   69,  111,   84,   86,   90,
+        4,    5,    6,    7,    8,    9,   10,   11,   12,   13,
+       14,   15,   16,   17,    4,   18,   19,   20,   20,   21,
+       22,   23,   24,   25,   26,   26,   26,   27,    4,   28,
+       29,   26,   30,   31,   32,   33,   34,   35,   26,   26,
+       36,   26,   26,   37,   38,   39,   40,   41,   26,   42,
+       43,   44,   45,   46,   50,   55,   58,   82,   56,   57,
+       57,   59,   60,   83,   61,   61,   61,   60,  176,   65,
+       65,   65,   73,   62,   63,   71,   72,   76,   51,   74,
+       50,   64,  175,   79,   75,   77,   87,  105,  105,   88,
+      129,  129,   62,   80,   93,   81,   94,   94,   94,   93,
 
-      196,  149,   98,   87,   88,  195,   67,   91,   89,   99,
-      194,   52,   92,   52,  104,   56,  105,  105,  105,  104,
-      193,  109,  109,  109,  116,  116,  106,  107,  113,  113,
-      113,  148,  148,   65,  108,   66,   66,   66,  114,  114,
-      114,  115,  115,  115,   65,  106,   70,   70,   70,  129,
-      135,  140,  130,  136,  141,  145,  145,  145,  104,  192,
-      105,  105,  105,  146,  146,  146,  147,  147,  147,  104,
-      191,  109,  109,  109,  113,  113,  113,  114,  114,  114,
-      115,  115,  115,  145,  145,  145,  146,  146,  146,  147,
-      147,  147,   54,   54,   54,   54,   57,   57,  190,   57,
+      174,   98,   98,   98,   51,   95,   96,  102,  102,  102,
+      105,  105,   60,   97,   61,   61,   61,  103,  103,  103,
+      104,  104,  104,   60,   95,   65,   65,   65,  126,  126,
+      126,   93,  173,   94,   94,   94,  127,  127,  127,  128,
+      128,  128,   93,  100,   98,   98,   98,  172,  130,  102,
+      102,  102,  103,  103,  103,  104,  104,  104,  136,  137,
+      126,  126,  126,  127,  127,  127,  128,  128,  128,  129,
+      129,   49,   49,   49,   49,   52,   52,  171,   52,   99,
+       99,   99,   99,  101,  170,  101,  101,  168,  165,  159,
+      148,  131,  106,   69,  169,  167,  166,  164,  163,  162,
 
-      110,  110,  110,  110,  112,  189,  112,  112,  188,  187,
-      186,  185,  184,  183,  182,  181,  180,  179,  178,  177,
-      176,  168,  175,  174,  173,  172,  171,  170,  169,  168,
-      167,  166,  165,  164,  163,  162,  161,  160,  159,  158,
-      157,  156,  155,  154,  153,  152,  151,  150,  111,  144,
-      143,  142,  139,  138,  137,  134,  133,  132,  131,  128,
-      127,  126,  125,  124,  123,  122,  121,  120,  119,  118,
-      117,  111,   57,  103,  102,  101,  100,   95,   94,   93,
-       85,   81,   80,   76,   75,   73,   72,   71,   58,   53,
-      197,    3,  197,  197,  197,  197,  197,  197,  197,  197,
+      161,  160,  158,  157,  156,  155,  154,  153,  152,  151,
+      150,  149,  147,  146,  145,  144,  143,  142,  141,  140,
+      139,  138,  135,  134,  133,  132,  100,  125,  124,  123,
+      122,  121,  120,  119,  118,  117,  116,  115,  114,  113,
+      112,  111,  110,  109,  108,  107,  100,   52,   92,   47,
+       91,   90,   89,   86,   85,   84,   78,   70,   68,   67,
+       66,   54,   53,   48,   47,  177,    3,  177,  177,  177,
+      177,  177,  177,  177,  177,  177,  177,  177,  177,  177,
+      177,  177,  177,  177,  177,  177,  177,  177,  177,  177,
+      177,  177,  177,  177,  177,  177,  177,  177,  177,  177,
 
-      197,  197,  197,  197,  197,  197,  197,  197,  197,  197,
-      197,  197,  197,  197,  197,  197,  197,  197,  197,  197,
-      197,  197,  197,  197,  197,  197,  197,  197,  197,  197,
-      197,  197,  197,  197,  197,  197,  197,  197,  197,  197,
-      197,  197,  197,  197,  197,  197,  197,  197,  197,  197
+      177,  177,  177,  177,  177,  177,  177,  177,  177,  177,
+      177,  177,  177,  177,  177,  177,  177,  177,  177,  177,
+      177
     } ;
 
-static const flex_int16_t yy_chk[351] =
+static const flex_int16_t yy_chk[322] =
     {   0,
         1,    1,    1,    1,    1,    1,    1,    1,    1,    1,
         1,    1,    1,    1,    1,    1,    1,    1,    1,    1,
         1,    1,    1,    1,    1,    1,    1,    1,    1,    1,
         1,    1,    1,    1,    1,    1,    1,    1,    1,    1,
         1,    1,    1,    1,    1,    1,    1,    1,    1,    1,
-        1,    1,    1,    1,    1,    1,    1,    1,    5,    8,
-        5,   15,   69,   69,   34,   19,   15,   15,   15,   17,
-       19,   34,   17,   17,   17,   20,   34,   20,   20,   20,
-       44,  108,  108,   44,    8,   37,  200,   20,   20,   21,
-       54,   21,   21,   21,   37,   20,  111,   37,   39,   40,
+        1,    1,    1,    1,    8,   17,   18,   36,   17,   17,
+       17,   18,   19,   36,   19,   19,   19,   20,  195,   20,
+       20,   20,   32,   19,   19,   31,   31,   33,    8,   32,
+       49,   19,  194,   35,   32,   33,   40,   64,   64,   40,
+       97,   97,   19,   35,   56,   35,   56,   56,   56,   57,
 
-      189,  111,   45,   39,   39,  184,   20,   40,   39,   45,
-      183,   52,   40,   52,   60,   54,   60,   60,   60,   61,
-      182,   61,   61,   61,  116,  116,   60,   60,   65,   65,
-       65,  148,  148,   66,   60,   66,   66,   66,   67,   67,
-       67,   68,   68,   68,   70,   60,   70,   70,   70,   88,
-       95,   99,   88,   95,   99,  104,  104,  104,  105,  181,
-      105,  105,  105,  106,  106,  106,  107,  107,  107,  109,
-      178,  109,  109,  109,  113,  113,  113,  114,  114,  114,
-      115,  115,  115,  145,  145,  145,  146,  146,  146,  147,
-      147,  147,  198,  198,  198,  198,  199,  199,  177,  199,
+      193,   57,   57,   57,   49,   56,   56,   60,   60,   60,
+      105,  105,   61,   56,   61,   61,   61,   62,   62,   62,
+       63,   63,   63,   65,   56,   65,   65,   65,   93,   93,
+       93,   94,  192,   94,   94,   94,   95,   95,   95,   96,
+       96,   96,   98,  100,   98,   98,   98,  191,  100,  102,
+      102,  102,  103,  103,  103,  104,  104,  104,  112,  112,
+      126,  126,  126,  127,  127,  127,  128,  128,  128,  129,
+      129,  178,  178,  178,  178,  179,  179,  190,  179,  181,
+      181,  181,  181,  182,  189,  182,  182,  188,  187,  186,
+      185,  184,  183,  180,  166,  161,  160,  157,  156,  155,
 
-      201,  201,  201,  201,  202,  175,  202,  202,  174,  171,
-      169,  167,  166,  165,  164,  163,  162,  160,  159,  158,
-      157,  156,  155,  154,  153,  151,  144,  143,  142,  140,
-      139,  138,  137,  136,  135,  134,  133,  129,  128,  127,
-      125,  124,  123,  122,  121,  120,  119,  118,  110,  102,
-      101,  100,   98,   97,   96,   94,   92,   91,   90,   87,
-       85,   84,   83,   82,   81,   80,   79,   78,   77,   76,
-       75,   63,   58,   57,   48,   47,   46,   43,   42,   41,
-       38,   36,   35,   33,   32,   26,   25,   24,   11,    7,
-        3,  197,  197,  197,  197,  197,  197,  197,  197,  197,
+      152,  151,  147,  144,  143,  142,  141,  140,  138,  137,
+      136,  133,  125,  124,  123,  122,  121,  120,  116,  115,
+      114,  113,  111,  110,  109,  108,   99,   91,   90,   89,
+       88,   87,   86,   84,   83,   81,   80,   79,   78,   76,
+       75,   74,   73,   72,   71,   70,   58,   53,   52,   47,
+       43,   42,   41,   39,   38,   37,   34,   30,   25,   24,
+       23,   15,   11,    7,    5,    3,  177,  177,  177,  177,
+      177,  177,  177,  177,  177,  177,  177,  177,  177,  177,
+      177,  177,  177,  177,  177,  177,  177,  177,  177,  177,
+      177,  177,  177,  177,  177,  177,  177,  177,  177,  177,
 
-      197,  197,  197,  197,  197,  197,  197,  197,  197,  197,
-      197,  197,  197,  197,  197,  197,  197,  197,  197,  197,
-      197,  197,  197,  197,  197,  197,  197,  197,  197,  197,
-      197,  197,  197,  197,  197,  197,  197,  197,  197,  197,
-      197,  197,  197,  197,  197,  197,  197,  197,  197,  197
+      177,  177,  177,  177,  177,  177,  177,  177,  177,  177,
+      177,  177,  177,  177,  177,  177,  177,  177,  177,  177,
+      177
     } ;
 
 static yy_state_type yy_last_accepting_state;
@@ -588,8 +579,8 @@ int line_count = 0;
 int token_count = 0;
 extern FILE* yyin;
 extern int yylineno;
-#line 592 "lex.yy.c"
-#line 593 "lex.yy.c"
+#line 583 "lex.yy.c"
+#line 584 "lex.yy.c"
 
 #define INITIAL 0
 
@@ -808,7 +799,7 @@ YY_DECL
 	{
 #line 14 "bas.l"
 
-#line 812 "lex.yy.c"
+#line 803 "lex.yy.c"
 
 	while ( /*CONSTCOND*/1 )		/* loops until end-of-file is reached */
 		{
@@ -835,13 +826,13 @@ yy_match:
 			while ( yy_chk[yy_base[yy_current_state] + yy_c] != yy_current_state )
 				{
 				yy_current_state = (int) yy_def[yy_current_state];
-				if ( yy_current_state >= 198 )
+				if ( yy_current_state >= 178 )
 					yy_c = yy_meta[yy_c];
 				}
 			yy_current_state = yy_nxt[yy_base[yy_current_state] + yy_c];
 			++yy_cp;
 			}
-		while ( yy_base[yy_current_state] != 292 );
+		while ( yy_base[yy_current_state] != 267 );
 
 yy_find_action:
 		yy_act = yy_accept[yy_current_state];
@@ -868,378 +859,323 @@ do_action:	/* This label is used only to access EOF actions. */
 case 1:
 YY_RULE_SETUP
 #line 15 "bas.l"
-{ printf("detected token of type PRINT : %s\n", yytext); token_count++; return PRINT; }
+{ printf("detected token of type INTEGER_LITERAL : %s\n", yytext); token_count++; return INTEGER_LITERAL; }
 	YY_BREAK
 case 2:
 YY_RULE_SETUP
 #line 16 "bas.l"
-{ printf("detected token of type INPUT : %s\n", yytext); token_count++; return INPUT; }
+{ printf("detected token of type INTEGER_LITERAL : %s\n", yytext); token_count++; return INTEGER_LITERAL; }
 	YY_BREAK
 case 3:
 YY_RULE_SETUP
 #line 17 "bas.l"
-{ printf("detected token of type BASE10_INTEGER_LITERAL : %s\n", yytext); token_count++; return BASE10_INTEGER_LITERAL; }
+{ printf("detected token of type INTEGER_LITERAL : %s\n", yytext); token_count++; return INTEGER_LITERAL; }
 	YY_BREAK
 case 4:
 YY_RULE_SETUP
 #line 18 "bas.l"
-{ printf("detected token of type BASE8_INTEGER_LITERAL : %s\n", yytext); token_count++; return BASE8_INTEGER_LITERAL; }
+{ printf("detected token of type INTEGER_LITERAL : %s\n", yytext); token_count++; return INTEGER_LITERAL; }
 	YY_BREAK
 case 5:
 YY_RULE_SETUP
 #line 19 "bas.l"
-{ printf("detected token of type BASE16_INTEGER_LITERAL : %s\n", yytext); token_count++; return BASE16_INTEGER_LITERAL; }
+{ printf("detected token of type INT_TYPE_KEYWORD : %s\n", yytext); token_count++; return INT_TYPE_KEYWORD; }
 	YY_BREAK
 case 6:
 YY_RULE_SETUP
 #line 20 "bas.l"
-{ printf("detected token of type BASE2_INTEGER_LITERAL : %s\n", yytext); token_count++; return BASE2_INTEGER_LITERAL; }
+{ printf("detected token of type FLOAT_TYPE_KEYWORD : %s\n", yytext); token_count++; return FLOAT_TYPE_KEYWORD; }
 	YY_BREAK
 case 7:
 YY_RULE_SETUP
 #line 21 "bas.l"
-{ printf("detected token of type INT_TYPE_KEYWORD : %s\n", yytext); token_count++; return INT_TYPE_KEYWORD; }
+{ printf("detected token of type STRING_TYPE_KEYWORD : %s\n", yytext); token_count++; return STRING_TYPE_KEYWORD; }
 	YY_BREAK
 case 8:
 YY_RULE_SETUP
 #line 22 "bas.l"
-{ printf("detected token of type FLOAT_TYPE_KEYWORD : %s\n", yytext); token_count++; return FLOAT_TYPE_KEYWORD; }
+{ printf("detected token of type CHAR_TYPE_KEYWORD : %s\n", yytext); token_count++; return CHAR_TYPE_KEYWORD; }
 	YY_BREAK
 case 9:
 YY_RULE_SETUP
 #line 23 "bas.l"
-{ printf("detected token of type STRING_TYPE_KEYWORD : %s\n", yytext); token_count++; return STRING_TYPE_KEYWORD; }
+{ printf("detected token of type BOOL_TYPE_KEYWORD : %s\n", yytext); token_count++; return BOOL_TYPE_KEYWORD; }
 	YY_BREAK
 case 10:
 YY_RULE_SETUP
 #line 24 "bas.l"
-{ printf("detected token of type CHAR_TYPE_KEYWORD : %s\n", yytext); token_count++; return CHAR_TYPE_KEYWORD; }
+{ printf("detected token of type VOID_TYPE_KEYWORD : %s\n", yytext); token_count++; return VOID_TYPE_KEYWORD; }
 	YY_BREAK
 case 11:
 YY_RULE_SETUP
 #line 25 "bas.l"
-{ printf("detected token of type BOOL_TYPE_KEYWORD : %s\n", yytext); token_count++; return BOOL_TYPE_KEYWORD; }
+{ printf("detected token of type IF_KEYWORD : %s\n", yytext); token_count++; return IF_KEYWORD; }
 	YY_BREAK
 case 12:
 YY_RULE_SETUP
 #line 26 "bas.l"
-{ printf("detected token of type VOID_TYPE_KEYWORD : %s\n", yytext); token_count++; return VOID_TYPE_KEYWORD; }
+{ printf("detected token of type ELSE_KEYWORD : %s\n", yytext); token_count++; return ELSE_KEYWORD; }
 	YY_BREAK
 case 13:
 YY_RULE_SETUP
 #line 27 "bas.l"
-{ printf("detected token of type IF_KEYWORD : %s\n", yytext); token_count++; return IF_KEYWORD; }
+{ printf("detected token of type FOR_KEYWORD : %s\n", yytext); token_count++; return FOR_KEYWORD; }
 	YY_BREAK
 case 14:
 YY_RULE_SETUP
 #line 28 "bas.l"
-{ printf("detected token of type ELSE_KEYWORD : %s\n", yytext); token_count++; return ELSE_KEYWORD; }
+{ printf("detected token of type WHILE_KEYWORD : %s\n", yytext); token_count++; return WHILE_KEYWORD; }
 	YY_BREAK
 case 15:
 YY_RULE_SETUP
 #line 29 "bas.l"
-{ printf("detected token of type ELSE_IF_KEYWORD : %s\n", yytext); token_count++; return ELSE_IF_KEYWORD; }
+{ printf("detected token of type SWITCH_KEYWORD : %s\n", yytext); token_count++; return SWITCH_KEYWORD; }
 	YY_BREAK
 case 16:
 YY_RULE_SETUP
 #line 30 "bas.l"
-{ printf("detected token of type TRY_KEYWORD : %s\n", yytext); token_count++; return TRY_KEYWORD; }
+{ printf("detected token of type CASE_KEYWORD : %s\n", yytext); token_count++; return CASE_KEYWORD; }
 	YY_BREAK
 case 17:
 YY_RULE_SETUP
 #line 31 "bas.l"
-{ printf("detected token of type CATCH_KEYWORD : %s\n", yytext); token_count++; return CATCH_KEYWORD; }
+{ printf("detected token of type DEFAULT_KEYWORD : %s\n", yytext); token_count++; return DEFAULT_KEYWORD; }
 	YY_BREAK
 case 18:
 YY_RULE_SETUP
 #line 32 "bas.l"
-{ printf("detected token of type THROW_KEYWORD : %s\n", yytext); token_count++; return THROW_KEYWORD; }
+{ printf("detected token of type BREAK_KEYWORD : %s\n", yytext); token_count++; return BREAK_KEYWORD; }
 	YY_BREAK
 case 19:
 YY_RULE_SETUP
 #line 33 "bas.l"
-{ printf("detected token of type FOR_KEYWORD : %s\n", yytext); token_count++; return FOR_KEYWORD; }
+{ printf("detected token of type CONTINUE_KEYWORD : %s\n", yytext); token_count++; return CONTINUE_KEYWORD; }
 	YY_BREAK
 case 20:
 YY_RULE_SETUP
 #line 34 "bas.l"
-{ printf("detected token of type WHILE_KEYWORD : %s\n", yytext); token_count++; return WHILE_KEYWORD; }
+{ printf("detected token of type DO_KEYWORD : %s\n", yytext); token_count++; return DO_KEYWORD; }
 	YY_BREAK
 case 21:
 YY_RULE_SETUP
 #line 35 "bas.l"
-{ printf("detected token of type SWITCH_KEYWORD : %s\n", yytext); token_count++; return SWITCH_KEYWORD; }
+{ printf("detected token of type RETURN_KEYWORD : %s\n", yytext); token_count++; return RETURN_KEYWORD; }
 	YY_BREAK
 case 22:
 YY_RULE_SETUP
 #line 36 "bas.l"
-{ printf("detected token of type REPEAT_KEYWORD : %s\n", yytext); token_count++; return REPEAT_KEYWORD; }
+{ printf("detected token of type CONST_KEYWORD : %s\n", yytext); token_count++; return CONST_KEYWORD; }
 	YY_BREAK
 case 23:
 YY_RULE_SETUP
 #line 37 "bas.l"
-{ printf("detected token of type UNTIL_KEYWORD : %s\n", yytext); token_count++; return UNTIL_KEYWORD; }
+{ printf("detected token of type AND_KEYWORD : %s\n", yytext); token_count++; return AND_KEYWORD; }
 	YY_BREAK
 case 24:
 YY_RULE_SETUP
 #line 38 "bas.l"
-{ printf("detected token of type RETURN_KEYWORD : %s\n", yytext); token_count++; return RETURN_KEYWORD; }
+{ printf("detected token of type OR_KEYWORD : %s\n", yytext); token_count++; return OR_KEYWORD; }
 	YY_BREAK
 case 25:
 YY_RULE_SETUP
 #line 39 "bas.l"
-{ printf("detected token of type IMPORT_KEYWORD : %s\n", yytext); token_count++; return IMPORT_KEYWORD; }
+{ printf("detected token of type NOT_KEYWORD : %s\n", yytext); token_count++; return NOT_KEYWORD; }
 	YY_BREAK
 case 26:
 YY_RULE_SETUP
 #line 40 "bas.l"
-{ printf("detected token of type GLOBAL_KEYWORD : %s\n", yytext); token_count++; return GLOBAL_KEYWORD; }
+{ printf("detected token of type OPENING_CURLY_BRACE : %s\n", yytext); token_count++; return OPENING_CURLY_BRACE; }
 	YY_BREAK
 case 27:
 YY_RULE_SETUP
 #line 41 "bas.l"
-{ printf("detected token of type CONST_KEYWORD : %s\n", yytext); token_count++; return CONST_KEYWORD; }
+{ printf("detected token of type CLOSING_CURLY_BRACE : %s\n", yytext); token_count++; return CLOSING_CURLY_BRACE; }
 	YY_BREAK
 case 28:
 YY_RULE_SETUP
 #line 42 "bas.l"
-{ printf("detected token of type DELETE_KEYWORD : %s\n", yytext); token_count++; return DELETE_KEYWORD; }
+{ printf("detected token of type OPENING_PARENTHESIS : %s\n", yytext); token_count++; return OPENING_PARENTHESIS; }
 	YY_BREAK
 case 29:
 YY_RULE_SETUP
 #line 43 "bas.l"
-{ printf("detected token of type NEW_KEYWORD : %s\n", yytext); token_count++; return NEW_KEYWORD; }
+{ printf("detected token of type CLOSING_PARENTHESIS : %s\n", yytext); token_count++; return CLOSING_PARENTHESIS; }
 	YY_BREAK
 case 30:
 YY_RULE_SETUP
 #line 44 "bas.l"
-{ printf("detected token of type IS_KEYWORD : %s\n", yytext); token_count++; return IS_KEYWORD; }
+{ printf("detected token of type OPENING_SQUARE_BRACKETS : %s\n", yytext); token_count++; return OPENING_SQUARE_BRACKETS; }
 	YY_BREAK
 case 31:
 YY_RULE_SETUP
 #line 45 "bas.l"
-{ printf("detected token of type AND_KEYWORD : %s\n", yytext); token_count++; return AND_KEYWORD; }
+{ printf("detected token of type CLOSING_SQUARE_BRACKETS : %s\n", yytext); token_count++; return CLOSING_SQUARE_BRACKETS; }
 	YY_BREAK
 case 32:
 YY_RULE_SETUP
 #line 46 "bas.l"
-{ printf("detected token of type OR_KEYWORD : %s\n", yytext); token_count++; return OR_KEYWORD; }
+{ printf("detected token of type FLOAT_LITERAL : %s\n", yytext); token_count++; return FLOAT_LITERAL; }
 	YY_BREAK
 case 33:
 YY_RULE_SETUP
 #line 47 "bas.l"
-{ printf("detected token of type NOT_KEYWORD : %s\n", yytext); token_count++; return NOT_KEYWORD; }
+{ printf("detected token of type COMMA : %s\n", yytext); token_count++; return COMMA; }
 	YY_BREAK
 case 34:
 YY_RULE_SETUP
 #line 48 "bas.l"
-{ printf("detected token of type OPENING_CURLY_BRACE : %s\n", yytext); token_count++; return OPENING_CURLY_BRACE; }
+{ printf("detected token of type ASTRISK : %s\n", yytext); token_count++; return ASTRISK; }
 	YY_BREAK
 case 35:
 YY_RULE_SETUP
 #line 49 "bas.l"
-{ printf("detected token of type CLOSING_CURLY_BRACE : %s\n", yytext); token_count++; return CLOSING_CURLY_BRACE; }
+{ printf("detected token of type PLUS : %s\n", yytext); token_count++; return PLUS; }
 	YY_BREAK
 case 36:
 YY_RULE_SETUP
 #line 50 "bas.l"
-{ printf("detected token of type OPENING_PARENTHESIS : %s\n", yytext); token_count++; return OPENING_PARENTHESIS; }
+{ printf("detected token of type MINUS : %s\n", yytext); token_count++; return MINUS; }
 	YY_BREAK
 case 37:
 YY_RULE_SETUP
 #line 51 "bas.l"
-{ printf("detected token of type CLOSING_PARENTHESIS : %s\n", yytext); token_count++; return CLOSING_PARENTHESIS; }
+{ printf("detected token of type DIVIDE : %s\n", yytext); token_count++; return DIVIDE; }
 	YY_BREAK
 case 38:
 YY_RULE_SETUP
 #line 52 "bas.l"
-{ printf("detected token of type OPENING_SQUARE_BRACKETS : %s\n", yytext); token_count++; return OPENING_SQUARE_BRACKETS; }
+{ printf("detected token of type MODULO : %s\n", yytext); token_count++; return MODULO; }
 	YY_BREAK
 case 39:
 YY_RULE_SETUP
 #line 53 "bas.l"
-{ printf("detected token of type CLOSING_SQUARE_BRACKETS : %s\n", yytext); token_count++; return CLOSING_SQUARE_BRACKETS; }
+{ printf("detected token of type INCREMENT : %s\n", yytext); token_count++; return INCREMENT; }
 	YY_BREAK
 case 40:
 YY_RULE_SETUP
 #line 54 "bas.l"
-{ printf("detected token of type DOT : %s\n", yytext); token_count++; return DOT; }
+{ printf("detected token of type DECREMENT : %s\n", yytext); token_count++; return DECREMENT; }
 	YY_BREAK
 case 41:
 YY_RULE_SETUP
 #line 55 "bas.l"
-{ printf("detected token of type FLOAT_LITERAL : %s\n", yytext); token_count++; return FLOAT_LITERAL; }
+{ printf("detected token of type ASSIGNMENT : %s\n", yytext); token_count++; return ASSIGNMENT; }
 	YY_BREAK
 case 42:
 YY_RULE_SETUP
 #line 56 "bas.l"
-{ printf("detected token of type COMMA : %s\n", yytext); token_count++; return COMMA; }
+{ printf("detected token of type EQUAL : %s\n", yytext); token_count++; return EQUAL; }
 	YY_BREAK
 case 43:
 YY_RULE_SETUP
 #line 57 "bas.l"
-{ printf("detected token of type ASTRISK : %s\n", yytext); token_count++; return ASTRISK; }
+{ printf("detected token of type NOT_EQUAL : %s\n", yytext); token_count++; return NOT_EQUAL; }
 	YY_BREAK
 case 44:
 YY_RULE_SETUP
 #line 58 "bas.l"
-{ printf("detected token of type PLUS : %s\n", yytext); token_count++; return PLUS; }
+{ printf("detected token of type LESS_OR_EQUAL : %s\n", yytext); token_count++; return LESS_OR_EQUAL; }
 	YY_BREAK
 case 45:
 YY_RULE_SETUP
 #line 59 "bas.l"
-{ printf("detected token of type MINUS : %s\n", yytext); token_count++; return MINUS; }
+{ printf("detected token of type GREATER_OR_EQUAL : %s\n", yytext); token_count++; return GREATER_OR_EQUAL; }
 	YY_BREAK
 case 46:
 YY_RULE_SETUP
 #line 60 "bas.l"
-{ printf("detected token of type DIVIDE : %s\n", yytext); token_count++; return DIVIDE; }
+{ printf("detected token of type LESS : %s\n", yytext); token_count++; return LESS; }
 	YY_BREAK
 case 47:
 YY_RULE_SETUP
 #line 61 "bas.l"
-{ printf("detected token of type MODULO : %s\n", yytext); token_count++; return MODULO; }
+{ printf("detected token of type GREATER : %s\n", yytext); token_count++; return GREATER; }
 	YY_BREAK
 case 48:
 YY_RULE_SETUP
 #line 62 "bas.l"
-{ printf("detected token of type INCREMENT : %s\n", yytext); token_count++; return INCREMENT; }
+{ printf("detected token of type BITWISE_AND : %s\n", yytext); token_count++; return BITWISE_AND; }
 	YY_BREAK
 case 49:
 YY_RULE_SETUP
 #line 63 "bas.l"
-{ printf("detected token of type DECREMENT : %s\n", yytext); token_count++; return DECREMENT; }
+{ printf("detected token of type BITWISE_OR : %s\n", yytext); token_count++; return BITWISE_OR; }
 	YY_BREAK
 case 50:
 YY_RULE_SETUP
 #line 64 "bas.l"
-{ printf("detected token of type ASSIGNMENT : %s\n", yytext); token_count++; return ASSIGNMENT; }
+{ printf("detected token of type BITWISE_XOR : %s\n", yytext); token_count++; return BITWISE_XOR; }
 	YY_BREAK
 case 51:
 YY_RULE_SETUP
 #line 65 "bas.l"
-{ printf("detected token of type EQUAL : %s\n", yytext); token_count++; return EQUAL; }
+{ printf("detected token of type BITWISE_NOT : %s\n", yytext); token_count++; return BITWISE_NOT; }
 	YY_BREAK
 case 52:
 YY_RULE_SETUP
 #line 66 "bas.l"
-{ printf("detected token of type NOT_EQUAL : %s\n", yytext); token_count++; return NOT_EQUAL; }
+{ printf("detected token of type COLON : %s\n", yytext); token_count++; return COLON; }
 	YY_BREAK
 case 53:
 YY_RULE_SETUP
 #line 67 "bas.l"
-{ printf("detected token of type LESS_OR_EQUAL : %s\n", yytext); token_count++; return LESS_OR_EQUAL; }
+{ printf("detected token of type SEMICOLON : %s\n", yytext); token_count++; return SEMICOLON; }
 	YY_BREAK
 case 54:
+/* rule 54 can match eol */
 YY_RULE_SETUP
 #line 68 "bas.l"
-{ printf("detected token of type GREATER_OR_EQUAL : %s\n", yytext); token_count++; return GREATER_OR_EQUAL; }
+{ printf("detected token of type CHARACTER_LITERAL : %s\n", yytext); token_count++; return CHARACTER_LITERAL; }
 	YY_BREAK
 case 55:
+/* rule 55 can match eol */
 YY_RULE_SETUP
 #line 69 "bas.l"
-{ printf("detected token of type LESS : %s\n", yytext); token_count++; return LESS; }
+{ printf("detected token of type STRING_LITERAL : %s\n", yytext); token_count++; return STRING_LITERAL; }
 	YY_BREAK
 case 56:
 YY_RULE_SETUP
 #line 70 "bas.l"
-{ printf("detected token of type GREATER : %s\n", yytext); token_count++; return GREATER; }
+{ printf("detected token of type BOOLEAN_LITERAL : %s\n", yytext); token_count++; return BOOLEAN_LITERAL; }
 	YY_BREAK
 case 57:
+/* rule 57 can match eol */
 YY_RULE_SETUP
 #line 71 "bas.l"
-{ printf("detected token of type BITWISE_AND : %s\n", yytext); token_count++; return BITWISE_AND; }
+{ printf("detected token of type COMMENT : %s\n", yytext); token_count++; return COMMENT; }
 	YY_BREAK
 case 58:
 YY_RULE_SETUP
 #line 72 "bas.l"
-{ printf("detected token of type BITWISE_OR : %s\n", yytext); token_count++; return BITWISE_OR; }
+{ printf("detected token of type COMMENT : %s\n", yytext); token_count++; return COMMENT; }
 	YY_BREAK
 case 59:
 YY_RULE_SETUP
 #line 73 "bas.l"
-{ printf("detected token of type BITWISE_XOR : %s\n", yytext); token_count++; return BITWISE_XOR; }
+{ printf("detected token of type IDENTIFIER : %s\n", yytext); if(strcmp(yytext, "main") == 0){ return RESERVED_IDENTIFIER; } token_count++; return IDENTIFIER; }
 	YY_BREAK
 case 60:
 YY_RULE_SETUP
 #line 74 "bas.l"
-{ printf("detected token of type BITWISE_NOT : %s\n", yytext); token_count++; return BITWISE_NOT; }
+{ ; }
 	YY_BREAK
 case 61:
+/* rule 61 can match eol */
 YY_RULE_SETUP
 #line 75 "bas.l"
-{ printf("detected token of type QUESTION_MARK : %s\n", yytext); token_count++; return QUESTION_MARK; }
+{ line_count++; yylineno++; }
 	YY_BREAK
 case 62:
 YY_RULE_SETUP
 #line 76 "bas.l"
-{ printf("detected token of type COLON : %s\n", yytext); token_count++; return COLON; }
+{ return UNRECOGNIZED_TOKEN; }
 	YY_BREAK
 case 63:
 YY_RULE_SETUP
 #line 77 "bas.l"
-{ printf("detected token of type SEMICOLON : %s\n", yytext); token_count++; return SEMICOLON; }
-	YY_BREAK
-case 64:
-/* rule 64 can match eol */
-YY_RULE_SETUP
-#line 78 "bas.l"
-{ printf("detected token of type CHARACTER_LITERAL : %s\n", yytext); token_count++; return CHARACTER_LITERAL; }
-	YY_BREAK
-case 65:
-/* rule 65 can match eol */
-YY_RULE_SETUP
-#line 79 "bas.l"
-{ printf("detected token of type STRING_LITERAL : %s\n", yytext); token_count++; return STRING_LITERAL; }
-	YY_BREAK
-case 66:
-YY_RULE_SETUP
-#line 80 "bas.l"
-{ printf("detected token of type BOOLEAN_LITERAL : %s\n", yytext); token_count++; return BOOLEAN_LITERAL; }
-	YY_BREAK
-case 67:
-YY_RULE_SETUP
-#line 81 "bas.l"
-{ printf("detected token of type NULL_LITERAL : %s\n", yytext); token_count++; return NULL_LITERAL; }
-	YY_BREAK
-case 68:
-/* rule 68 can match eol */
-YY_RULE_SETUP
-#line 82 "bas.l"
-{ printf("detected token of type COMMENT : %s\n", yytext); token_count++; return COMMENT; }
-	YY_BREAK
-case 69:
-YY_RULE_SETUP
-#line 83 "bas.l"
-{ printf("detected token of type COMMENT : %s\n", yytext); token_count++; return COMMENT; }
-	YY_BREAK
-case 70:
-YY_RULE_SETUP
-#line 84 "bas.l"
-{ printf("detected token of type IDENTIFIER : %s\n", yytext); token_count++; return IDENTIFIER; }
-	YY_BREAK
-case 71:
-YY_RULE_SETUP
-#line 85 "bas.l"
-{ ; }
-	YY_BREAK
-case 72:
-/* rule 72 can match eol */
-YY_RULE_SETUP
-#line 86 "bas.l"
-{ line_count++; yylineno++; }
-	YY_BREAK
-case 73:
-YY_RULE_SETUP
-#line 87 "bas.l"
-{ return UNRECOGNIZED_TOKEN; }
-	YY_BREAK
-case 74:
-YY_RULE_SETUP
-#line 88 "bas.l"
 ECHO;
 	YY_BREAK
-#line 1243 "lex.yy.c"
+#line 1179 "lex.yy.c"
 case YY_STATE_EOF(INITIAL):
 	yyterminate();
 
@@ -1536,7 +1472,7 @@ static int yy_get_next_buffer (void)
 		while ( yy_chk[yy_base[yy_current_state] + yy_c] != yy_current_state )
 			{
 			yy_current_state = (int) yy_def[yy_current_state];
-			if ( yy_current_state >= 198 )
+			if ( yy_current_state >= 178 )
 				yy_c = yy_meta[yy_c];
 			}
 		yy_current_state = yy_nxt[yy_base[yy_current_state] + yy_c];
@@ -1564,11 +1500,11 @@ static int yy_get_next_buffer (void)
 	while ( yy_chk[yy_base[yy_current_state] + yy_c] != yy_current_state )
 		{
 		yy_current_state = (int) yy_def[yy_current_state];
-		if ( yy_current_state >= 198 )
+		if ( yy_current_state >= 178 )
 			yy_c = yy_meta[yy_c];
 		}
 	yy_current_state = yy_nxt[yy_base[yy_current_state] + yy_c];
-	yy_is_jam = (yy_current_state == 197);
+	yy_is_jam = (yy_current_state == 177);
 
 		return yy_is_jam ? 0 : yy_current_state;
 }
@@ -2244,8 +2180,21 @@ void yyfree (void * ptr )
 
 #define YYTABLES_NAME "yytables"
 
-#line 88 "bas.l"
+#line 77 "bas.l"
 
+
+
+  /* "\."                                                    { printf("detected token of type DOT : %s\n", yytext); token_count++; return DOT; } */
+  /* "null"                                                   { printf("detected token of type NULL_LITERAL : %s\n", yytext); token_count++; return NULL_LITERAL; } */
+  /* "delete"                                                 { printf("detected token of type DELETE_KEYWORD : %s\n", yytext); token_count++; return DELETE_KEYWORD; } */
+  /* "new"                                                    { printf("detected token of type NEW_KEYWORD : %s\n", yytext); token_count++; return NEW_KEYWORD; } */
+  /* "?"                                                      { printf("detected token of type QUESTION_MARK : %s\n", yytext); token_count++; return QUESTION_MARK; } */
+  /* "try"                                                   { printf("detected token of type TRY_KEYWORD : %s\n", yytext); token_count++; return TRY_KEYWORD; }  */
+  /* "catch"                                                 { printf("detected token of type CATCH_KEYWORD : %s\n", yytext); token_count++; return CATCH_KEYWORD; } */
+  /* "throw"                                                 { printf("detected token of type THROW_KEYWORD : %s\n", yytext); token_count++; return THROW_KEYWORD; } */
+  /* "global"                                                 { printf("detected token of type GLOBAL_KEYWORD : %s\n", yytext); token_count++; return GLOBAL_KEYWORD; } */
+  /* "is"                                                     { printf("detected token of type IS_KEYWORD : %s\n", yytext); token_count++; return IS_KEYWORD; } */ 
+  /* "import"                                                 { printf("detected token of type IMPORT_KEYWORD : %s\n", yytext); token_count++; return IMPORT_KEYWORD; } */
 
 int yywrap(void){
     printf("number of tokens detected : %d\n", token_count);
