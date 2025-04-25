@@ -1,6 +1,7 @@
 %{
 #include <stdio.h>
-#include "bas.tab.h"
+// #include "bas.tab.h"
+#include "test.tab.h"
 int line_count = 0;
 int token_count = 0;
 extern FILE* yyin;
@@ -17,6 +18,7 @@ letter                  [a-zA-Z]
 0[xX]{digit}+|-0[xX]{digit}+                             { printf("detected token of type INTEGER_LITERAL : %s\n", yytext); token_count++; return INTEGER_LITERAL; }
 0b[01]+|-0b[01]+                                         { printf("detected token of type INTEGER_LITERAL : %s\n", yytext); token_count++; return INTEGER_LITERAL; }
 "int"                                                    { printf("detected token of type INT_TYPE_KEYWORD : %s\n", yytext); token_count++; return INT_TYPE_KEYWORD; }
+"main"                                                   { printf("detected token of type MAIN_KEYWORD : %s\n", yytext); token_count++; return MAIN_KEYWORD; }
 "float"                                                  { printf("detected token of type FLOAT_TYPE_KEYWORD : %s\n", yytext); token_count++; return FLOAT_TYPE_KEYWORD; }
 "string"                                                 { printf("detected token of type STRING_TYPE_KEYWORD : %s\n", yytext); token_count++; return STRING_TYPE_KEYWORD; }
 "char"                                                   { printf("detected token of type CHAR_TYPE_KEYWORD : %s\n", yytext); token_count++; return CHAR_TYPE_KEYWORD; }
@@ -65,15 +67,16 @@ letter                  [a-zA-Z]
 "!"                                                      { printf("detected token of type BITWISE_NOT : %s\n", yytext); token_count++; return BITWISE_NOT; }
 ":"                                                      { printf("detected token of type COLON : %s\n", yytext); token_count++; return COLON; }
 ";"                                                      { printf("detected token of type SEMICOLON : %s\n", yytext); token_count++; return SEMICOLON; }
-\'(?:[^\'\\]|\\\'|\\[^'])\'                              { printf("detected token of type CHARACTER_LITERAL : %s\n", yytext); token_count++; return CHARACTER_LITERAL; }
-\"(?:[^\"\\]|\\\"|\\[^"])*\"                             { printf("detected token of type STRING_LITERAL : %s\n", yytext); token_count++; return STRING_LITERAL; }
+\'[^\'\\]\'                                              { printf("detected token of type CHARACTER_LITERAL : %s\n", yytext); token_count++; return CHARACTER_LITERAL; }
+\"([^\\\"]|\\.)*\"                                       { printf("detected token of type STRING_LITERAL : %s\n", yytext); token_count++; return STRING_LITERAL; }
 ("true"|"false")                                         { printf("detected token of type BOOLEAN_LITERAL : %s\n", yytext); token_count++; return BOOLEAN_LITERAL; }
 "/*"([^*]|\*+[^*/])*\*+"/"                               { ; }
 "//".*                                                   { ; }
-({letter}|_)({digit}|{letter}|_){0,14}                 { printf("detected token of type IDENTIFIER : %s\n", yytext); if(strcmp(yytext, "main") == 0){ return RESERVED_IDENTIFIER; } token_count++; return IDENTIFIER; }
+({letter}|_)({digit}|{letter}|_){0,14}                   { printf("detected token of type IDENTIFIER : %s\n", yytext);   token_count++; return IDENTIFIER; }
 [ \t]*                                                   { ; }
 [\n]                                                     { line_count++; yylineno++; }
 .                                                        { return UNRECOGNIZED_TOKEN; }
+ 
 %%
 
 
