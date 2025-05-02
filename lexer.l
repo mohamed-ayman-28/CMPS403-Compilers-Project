@@ -1,7 +1,7 @@
 %{
 #include <stdio.h>
-// #include "bas.tab.h"
-#include "test.tab.h"
+#include "parser.tab.h"
+
 int line_count = 0;
 int token_count = 0;
 extern FILE* yyin;
@@ -25,6 +25,7 @@ letter                  [a-zA-Z]
 "bool"                                                   { printf("detected token of type BOOL_TYPE_KEYWORD : %s\n", yytext); token_count++; return BOOL_TYPE_KEYWORD; }
 "void"                                                   { printf("detected token of type VOID_TYPE_KEYWORD : %s\n", yytext); token_count++; return VOID_TYPE_KEYWORD; }
 "if"                                                     { printf("detected token of type IF_KEYWORD : %s\n", yytext); token_count++; return IF_KEYWORD; }
+"elseif"                                                 { printf("detected token of type ELSEIF_KEYWORD : %s\n", yytext); token_count++; return ELSEIF_KEYWORD; }
 "else"                                                   { printf("detected token of type ELSE_KEYWORD : %s\n", yytext); token_count++; return ELSE_KEYWORD; }
 "for"                                                    { printf("detected token of type FOR_KEYWORD : %s\n", yytext); token_count++; return FOR_KEYWORD; }
 "while"                                                  { printf("detected token of type WHILE_KEYWORD : %s\n", yytext); token_count++; return WHILE_KEYWORD; }
@@ -93,7 +94,7 @@ letter                  [a-zA-Z]
   /* "import"                                                 { printf("detected token of type IMPORT_KEYWORD : %s\n", yytext); token_count++; return IMPORT_KEYWORD; } */
 
 int yywrap(void){
-    printf("number of tokens detected : %d\n", token_count);
-    printf("number of lines read : %d\n", line_count);
+    printf("lexer : number of tokens detected : %d\n", token_count);
+    printf("lexer : number of lines read : %d\n", line_count);
     return 1;
 }
