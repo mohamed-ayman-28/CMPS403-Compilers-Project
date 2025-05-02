@@ -1,0 +1,83 @@
+/* Keywords */
+int x = 10;
+float y = 3.14;
+string s = "hello";
+char c = 'a';
+bool flag = true;
+void func() { return; }
+
+if (x == 10) {
+    print(x);
+} else {
+    // do nothing
+}
+
+
+for (int i = 0; i < 10; i++) {
+    x += i;
+}
+
+int x = 2;
+int x = -2;
+int x = +2;
+float x = 2.076;
+float x = -3.456;
+float x = +0.98;
+int z = -0b1001;
+int z = +0b1001;
+int z = 0b100011;
+int y = 0o564;
+int y = +0o564;
+int y = -0o564;
+int y = 0xF45;
+int y = -0xF45;
+int y = +0xF45;
+
+while (x > 0) {
+    x--;
+}
+
+switch (x) {
+    case 1: break;
+    default: break;
+}
+
+do {
+    x--;
+} while (x == 0);
+
+/* Types and identifiers */
+const int CONSTANT = 42;
+float GLOBAL_VAR = 0.5;
+object;
+Type();
+x is y;
+x and y or z;
+not flag;
+
+/* Literals */
+123
+0o123
+0x1F
+0b1010
+123.456
+.789
+"string with \"escaped quotes\" and \\backslash \n"
+'c'
+'\n'
+'"'
+'\''
+true
+false
+//#
+
+/*Operators and punctuation*/
+{ } ( ) [ ]
+, * + - / % ++ -- = == != <= >= < > | & ^ ! : ; 
+
+/* This is a comment */
+
+/* Multiline
+   comment continues */
+
+// another comment
