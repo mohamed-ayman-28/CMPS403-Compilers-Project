@@ -2,11 +2,15 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdbool.h>
+#include "symbol_table.h"
 
-/*not used right now*/
 void yyerror(const char *s);
 int yylex(void);
 extern FILE* yyin;
+extern scope_no;
+SymbolTable* symbol_table = create_symbol_table();
+Parameter* curr_function_parameter_list = NULL;
+Parameter* curr_function_parameter_list_ptr = NULL;
 %}
 
 %start program
@@ -15,6 +19,11 @@ extern FILE* yyin;
     int ival;
     float fval;
     char* sval;
+    struct Parameter *param_list;
+    struct {
+        char* type;
+        char* name;
+    } type_id;
     char cval;
 }
 
@@ -23,7 +32,7 @@ extern FILE* yyin;
 %token <char> CHARACTER_LITERAL
 %token <sval> STRING_LITERAL
 %token <ival> BOOLEAN_LITERAL
-%token IDENTIFIER
+%token <sval> IDENTIFIER
 %token INT_TYPE_KEYWORD
 %token FLOAT_TYPE_KEYWORD
 %token STRING_TYPE_KEYWORD
@@ -76,12 +85,13 @@ extern FILE* yyin;
 %token SEMICOLON
 %token UNRECOGNIZED_TOKEN
 %token RESERVED_IDENTIFIER
-
+%type <sval> type
+%type <type_id> type_identifier
 
 %%
 
 program:
-    functions main_function            
+    { scope_no++; } functions main_function { delete_scope(symbol_table, scope_no); scope_no--;}            
     ;
 
 functions:
@@ -89,29 +99,47 @@ functions:
     | /* empty */                       
     ;
 
-function: type IDENTIFIER OPENING_PARENTHESIS function_arguments CLOSING_PARENTHESIS body
+function: type IDENTIFIER OPENING_PARENTHESIS { curr_function_parameter_list = NULL; } function_arguments CLOSING_PARENTHESIS body
         | VOID_TYPE_KEYWORD IDENTIFIER OPENING_PARENTHESIS function_arguments CLOSING_PARENTHESIS body
         | type IDENTIFIER OPENING_PARENTHESIS CLOSING_PARENTHESIS body
         | VOID_TYPE_KEYWORD IDENTIFIER OPENING_PARENTHESIS CLOSING_PARENTHESIS body
         ;
 
-function_arguments      : type_identifier 
-                        | function_arguments COMMA type_identifier
+function_arguments      : type_identifier {
+                            if(!curr_function_parameter_list){
+                                curr_function_parameter_list = create_parameter($1.name, $2.type);
+                                curr_function_parameter_list_ptr = curr_function_parameter_list_ptr;
+                            }else{
+                                curr_function_parameter_list_ptr->next = create_parameter($1.name, $2.type);
+                                curr_function_parameter_list_ptr = curr_function_parameter_list_ptr->next;
+                            }
+                            free($1.name);
+                            free($1.type);
+                        }
+                        | function_arguments COMMA type_identifier {
+                            curr_function_parameter_list_ptr->next = create_parameter($1.name, $2.type);
+                            curr_function_parameter_list_ptr = curr_function_parameter_list_ptr->next;
+                            free($3.name);
+                            free($3.type);
+                        }
                         ;
 
-type_identifier         : type IDENTIFIER 
+type_identifier         : type IDENTIFIER { 
+                                            $$.type = $1;
+                                            $$.name = $2; 
+                                          }
                         ;
 
 type:
-    INT_TYPE_KEYWORD                   
-    | FLOAT_TYPE_KEYWORD               
-    | STRING_TYPE_KEYWORD              
-    | CHAR_TYPE_KEYWORD
-    | BOOL_TYPE_KEYWORD
+    INT_TYPE_KEYWORD   { $$ = $1; }                
+    | FLOAT_TYPE_KEYWORD  { $$ = $1; }             
+    | STRING_TYPE_KEYWORD { $$ = $1; }             
+    | CHAR_TYPE_KEYWORD  { $$ = $1; }
+    | BOOL_TYPE_KEYWORD  { $$ = $1; }
     ;
 
 body:
-    OPENING_CURLY_BRACE statements CLOSING_CURLY_BRACE
+    OPENING_CURLY_BRACE { scope_no++; } statements { delete_scope(symbol_table, scope_no); scope_no--; } CLOSING_CURLY_BRACE
     ;
 
 statements:
