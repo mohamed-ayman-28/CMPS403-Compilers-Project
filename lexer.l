@@ -47,7 +47,7 @@ letter                  [a-zA-Z]
 \)                                                       { printf("detected token of type CLOSING_PARENTHESIS : %s\n", yytext); token_count++; return CLOSING_PARENTHESIS; }
 \[                                                       { printf("detected token of type OPENING_SQUARE_BRACKETS : %s\n", yytext); token_count++; return OPENING_SQUARE_BRACKETS; }
 \]                                                       { printf("detected token of type CLOSING_SQUARE_BRACKETS : %s\n", yytext); token_count++; return CLOSING_SQUARE_BRACKETS; }
-{digit}+\.{digit}*|-{digit}+\.{digit}*                   { printf("detected token of type FLOAT_LITERAL : %s\n", yytext); token_count++; return FLOAT_LITERAL; }
+{digit}+\.{digit}*|-{digit}+\.{digit}*                   { printf("detected token of type FLOAT_LITERAL : %s\n", yytext); token_count++; yylval.fval = atof(yytext); return FLOAT_LITERAL; }
 ","                                                      { printf("detected token of type COMMA : %s\n", yytext); token_count++; return COMMA; }
 "*"                                                      { printf("detected token of type ASTRISK : %s\n", yytext); token_count++; return ASTRISK; }
 "+"                                                      { printf("detected token of type PLUS : %s\n", yytext); token_count++; return PLUS; }
@@ -63,8 +63,8 @@ letter                  [a-zA-Z]
 ">="                                                     { printf("detected token of type GREATER_OR_EQUAL : %s\n", yytext); token_count++; return GREATER_OR_EQUAL; }
 "<"                                                      { printf("detected token of type LESS : %s\n", yytext); token_count++; return LESS; }
 ">"                                                      { printf("detected token of type GREATER : %s\n", yytext); token_count++; return GREATER; }
-"|"                                                      { printf("detected token of type BITWISE_AND : %s\n", yytext); token_count++; return BITWISE_AND; }
-"&"                                                      { printf("detected token of type BITWISE_OR : %s\n", yytext); token_count++; return BITWISE_OR; }
+"&"                                                      { printf("detected token of type BITWISE_AND : %s\n", yytext); token_count++; return BITWISE_AND; }
+"|"                                                      { printf("detected token of type BITWISE_OR : %s\n", yytext); token_count++; return BITWISE_OR; }
 "^"                                                      { printf("detected token of type BITWISE_XOR : %s\n", yytext); token_count++; return BITWISE_XOR; }
 "!"                                                      { printf("detected token of type BITWISE_NOT : %s\n", yytext); token_count++; return BITWISE_NOT; }
 ":"                                                      { printf("detected token of type COLON : %s\n", yytext); token_count++; return COLON; }

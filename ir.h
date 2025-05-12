@@ -33,14 +33,14 @@ typedef enum InstructionType {
     // EXTRA (NOT IN THE DOCUMENT)
     POP,
     MOD
-};
+} InstructionType;
 
 typedef enum InstructionOperandType {
     REGISTER,
     IMMEDIATE_VALUE,
     LABEL,
     MEM_ADDR
-};
+} InstructionOperandType;
 
 typedef struct Quadruple {
     int address;
@@ -48,12 +48,12 @@ typedef struct Quadruple {
     char* operand_1;
     char* operand_2;
     char* result;
-};
+} Quadruple;
 
 typedef struct Instruction {
     Quadruple quadruple;
     Instruction* next_instruction;
-};
+} Instruction;
 
 Instruction* create_instruction(InstructionType type, char* op1, char* op2, char* result) {
     Instruction* instr = (Instruction*)malloc(sizeof(Instruction));

@@ -25,6 +25,7 @@ typedef union {
     int* int_array;
     double* float_array;
     char* char_array;
+    char** string_array;
     Instruction* function;
 } Value;
 
@@ -32,12 +33,15 @@ typedef enum ValueType {
     INT_VALUE,
     FLOAT_VALUE,
     CHAR_VALUE,
+    BOOL_VALUE,
     CHAR_ARRAY_VALUE,
     INT_ARRAY_VALUE,
+    BOOL_ARRAY_VALUE,
     FLOAT_ARRAY_VALUE,
+    STRING_ARRAY_VALUE,
     STRING_VALUE,
     FUNCTION
-} ;
+} ValueType;
 
 typedef struct SymbolTableEntry {
     char name[MAX_IDENTIFIER_NAME_LENGTH + 1];
@@ -48,15 +52,17 @@ typedef struct SymbolTableEntry {
     ValueType value_type;
     int is_function;
     int is_constant;
+    int array_length;
     Parameter* parameters;
     struct SymbolTableEntry* next_entry;
-};
+    char* enclosing_function_name;
+} SymbolTableEntry;
 
 typedef struct SymbolTable {
     SymbolTableEntry **buckets;
     int table_size;
     int entry_count;
-};
+} SymbolTable;
 
 SymbolTable* create_symbol_table() {
     SymbolTable* symbol_table = (SymbolTable*)malloc(sizeof(SymbolTable));
@@ -66,7 +72,7 @@ SymbolTable* create_symbol_table() {
     }
     symbol_table->table_size = TAB_SIZE;
     symbol_table->entry_count = 0;
-    symbol_table->buckets = (SymbolTableEntry**)calloc(symbol_table->table_size, sizeof(SymbolTableEntry*));
+    symbol_table->buckets = (SymbolTableEntry**)calloc(symbol_table->table_size, sizeof(SymbolTableEntry*)); // the actual array
     if (!symbol_table->buckets) {
         fprintf(stderr, "Memory allocation of symbol table buckets failed\n");
         free(symbol_table);
@@ -98,7 +104,7 @@ Parameter* create_parameter(const char *name, const char *type) {
     return param;
 }
 
-SymbolTableEntry* insert_symbol(SymbolTable* table, const char* name, const char* type, Value value, ValueType value_type, int scope_no, int is_function, int is_constant, Parameter* parameters, int line_no, size_t array_length) {
+SymbolTableEntry* insert_symbol(SymbolTable* table, const char* name, const char* type, Value value, ValueType value_type, int scope_no, int is_function, int is_constant, int no_explicit_array, Parameter* parameters, int line_no, size_t array_length) {
     // Check for reserved keywords
     const char *keywords[] = {"if", "while", "for", "return", "int", "double", "char", NULL};
     for (int i = 0; keywords[i]; i++) {
@@ -141,9 +147,11 @@ SymbolTableEntry* insert_symbol(SymbolTable* table, const char* name, const char
     entry->is_constant = is_constant;
     entry->parameters = parameters;
     entry->next_entry = NULL;
+    entry->array_length = array_length;
 
     // Handle value based on value_type
     switch (value_type) {
+        case BOOL_VALUE:
         case INT_VALUE:
             entry->value.int_value = value.int_value;
             break;
@@ -168,44 +176,65 @@ SymbolTableEntry* insert_symbol(SymbolTable* table, const char* name, const char
             }
             break;
         case CHAR_ARRAY_VALUE:
-            if (array_length > 0 && value.char_array) {
+            if (array_length > 0) {
                 entry->value.char_array = (char*)malloc(array_length);
                 if (!entry->value.char_array) {
                     free(entry);
                     fprintf(stderr, "Memory allocation for char array failed at line %d\n", line_no);
                     return NULL;
                 }
-                memcpy(entry->value.char_array, value.char_array, array_length);
+                if(!no_explicit_array && value.char_array){
+                    memcpy(entry->value.char_array, value.char_array, array_length);
+                }
             } else {
                 entry->value.char_array = NULL;
             }
             break;
+        case BOOL_ARRAY_VALUE:
         case INT_ARRAY_VALUE:
-            if (array_length > 0 && value.int_array) {
+            if (array_length > 0) {
                 entry->value.int_array = (int*)malloc(array_length * sizeof(int));
                 if (!entry->value.int_array) {
                     free(entry);
                     fprintf(stderr, "Memory allocation for int array failed at line %d\n", line_no);
                     return NULL;
                 }
-                memcpy(entry->value.int_array, value.int_array, array_length * sizeof(int));
+                if(!no_explicit_array && value.int_array){
+                    memcpy(entry->value.int_array, value.int_array, array_length * sizeof(int));
+                }
             } else {
                 entry->value.int_array = NULL;
             }
             break;
         case FLOAT_ARRAY_VALUE:
-            if (array_length > 0 && value.float_array) {
+            if (array_length > 0) {
                 entry->value.float_array = (double*)malloc(array_length * sizeof(double));
                 if (!entry->value.float_array) {
                     free(entry);
                     fprintf(stderr, "Memory allocation for float array failed at line %d\n", line_no);
                     return NULL;
                 }
-                memcpy(entry->value.float_array, value.float_array, array_length * sizeof(double));
+                if(!no_explicit_array && value.float_array){
+                    memcpy(entry->value.float_array, value.float_array, array_length * sizeof(double));
+                }
             } else {
                 entry->value.float_array = NULL;
             }
             break;
+        case STRING_ARRAY_VALUE:
+            if(array_length > 0) {
+                entry->value.string_array = (char**)malloc(array_length * sizeof(char*));
+                if (!entry->value.string_array) {
+                    free(entry);
+                    fprintf(stderr, "Memory allocation for string array failed at line %d\n", line_no);
+                    return NULL;
+                }
+                if(!no_explicit_array && value.string_array){
+                    memcpy(entry->value.string_array, value.string_array, array_length * sizeof(char*));
+                }
+            } else {
+                entry->value.string_array = NULL;
+            }
         case FUNCTION:
             entry->value.function = value.function;
             break;
@@ -233,6 +262,7 @@ SymbolTableEntry* insert_symbol(SymbolTable* table, const char* name, const char
         entry->next_entry = curr;
     }
     table->entry_count++;
+    
     return entry;
 }
 
@@ -242,7 +272,6 @@ void free_symbol_table(SymbolTable* table) {
         while (current) {
             SymbolTableEntry *temp = current;
             current = current->next_entry;
-            // Free dynamically allocated values
             switch (temp->value_type) {
                 case STRING_VALUE:
                 case CHAR_ARRAY_VALUE:
@@ -260,10 +289,19 @@ void free_symbol_table(SymbolTable* table) {
                         free(temp->value.float_array);
                     }
                     break;
+                case STRING_ARRAY_VALUE:
+                    if (temp->value.string_array) {
+                        for (size_t j = 0; j < temp->array_length; j++) { // Requires storing array_length in SymbolTableEntry
+                            if (temp->value.string_array[j]) {
+                                free(temp->value.string_array[j]);
+                            }
+                        }
+                        free(temp->value.string_array);
+                    }
+                    break;
                 default:
                     break;
             }
-            // Free parameters
             Parameter *param = temp->parameters;
             while (param) {
                 Parameter *temp_param = param;

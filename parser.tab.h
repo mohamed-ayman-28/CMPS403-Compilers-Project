@@ -120,8 +120,19 @@ extern int yydebug;
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 union YYSTYPE
 {
-#line 23 "parser.y"
+#line 37 "parser.y"
 
+    enum EXPRESSION_TYPE {
+        BOOL_EXPR,
+        NUMERIC_EXPR,
+        FLOAT_EXPR,
+        INT_EXPR,
+        FUNCTION_CALL_EXPR,
+        ARRAY_ACCESS_EXPR,
+        CHAR_EXPR,
+        STRING_EXPR,
+        IDENTIFIER_EXPR
+    };
     int ival;
     float fval;
     char* sval;
@@ -132,8 +143,18 @@ union YYSTYPE
         char* name;
     } type_id;
     struct Instruction* instruction;
+    struct {
+        EXPRESSION_TYPE expr_type;
+        Value expr_value;
+        ValueType expr_return_type;
+        char* associated_identifier;
+    } expr;
+    struct {
+        expr* e;
+        expr* next_expr;
+    } expr_lst;
 
-#line 137 "parser.tab.h"
+#line 158 "parser.tab.h"
 
 };
 typedef union YYSTYPE YYSTYPE;
