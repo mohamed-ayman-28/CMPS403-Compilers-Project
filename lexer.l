@@ -25,9 +25,9 @@ letter                  [a-zA-Z]
 "char"                                                   { printf("detected token of type CHAR_TYPE_KEYWORD : %s\n", yytext); token_count++; yylval.sval = strdup(yytext); return CHAR_TYPE_KEYWORD; }
 "bool"                                                   { printf("detected token of type BOOL_TYPE_KEYWORD : %s\n", yytext); token_count++; yylval.sval = strdup(yytext); return BOOL_TYPE_KEYWORD; }
 "void"                                                   { printf("detected token of type VOID_TYPE_KEYWORD : %s\n", yytext); token_count++; yylval.sval = strdup(yytext); return VOID_TYPE_KEYWORD; }
-"if"                                                     { printf("detected token of type IF_KEYWORD : %s\n", yytext); token_count++; yylval.sval = strdup(yytext); return IF_KEYWORD; }
-"elseif"                                                 { printf("detected token of type ELSEIF_KEYWORD : %s\n", yytext); token_count++; yylval.sval = strdup(yytext); return ELSEIF_KEYWORD; }
-"else"                                                   { printf("detected token of type ELSE_KEYWORD : %s\n", yytext); token_count++; yylval.sval = strdup(yytext); return ELSE_KEYWORD; }
+"if"                                                     { printf("detected token of type IF_KEYWORD : %s\n", yytext); token_count++; return IF_KEYWORD; }
+"elseif"                                                 { printf("detected token of type ELSEIF_KEYWORD : %s\n", yytext); token_count++;  return ELSEIF_KEYWORD; }
+"else"                                                   { printf("detected token of type ELSE_KEYWORD : %s\n", yytext); token_count++;  return ELSE_KEYWORD; }
 "for"                                                    { printf("detected token of type FOR_KEYWORD : %s\n", yytext); token_count++; return FOR_KEYWORD; }
 "while"                                                  { printf("detected token of type WHILE_KEYWORD : %s\n", yytext); token_count++; return WHILE_KEYWORD; }
 "switch"                                                 { printf("detected token of type SWITCH_KEYWORD : %s\n", yytext); token_count++; return SWITCH_KEYWORD; }
@@ -69,15 +69,15 @@ letter                  [a-zA-Z]
 "!"                                                      { printf("detected token of type BITWISE_NOT : %s\n", yytext); token_count++; return BITWISE_NOT; }
 ":"                                                      { printf("detected token of type COLON : %s\n", yytext); token_count++; return COLON; }
 ";"                                                      { printf("detected token of type SEMICOLON : %s\n", yytext); token_count++; return SEMICOLON; }
-\'[^\'\\]\'                                              { printf("detected token of type CHARACTER_LITERAL : %s\n", yytext); token_count++; return CHARACTER_LITERAL; }
-\"([^\\\"]|\\.)*\"                                       { printf("detected token of type STRING_LITERAL : %s\n", yytext); token_count++; return STRING_LITERAL; }
-("true"|"false")                                         { printf("detected token of type BOOLEAN_LITERAL : %s\n", yytext); token_count++; return BOOLEAN_LITERAL; }
+\'[^\'\\]\'                                              { printf("detected token of type CHARACTER_LITERAL : %s\n", yytext); token_count++; yylval.cval = yytext[0];  return CHARACTER_LITERAL; }
+\"([^\\\"]|\\.)*\"                                       { printf("detected token of type STRING_LITERAL : %s\n", yytext); token_count++; yylval.sval = strdup(yytext); return STRING_LITERAL; }
+("true"|"false")                                         { printf("detected token of type BOOLEAN_LITERAL : %s\n", yytext); token_count++; if(strcmp(yytext, "true") == 0){ yylval.ival = 1; }else{ yylval.ival = 0; } return BOOLEAN_LITERAL; }
 "/*"([^*]|\*+[^*/])*\*+"/"                               { ; }
 "//".*                                                   { ; }
-({letter}|_)({digit}|{letter}|_){0,63}                   { printf("detected token of type IDENTIFIER : %s\n", yytext);   token_count++; return IDENTIFIER; }
+({letter}|_)({digit}|{letter}|_){0,63}                   { printf("detected token of type IDENTIFIER : %s\n", yytext); token_count++; yylval.sval = strdup(yytext); return IDENTIFIER; }
 [ \t]*                                                   { ; }
 [\n]                                                     { line_count++; yylineno++; }
-.                                                        { return UNRECOGNIZED_TOKEN; }
+.                                                        { yylval.sval = strdup(yytext); return UNRECOGNIZED_TOKEN; }
  
 %%
 

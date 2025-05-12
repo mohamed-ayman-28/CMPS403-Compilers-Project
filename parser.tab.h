@@ -120,14 +120,20 @@ extern int yydebug;
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 union YYSTYPE
 {
-#line 14 "parser.y"
+#line 23 "parser.y"
 
     int ival;
     float fval;
     char* sval;
     char cval;
+    struct Parameter *param_list;
+    struct {
+        char* type;
+        char* name;
+    } type_id;
+    struct Instruction* instruction;
 
-#line 131 "parser.tab.h"
+#line 137 "parser.tab.h"
 
 };
 typedef union YYSTYPE YYSTYPE;

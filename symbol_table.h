@@ -1,6 +1,10 @@
+#ifndef SYMBOL_TABLE_H_
+#define SYMBOL_TABLE_H_
+
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
+#include "ir.h"
 
 #define TAB_SIZE 1000
 #define MAX_IDENTIFIER_NAME_LENGTH 64
@@ -21,10 +25,10 @@ typedef union {
     int* int_array;
     double* float_array;
     char* char_array;
-    void* function;
+    Instruction* function;
 } Value;
 
-typedef enum {
+typedef enum ValueType {
     INT_VALUE,
     FLOAT_VALUE,
     CHAR_VALUE,
@@ -33,7 +37,7 @@ typedef enum {
     FLOAT_ARRAY_VALUE,
     STRING_VALUE,
     FUNCTION
-} ValueType;
+} ;
 
 typedef struct SymbolTableEntry {
     char name[MAX_IDENTIFIER_NAME_LENGTH + 1];
@@ -43,15 +47,16 @@ typedef struct SymbolTableEntry {
     Value value;
     ValueType value_type;
     int is_function;
+    int is_constant;
     Parameter* parameters;
     struct SymbolTableEntry* next_entry;
-} SymbolTableEntry;
+};
 
 typedef struct SymbolTable {
     SymbolTableEntry **buckets;
     int table_size;
     int entry_count;
-} SymbolTable;
+};
 
 SymbolTable* create_symbol_table() {
     SymbolTable* symbol_table = (SymbolTable*)malloc(sizeof(SymbolTable));
@@ -93,7 +98,7 @@ Parameter* create_parameter(const char *name, const char *type) {
     return param;
 }
 
-SymbolTableEntry* insert_symbol(SymbolTable* table, const char* name, const char* type, Value value, ValueType value_type, int scope_no, int is_function, Parameter* parameters, int line_no, size_t array_length) {
+SymbolTableEntry* insert_symbol(SymbolTable* table, const char* name, const char* type, Value value, ValueType value_type, int scope_no, int is_function, int is_constant, Parameter* parameters, int line_no, size_t array_length) {
     // Check for reserved keywords
     const char *keywords[] = {"if", "while", "for", "return", "int", "double", "char", NULL};
     for (int i = 0; keywords[i]; i++) {
@@ -133,6 +138,7 @@ SymbolTableEntry* insert_symbol(SymbolTable* table, const char* name, const char
     entry->line_no = line_no;
     entry->value_type = value_type;
     entry->is_function = is_function;
+    entry->is_constant = is_constant;
     entry->parameters = parameters;
     entry->next_entry = NULL;
 
@@ -345,3 +351,4 @@ SymbolTableEntry* search_symbol_table(SymbolTable* table, const char* name, int 
     return NULL;
 }
 
+#endif
