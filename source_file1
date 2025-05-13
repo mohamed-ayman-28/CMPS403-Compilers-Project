@@ -1,22 +1,24 @@
-/* This is a test source file for token detection */
+/* This is a test source file*/
 /**/
 
+void print(string x){
 
-int main() {
+}
+
+main() {
     int x = 10;
     float y = 3.14;
     string name = "Test";
 
 
-    if (x > 5) {
+    if(x > 5){
         print("x is greater than 5");
-    } else {
+    }else{
         print("x is less than or equal to 5");
     }
 
-    for (int i = 0; i < 10; i++) {
-        print(i);
+    for(int i = 0; i < 20; i++) {
+        print("a");
     }
 
-    return 0;
 }

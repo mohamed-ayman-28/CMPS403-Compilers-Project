@@ -1,0 +1,11 @@
+Inserted Symbol: name='x', type='string', scope=1, line=4, value_type=STRING_VALUE (NULL), is_function=0, is_constant=0, array_length=0, enclosing_function=print
+Inserted Symbol: name='print', type='void', scope=1, line=6, value_type=VOID, is_function=1, is_constant=0, array_length=0, enclosing_function=NONE
+  Parameters: {name='x', type='string', array_length=0}
+Inserted Symbol: name='x', type='int', scope=2, line=9, value_type=INT_VALUE (10), is_function=0, is_constant=0, array_length=0, enclosing_function=main
+Inserted Symbol: name='y', type='float', scope=2, line=10, value_type=FLOAT_VALUE (3.140000), is_function=0, is_constant=0, array_length=0, enclosing_function=main
+Inserted Symbol: name='name', type='string', scope=2, line=11, value_type=STRING_VALUE ("Test"), is_function=0, is_constant=0, array_length=0, enclosing_function=main
+Inserted Symbol: name='i', type='int', scope=2, line=20, value_type=INT_VALUE (0), is_function=0, is_constant=0, array_length=0, enclosing_function=main
+Deleted Symbol: name='name', type='string', scope=2, line=11, value_type=STRING_VALUE ("Test"), is_function=0, is_constant=0, array_length=0, enclosing_function=main
+Deleted Symbol: name='i', type='int', scope=2, line=20, value_type=INT_VALUE (1), is_function=0, is_constant=0, array_length=0, enclosing_function=main
+Deleted Symbol: name='x', type='int', scope=2, line=9, value_type=INT_VALUE (10), is_function=0, is_constant=0, array_length=0, enclosing_function=main
+Deleted Symbol: name='y', type='float', scope=2, line=10, value_type=FLOAT_VALUE (3.140000), is_function=0, is_constant=0, array_length=0, enclosing_function=main

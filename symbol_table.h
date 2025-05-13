@@ -6,8 +6,8 @@
 #include <string.h>
 #include "ir.h"
 
-FILE* symbol_table_file;
-FILE* symbol_table_changes_file;
+FILE* symbol_table_file = NULL;
+FILE* symbol_table_changes_file = NULL;
 
 int scope_no = -1;
 
@@ -50,8 +50,8 @@ static void log_symbol_details(FILE *file, SymbolTableEntry *entry, const char *
         case STRING_ARRAY_VALUE:
             fprintf(file, "STRING_ARRAY_VALUE (length=%d)", entry->array_length);
             break;
-        case FUNCTION:
-            fprintf(file, "FUNCTION");
+        case VOID:
+            fprintf(file, "VOID");
             break;
         default:
             fprintf(file, "UNKNOWN");
@@ -177,126 +177,127 @@ SymbolTableEntry* insert_symbol(SymbolTable* table, const char* name, const char
     }
 
     // Handle value based on value_type
-    switch (value_type) {
-        case BOOL_VALUE:
-        case INT_VALUE:
-            entry->value.int_value = value.int_value;
-            break;
-        case FLOAT_VALUE:
-            entry->value.float_value = value.float_value;
-            break;
-        case CHAR_VALUE:
-            entry->value.char_value = value.char_value;
-            break;
-        case STRING_VALUE:
-            if (value.char_array) {
-                size_t string_length = strlen(value.char_array);
-                entry->value.char_array = (char*)malloc(string_length + 1);
-                if (!entry->value.char_array) {
-                    free(entry->enclosing_function_name);
-                    free(entry);
-                    fprintf(stderr, "Memory allocation for string failed at line %d\n", line_no);
-                    return NULL;
-                }
-                strncpy(entry->value.char_array, value.char_array, string_length + 1);
-            } else {
-                entry->value.char_array = NULL;
-            }
-            break;
-        case CHAR_ARRAY_VALUE:
-            if (array_length > 0) {
-                entry->value.char_array = (char*)malloc(array_length);
-                if (!entry->value.char_array) {
-                    free(entry->enclosing_function_name);
-                    free(entry);
-                    fprintf(stderr, "Memory allocation for char array failed at line %d\n", line_no);
-                    return NULL;
-                }
-                if(!no_explicit_array && value.char_array){
-                    memcpy(entry->value.char_array, value.char_array, array_length);
-                }
-            } else {
-                entry->value.char_array = NULL;
-            }
-            break;
-        case BOOL_ARRAY_VALUE:
-            if (array_length > 0) {
-                entry->value.int_array = (int*)malloc(array_length * sizeof(int));
-                if (!entry->value.int_array) {
-                    free(entry->enclosing_function_name);
-                    free(entry);
-                    fprintf(stderr, "Memory allocation for bool array failed at line %d\n", line_no);
-                    return NULL;
-                }
-                if (!no_explicit_array && value.int_array) {
-                    memcpy(entry->value.int_array, value.int_array, array_length * sizeof(int));
-                }
-            } else {
-                entry->value.int_array = NULL;
-            }
-            break;
-        case INT_ARRAY_VALUE:
-            if (array_length > 0) {
-                entry->value.int_array = (int*)malloc(array_length * sizeof(int));
-                if (!entry->value.int_array) {
-                    free(entry->enclosing_function_name);
-                    free(entry);
-                    fprintf(stderr, "Memory allocation for int array failed at line %d\n", line_no);
-                    return NULL;
-                }
-                if(!no_explicit_array && value.int_array){
-                    memcpy(entry->value.int_array, value.int_array, array_length * sizeof(int));
-                }
-            } else {
-                entry->value.int_array = NULL;
-            }
-            break;
-        case FLOAT_ARRAY_VALUE:
-            if (array_length > 0) {
-                entry->value.float_array = (double*)malloc(array_length * sizeof(double));
-                if (!entry->value.float_array) {
-                    free(entry->enclosing_function_name);
-                    free(entry);
-                    fprintf(stderr, "Memory allocation for float array failed at line %d\n", line_no);
-                    return NULL;
-                }
-                if(!no_explicit_array && value.float_array){
-                    memcpy(entry->value.float_array, value.float_array, array_length * sizeof(double));
-                }
-            } else {
-                entry->value.float_array = NULL;
-            }
-            break;
-        case STRING_ARRAY_VALUE:
-            if (array_length > 0) {
-                entry->value.string_array = (char**)malloc(array_length * sizeof(char*));
-                if (!entry->value.string_array) {
-                    free(entry->enclosing_function_name);
-                    free(entry);
-                    fprintf(stderr, "Memory allocation for string array failed at line %d\n", line_no);
-                    return NULL;
-                }
-                for (size_t i = 0; i < array_length; i++) {
-                    entry->value.string_array[i] = strdup("");
-                }
-                if (!no_explicit_array && value.string_array) {
-                    for (size_t i = 0; i < array_length; i++) {
-                        free(entry->value.string_array[i]);
-                        entry->value.string_array[i] = strdup(value.string_array[i] ? value.string_array[i] : "");
+    if(!is_function){
+        switch (value_type) {
+            case BOOL_VALUE:
+            case INT_VALUE:
+                entry->value.int_value = value.int_value;
+                break;
+            case FLOAT_VALUE:
+                entry->value.float_value = value.float_value;
+                break;
+            case CHAR_VALUE:
+                entry->value.char_value = value.char_value;
+                break;
+            case STRING_VALUE:
+                if (value.char_array) {
+                    size_t string_length = strlen(value.char_array);
+                    entry->value.char_array = (char*)malloc(string_length + 1);
+                    if (!entry->value.char_array) {
+                        free(entry->enclosing_function_name);
+                        free(entry);
+                        fprintf(stderr, "Memory allocation for string failed at line %d\n", line_no);
+                        return NULL;
                     }
+                    strncpy(entry->value.char_array, value.char_array, string_length + 1);
+                } else {
+                    entry->value.char_array = NULL;
                 }
-            } else {
-                entry->value.string_array = NULL;
-            }
-            break;
-        case FUNCTION:
-            entry->value.function = value.function;
-            break;
-        default:
-            fprintf(stderr, "Error at line %d: Invalid value type for '%s'\n", line_no, name);
-            free(entry->enclosing_function_name);
-            free(entry);
-            return NULL;
+                break;
+            case CHAR_ARRAY_VALUE:
+                if (array_length > 0) {
+                    entry->value.char_array = (char*)malloc(array_length);
+                    if (!entry->value.char_array) {
+                        free(entry->enclosing_function_name);
+                        free(entry);
+                        fprintf(stderr, "Memory allocation for char array failed at line %d\n", line_no);
+                        return NULL;
+                    }
+                    if(!no_explicit_array && value.char_array){
+                        memcpy(entry->value.char_array, value.char_array, array_length);
+                    }
+                } else {
+                    entry->value.char_array = NULL;
+                }
+                break;
+            case BOOL_ARRAY_VALUE:
+                if (array_length > 0) {
+                    entry->value.int_array = (int*)malloc(array_length * sizeof(int));
+                    if (!entry->value.int_array) {
+                        free(entry->enclosing_function_name);
+                        free(entry);
+                        fprintf(stderr, "Memory allocation for bool array failed at line %d\n", line_no);
+                        return NULL;
+                    }
+                    if (!no_explicit_array && value.int_array) {
+                        memcpy(entry->value.int_array, value.int_array, array_length * sizeof(int));
+                    }
+                } else {
+                    entry->value.int_array = NULL;
+                }
+                break;
+            case INT_ARRAY_VALUE:
+                if (array_length > 0) {
+                    entry->value.int_array = (int*)malloc(array_length * sizeof(int));
+                    if (!entry->value.int_array) {
+                        free(entry->enclosing_function_name);
+                        free(entry);
+                        fprintf(stderr, "Memory allocation for int array failed at line %d\n", line_no);
+                        return NULL;
+                    }
+                    if(!no_explicit_array && value.int_array){
+                        memcpy(entry->value.int_array, value.int_array, array_length * sizeof(int));
+                    }
+                } else {
+                    entry->value.int_array = NULL;
+                }
+                break;
+            case FLOAT_ARRAY_VALUE:
+                if (array_length > 0) {
+                    entry->value.float_array = (double*)malloc(array_length * sizeof(double));
+                    if (!entry->value.float_array) {
+                        free(entry->enclosing_function_name);
+                        free(entry);
+                        fprintf(stderr, "Memory allocation for float array failed at line %d\n", line_no);
+                        return NULL;
+                    }
+                    if(!no_explicit_array && value.float_array){
+                        memcpy(entry->value.float_array, value.float_array, array_length * sizeof(double));
+                    }
+                } else {
+                    entry->value.float_array = NULL;
+                }
+                break;
+            case STRING_ARRAY_VALUE:
+                if (array_length > 0) {
+                    entry->value.string_array = (char**)malloc(array_length * sizeof(char*));
+                    if (!entry->value.string_array) {
+                        free(entry->enclosing_function_name);
+                        free(entry);
+                        fprintf(stderr, "Memory allocation for string array failed at line %d\n", line_no);
+                        return NULL;
+                    }
+                    for (size_t i = 0; i < array_length; i++) {
+                        entry->value.string_array[i] = strdup("");
+                    }
+                    if (!no_explicit_array && value.string_array) {
+                        for (size_t i = 0; i < array_length; i++) {
+                            free(entry->value.string_array[i]);
+                            entry->value.string_array[i] = strdup(value.string_array[i] ? value.string_array[i] : "");
+                        }
+                    }
+                } else {
+                    entry->value.string_array = NULL;
+                }
+                break;
+            default:
+                fprintf(stderr, "Error at line %d: Invalid value type for '%s'\n", line_no, name);
+                free(entry->enclosing_function_name);
+                free(entry);
+                return NULL;
+        }
+    }else {
+        entry->value.function = value.function;
     }
 
     // Insert into hash table and maintain scope descending order among linked list elements
@@ -442,19 +443,20 @@ void delete_scope(SymbolTable* table, int scope_no) {
     }
 }
 
-void print_symbol_table(SymbolTable* table) {
+void print_symbol_table(SymbolTable* table, FILE *log_file) {
     if (!table) {
         fprintf(stderr, "Symbol table is NULL\n");
         return;
     }
 
-    FILE *log_file = fopen("symbol_table.log", "a");
     if (!log_file) {
         fprintf(stderr, "Failed to open symbol_table.log for writing\n");
         return;
     }
 
+
     fprintf(log_file, "\n=== Symbol Table State (Entry Count: %d) ===\n", table->entry_count);
+    
     for (int i = 0; i < table->table_size; i++) {
         SymbolTableEntry *current = table->buckets[i];
         while (current) {
@@ -462,9 +464,7 @@ void print_symbol_table(SymbolTable* table) {
             current = current->next_entry;
         }
     }
-    fprintf(symbol_table_file, "====================================\n\n");
-
-    fclose(log_file);
+    fprintf(log_file, "====================================\n\n");
 }
 
 SymbolTableEntry* search_symbol_table(SymbolTable* table, const char* name, int curr_scope, const char* enclosing_function_name) {

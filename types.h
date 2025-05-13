@@ -90,7 +90,7 @@ typedef enum ValueType {
     FLOAT_ARRAY_VALUE,
     STRING_ARRAY_VALUE,
     STRING_VALUE,
-    FUNCTION
+    VOID
 } ValueType;
 
 typedef struct SymbolTableEntry {
