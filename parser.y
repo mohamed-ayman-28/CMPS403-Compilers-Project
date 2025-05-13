@@ -10,6 +10,7 @@ int yylex(void);
 extern FILE* yyin;
 extern int yylineno;
 extern FILE* symbol_table_file;
+extern FILE* symbol_table_changes_file;
 
 
 SymbolTable* symbol_table = NULL;
@@ -1855,9 +1856,35 @@ int main(int argc, char* argv[]) {
         return 1;
     }
 
+    // Create filenames for symbol_table_file and symbol_table_changes_file
+    char* base_name = strtok(argv[1], ".");
+    char symbol_table_filename[256];
+    char symbol_table_changes_filename[256];
+    snprintf(symbol_table_filename, sizeof(symbol_table_filename), "%s_symbol_table.txt", base_name);
+    snprintf(symbol_table_changes_filename, sizeof(symbol_table_changes_filename), "%s_symbol_table_changes.txt", base_name);
+
+    // Open symbol_table_file for writing
+    symbol_table_file = fopen(symbol_table_filename, "w");
+    if (!symbol_table_file) {
+        fprintf(stderr, "Error: Cannot create symbol table file '%s'\n", symbol_table_filename);
+        fclose(yyin);
+        return 1;
+    }
+
+    // Open symbol_table_changes_file for writing
+    symbol_table_changes_file = fopen(symbol_table_changes_filename, "w");
+    if (!symbol_table_changes_file) {
+        fprintf(stderr, "Error: Cannot create symbol table changes file '%s'\n", symbol_table_changes_filename);
+        fclose(symbol_table_file);
+        fclose(yyin);
+        return 1;
+    }
+
     symbol_table = create_symbol_table();
     if (!symbol_table) {
         fprintf(stderr, "Error: Failed to create symbol table\n");
+        fclose(symbol_table_changes_file);
+        fclose(symbol_table_file);
         fclose(yyin);
         return 1;
     }
@@ -1865,6 +1892,8 @@ int main(int argc, char* argv[]) {
     yylineno = 1;
     int parse_result = yyparse();
     fclose(yyin);
+    fclose(symbol_table_file);
+    fclose(symbol_table_changes_file);
     if (parse_result == 0) {
         printf("Parsing successful.\n");
     } else {

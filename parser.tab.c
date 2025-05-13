@@ -80,6 +80,7 @@ int yylex(void);
 extern FILE* yyin;
 extern int yylineno;
 extern FILE* symbol_table_file;
+extern FILE* symbol_table_changes_file;
 
 
 SymbolTable* symbol_table = NULL;
@@ -206,7 +207,7 @@ void yyerror(const char *s) {
 }
 
 
-#line 210 "parser.tab.c"
+#line 211 "parser.tab.c"
 
 # ifndef YY_CAST
 #  ifdef __cplusplus
@@ -747,20 +748,20 @@ static const yytype_int8 yytranslate[] =
 /* YYRLINE[YYN] -- Source line where rule number YYN was defined.  */
 static const yytype_int16 yyrline[] =
 {
-       0,   228,   228,   228,   232,   233,   239,   244,   239,   268,
-     273,   268,   290,   290,   314,   314,   334,   363,   390,   395,
-     403,   404,   405,   406,   407,   412,   412,   427,   429,   432,
-     433,   434,   435,   436,   437,   438,   439,   440,   441,   442,
-     443,   444,   445,   448,   451,   452,   455,   456,   459,   462,
-     463,   464,   468,   491,   519,   547,   548,   551,   554,   558,
-     571,   558,   575,   578,   579,   582,   587,   587,   652,   652,
-     734,   734,   804,   804,   887,   887,   945,   974,   974,  1022,
-    1022,  1124,  1130,  1131,  1132,  1138,  1144,  1145,  1190,  1236,
-    1240,  1254,  1301,  1334,  1355,  1376,  1397,  1418,  1432,  1446,
-    1460,  1474,  1488,  1502,  1516,  1532,  1533,  1536,  1555,  1574,
-    1577,  1596,  1621,  1637,  1653,  1656,  1657,  1663,  1666,  1677,
-    1680,  1691,  1694,  1705,  1708,  1719,  1728,  1755,  1782,  1804,
-    1820,  1825,  1834,  1834
+       0,   229,   229,   229,   233,   234,   240,   245,   240,   269,
+     274,   269,   291,   291,   315,   315,   335,   364,   391,   396,
+     404,   405,   406,   407,   408,   413,   413,   428,   430,   433,
+     434,   435,   436,   437,   438,   439,   440,   441,   442,   443,
+     444,   445,   446,   449,   452,   453,   456,   457,   460,   463,
+     464,   465,   469,   492,   520,   548,   549,   552,   555,   559,
+     572,   559,   576,   579,   580,   583,   588,   588,   653,   653,
+     735,   735,   805,   805,   888,   888,   946,   975,   975,  1023,
+    1023,  1125,  1131,  1132,  1133,  1139,  1145,  1146,  1191,  1237,
+    1241,  1255,  1302,  1335,  1356,  1377,  1398,  1419,  1433,  1447,
+    1461,  1475,  1489,  1503,  1517,  1533,  1534,  1537,  1556,  1575,
+    1578,  1597,  1622,  1638,  1654,  1657,  1658,  1664,  1667,  1678,
+    1681,  1692,  1695,  1706,  1709,  1720,  1729,  1756,  1783,  1805,
+    1821,  1826,  1835,  1835
 };
 #endif
 
@@ -1528,38 +1529,38 @@ yyreduce:
   switch (yyn)
     {
   case 2: /* $@1: %empty  */
-#line 228 "parser.y"
+#line 229 "parser.y"
     { scope_no++; }
-#line 1534 "parser.tab.c"
+#line 1535 "parser.tab.c"
     break;
 
   case 3: /* program: $@1 functions main_function  */
-#line 228 "parser.y"
+#line 229 "parser.y"
                                             { delete_scope(symbol_table, scope_no); scope_no--;}
-#line 1540 "parser.tab.c"
+#line 1541 "parser.tab.c"
     break;
 
   case 6: /* $@2: %empty  */
-#line 239 "parser.y"
+#line 240 "parser.y"
                                         {
         scope_no++;
         curr_function_parameter_list = NULL;
         push_function((yyvsp[-1].sval));
     }
-#line 1550 "parser.tab.c"
+#line 1551 "parser.tab.c"
     break;
 
   case 7: /* $@3: %empty  */
-#line 244 "parser.y"
+#line 245 "parser.y"
                                            {
         inside_a_function_declaration_body = 1;
         curr_function_instructions_list = NULL;
     }
-#line 1559 "parser.tab.c"
+#line 1560 "parser.tab.c"
     break;
 
   case 8: /* function: type IDENTIFIER OPENING_PARENTHESIS $@2 function_arguments CLOSING_PARENTHESIS $@3 body  */
-#line 248 "parser.y"
+#line 249 "parser.y"
          {
         Value val;
         val.function = (yyvsp[0].instruction);
@@ -1580,30 +1581,30 @@ yyreduce:
         scope_no--;
         free((yyvsp[-7].sval));
     }
-#line 1584 "parser.tab.c"
+#line 1585 "parser.tab.c"
     break;
 
   case 9: /* $@4: %empty  */
-#line 268 "parser.y"
+#line 269 "parser.y"
                                                        {
         scope_no++;
         curr_function_parameter_list = NULL;
         push_function((yyvsp[-1].sval));
     }
-#line 1594 "parser.tab.c"
+#line 1595 "parser.tab.c"
     break;
 
   case 10: /* $@5: %empty  */
-#line 273 "parser.y"
+#line 274 "parser.y"
                                            {
         inside_a_function_declaration_body = 1;
         curr_function_instructions_list = NULL;
     }
-#line 1603 "parser.tab.c"
+#line 1604 "parser.tab.c"
     break;
 
   case 11: /* function: VOID_TYPE_KEYWORD IDENTIFIER OPENING_PARENTHESIS $@4 function_arguments CLOSING_PARENTHESIS $@5 body  */
-#line 277 "parser.y"
+#line 278 "parser.y"
          {
         Value val;
         val.function = (yyvsp[0].instruction);
@@ -1617,22 +1618,22 @@ yyreduce:
         if (popped) free(popped);
         scope_no--;
     }
-#line 1621 "parser.tab.c"
+#line 1622 "parser.tab.c"
     break;
 
   case 12: /* $@6: %empty  */
-#line 290 "parser.y"
+#line 291 "parser.y"
                                                               {
         scope_no++;
         inside_a_function_declaration_body = 1;
         curr_function_instructions_list = NULL;
         push_function((yyvsp[-2].sval));
     }
-#line 1632 "parser.tab.c"
+#line 1633 "parser.tab.c"
     break;
 
   case 13: /* function: type IDENTIFIER OPENING_PARENTHESIS CLOSING_PARENTHESIS $@6 body  */
-#line 296 "parser.y"
+#line 297 "parser.y"
          {
         Value val;
         val.function = (yyvsp[0].instruction);
@@ -1651,22 +1652,22 @@ yyreduce:
         scope_no--;
         free((yyvsp[-5].sval));
     }
-#line 1655 "parser.tab.c"
+#line 1656 "parser.tab.c"
     break;
 
   case 14: /* $@7: %empty  */
-#line 314 "parser.y"
+#line 315 "parser.y"
                                                                            {
         scope_no++;
         inside_a_function_declaration_body = 1;
         curr_function_instructions_list = NULL;
         push_function((yyvsp[-2].sval));
     }
-#line 1666 "parser.tab.c"
+#line 1667 "parser.tab.c"
     break;
 
   case 15: /* function: VOID_TYPE_KEYWORD IDENTIFIER OPENING_PARENTHESIS CLOSING_PARENTHESIS $@7 body  */
-#line 320 "parser.y"
+#line 321 "parser.y"
          {
         Value val;
         val.function = (yyvsp[0].instruction);
@@ -1678,11 +1679,11 @@ yyreduce:
         if (popped) free(popped);
         scope_no--;
     }
-#line 1682 "parser.tab.c"
+#line 1683 "parser.tab.c"
     break;
 
   case 16: /* function_arguments: type_identifier  */
-#line 334 "parser.y"
+#line 335 "parser.y"
                     {
         if (!curr_function_parameter_list) {
             curr_function_parameter_list = create_parameter((yyvsp[0].type_id).name, (yyvsp[0].type_id).type);
@@ -1712,11 +1713,11 @@ yyreduce:
         free((yyvsp[0].type_id).type);
         (yyval.param_list) = curr_function_parameter_list;
     }
-#line 1716 "parser.tab.c"
+#line 1717 "parser.tab.c"
     break;
 
   case 17: /* function_arguments: function_arguments COMMA type_identifier  */
-#line 363 "parser.y"
+#line 364 "parser.y"
                                                {
         curr_function_parameter_list_ptr->next = create_parameter((yyvsp[0].type_id).name, (yyvsp[0].type_id).type);
         curr_function_parameter_list_ptr = curr_function_parameter_list_ptr->next;
@@ -1741,69 +1742,69 @@ yyreduce:
         free((yyvsp[0].type_id).type);
         (yyval.param_list) = curr_function_parameter_list;
     }
-#line 1745 "parser.tab.c"
+#line 1746 "parser.tab.c"
     break;
 
   case 18: /* type_identifier: type IDENTIFIER  */
-#line 390 "parser.y"
+#line 391 "parser.y"
                     {
         (yyval.type_id).type = (yyvsp[-1].sval);
         (yyval.type_id).name = (yyvsp[0].sval);
         (yyval.type_id).array_size = 0; // Default for scalar types
     }
-#line 1755 "parser.tab.c"
+#line 1756 "parser.tab.c"
     break;
 
   case 19: /* type_identifier: type OPENING_SQUARE_BRACKETS INTEGER_LITERAL CLOSING_SQUARE_BRACKETS IDENTIFIER  */
-#line 395 "parser.y"
+#line 396 "parser.y"
                                                                                       {
         (yyval.type_id).type = concat_strings("a", (yyvsp[-4].sval));
         (yyval.type_id).name = (yyvsp[0].sval);
         (yyval.type_id).array_size = (yyvsp[-2].ival);
     }
-#line 1765 "parser.tab.c"
+#line 1766 "parser.tab.c"
     break;
 
   case 20: /* type: INT_TYPE_KEYWORD  */
-#line 403 "parser.y"
+#line 404 "parser.y"
                        { (yyval.sval) = strdup("int"); }
-#line 1771 "parser.tab.c"
+#line 1772 "parser.tab.c"
     break;
 
   case 21: /* type: FLOAT_TYPE_KEYWORD  */
-#line 404 "parser.y"
+#line 405 "parser.y"
                            { (yyval.sval) = strdup("float"); }
-#line 1777 "parser.tab.c"
+#line 1778 "parser.tab.c"
     break;
 
   case 22: /* type: STRING_TYPE_KEYWORD  */
-#line 405 "parser.y"
+#line 406 "parser.y"
                             { (yyval.sval) = strdup("string"); }
-#line 1783 "parser.tab.c"
+#line 1784 "parser.tab.c"
     break;
 
   case 23: /* type: CHAR_TYPE_KEYWORD  */
-#line 406 "parser.y"
+#line 407 "parser.y"
                           { (yyval.sval) = strdup("char"); }
-#line 1789 "parser.tab.c"
+#line 1790 "parser.tab.c"
     break;
 
   case 24: /* type: BOOL_TYPE_KEYWORD  */
-#line 407 "parser.y"
+#line 408 "parser.y"
                           { (yyval.sval) = strdup("bool"); }
-#line 1795 "parser.tab.c"
+#line 1796 "parser.tab.c"
     break;
 
   case 25: /* $@8: %empty  */
-#line 412 "parser.y"
+#line 413 "parser.y"
      { 
         scope_no++;
     }
-#line 1803 "parser.tab.c"
+#line 1804 "parser.tab.c"
     break;
 
   case 26: /* body: $@8 OPENING_CURLY_BRACE statements CLOSING_CURLY_BRACE  */
-#line 417 "parser.y"
+#line 418 "parser.y"
                         { 
         if(!inside_a_function_declaration_body) {
             delete_scope(symbol_table, scope_no); 
@@ -1811,107 +1812,107 @@ yyreduce:
         scope_no--;
         (yyval.instruction) = (yyvsp[-1].instruction); 
     }
-#line 1815 "parser.tab.c"
+#line 1816 "parser.tab.c"
     break;
 
   case 27: /* statements: statement statements  */
-#line 428 "parser.y"
+#line 429 "parser.y"
                {(yyval.instruction) = NULL;}
-#line 1821 "parser.tab.c"
+#line 1822 "parser.tab.c"
     break;
 
   case 28: /* statements: %empty  */
-#line 429 "parser.y"
+#line 430 "parser.y"
                   {(yyval.instruction) = NULL;}
-#line 1827 "parser.tab.c"
+#line 1828 "parser.tab.c"
     break;
 
   case 29: /* statement: body SEMICOLON  */
-#line 432 "parser.y"
+#line 433 "parser.y"
                           {(yyval.instruction) = NULL;}
-#line 1833 "parser.tab.c"
+#line 1834 "parser.tab.c"
     break;
 
   case 30: /* statement: assignment  */
-#line 433 "parser.y"
+#line 434 "parser.y"
                       {(yyval.instruction) = NULL;}
-#line 1839 "parser.tab.c"
+#line 1840 "parser.tab.c"
     break;
 
   case 31: /* statement: array_assignment  */
-#line 434 "parser.y"
+#line 435 "parser.y"
                             {(yyval.instruction) = NULL;}
-#line 1845 "parser.tab.c"
+#line 1846 "parser.tab.c"
     break;
 
   case 32: /* statement: return_statement  */
-#line 435 "parser.y"
+#line 436 "parser.y"
                             {(yyval.instruction) = NULL;}
-#line 1851 "parser.tab.c"
+#line 1852 "parser.tab.c"
     break;
 
   case 33: /* statement: expression SEMICOLON  */
-#line 436 "parser.y"
+#line 437 "parser.y"
                                 {(yyval.instruction) = NULL;}
-#line 1857 "parser.tab.c"
+#line 1858 "parser.tab.c"
     break;
 
   case 34: /* statement: initialization  */
-#line 437 "parser.y"
+#line 438 "parser.y"
                           {(yyval.instruction) = NULL;}
-#line 1863 "parser.tab.c"
+#line 1864 "parser.tab.c"
     break;
 
   case 35: /* statement: variable_declaration  */
-#line 438 "parser.y"
+#line 439 "parser.y"
                                 {(yyval.instruction) = NULL;}
-#line 1869 "parser.tab.c"
+#line 1870 "parser.tab.c"
     break;
 
   case 36: /* statement: const_initialization  */
-#line 439 "parser.y"
+#line 440 "parser.y"
                                 {(yyval.instruction) = NULL;}
-#line 1875 "parser.tab.c"
+#line 1876 "parser.tab.c"
     break;
 
   case 37: /* statement: if_statement  */
-#line 440 "parser.y"
+#line 441 "parser.y"
                         {(yyval.instruction) = NULL;}
-#line 1881 "parser.tab.c"
+#line 1882 "parser.tab.c"
     break;
 
   case 38: /* statement: for_statement  */
-#line 441 "parser.y"
+#line 442 "parser.y"
                          {(yyval.instruction) = NULL;}
-#line 1887 "parser.tab.c"
+#line 1888 "parser.tab.c"
     break;
 
   case 39: /* statement: while_statement  */
-#line 442 "parser.y"
+#line 443 "parser.y"
                            {(yyval.instruction) = NULL;}
-#line 1893 "parser.tab.c"
+#line 1894 "parser.tab.c"
     break;
 
   case 40: /* statement: do_while_statement  */
-#line 443 "parser.y"
+#line 444 "parser.y"
                               {(yyval.instruction) = NULL;}
-#line 1899 "parser.tab.c"
+#line 1900 "parser.tab.c"
     break;
 
   case 41: /* statement: switch_statement  */
-#line 444 "parser.y"
+#line 445 "parser.y"
                             {(yyval.instruction) = NULL;}
-#line 1905 "parser.tab.c"
+#line 1906 "parser.tab.c"
     break;
 
   case 42: /* statement: function  */
-#line 445 "parser.y"
+#line 446 "parser.y"
                     {(yyval.instruction) = NULL;}
-#line 1911 "parser.tab.c"
+#line 1912 "parser.tab.c"
     break;
 
   case 52: /* loop_update: IDENTIFIER ASSIGNMENT expression  */
-#line 468 "parser.y"
+#line 469 "parser.y"
                                      {
         SymbolTableEntry* result = search_symbol_table(symbol_table, (yyvsp[-2].sval), scope_no, get_current_enclosing_function());
         if (!result) {
@@ -1935,11 +1936,11 @@ yyreduce:
             exit(1);
         }
     }
-#line 1939 "parser.tab.c"
+#line 1940 "parser.tab.c"
     break;
 
   case 53: /* loop_update: IDENTIFIER INCREMENT  */
-#line 491 "parser.y"
+#line 492 "parser.y"
                            {
         SymbolTableEntry* result = search_symbol_table(symbol_table, (yyvsp[-1].sval), scope_no, get_current_enclosing_function());
         if (!result) {
@@ -1968,11 +1969,11 @@ yyreduce:
             result->value.float_value++;
         }
     }
-#line 1972 "parser.tab.c"
+#line 1973 "parser.tab.c"
     break;
 
   case 54: /* loop_update: IDENTIFIER DECREMENT  */
-#line 519 "parser.y"
+#line 520 "parser.y"
                            {
         SymbolTableEntry* result = search_symbol_table(symbol_table, (yyvsp[-1].sval), scope_no, get_current_enclosing_function());
         if (!result) {
@@ -2001,11 +2002,11 @@ yyreduce:
             result->value.float_value--;
         }
     }
-#line 2005 "parser.tab.c"
+#line 2006 "parser.tab.c"
     break;
 
   case 59: /* $@9: %empty  */
-#line 558 "parser.y"
+#line 559 "parser.y"
                                                   {
         SymbolTableEntry* result = search_symbol_table(symbol_table, (yyvsp[0].sval), scope_no, get_current_enclosing_function());
         if (!result) {
@@ -2019,23 +2020,23 @@ yyreduce:
             exit(1);
         }
     }
-#line 2023 "parser.tab.c"
+#line 2024 "parser.tab.c"
     break;
 
   case 60: /* $@10: %empty  */
-#line 571 "parser.y"
+#line 572 "parser.y"
                                             {scope_no++;}
-#line 2029 "parser.tab.c"
+#line 2030 "parser.tab.c"
     break;
 
   case 61: /* switch_statement: SWITCH_KEYWORD OPENING_PARENTHESIS IDENTIFIER $@9 CLOSING_PARENTHESIS OPENING_CURLY_BRACE $@10 case_list default_case CLOSING_CURLY_BRACE  */
-#line 572 "parser.y"
+#line 573 "parser.y"
                                                { delete_scope(symbol_table, scope_no); scope_no--;}
-#line 2035 "parser.tab.c"
+#line 2036 "parser.tab.c"
     break;
 
   case 66: /* $@11: %empty  */
-#line 587 "parser.y"
+#line 588 "parser.y"
                                           {
         SymbolTableEntry* result = search_symbol_table(symbol_table, (yyvsp[-2].type_id).name, scope_no, get_current_enclosing_function());
         if (result && (!result->enclosing_function_name || 
@@ -2100,11 +2101,11 @@ yyreduce:
         free((yyvsp[-2].type_id).name);
         free((yyvsp[-2].type_id).type);
     }
-#line 2104 "parser.tab.c"
+#line 2105 "parser.tab.c"
     break;
 
   case 68: /* $@12: %empty  */
-#line 652 "parser.y"
+#line 653 "parser.y"
                                                                                                                                                            {
         SymbolTableEntry* result = search_symbol_table(symbol_table, (yyvsp[-7].type_id).name, scope_no, get_current_enclosing_function());
         if (result && (!result->enclosing_function_name || 
@@ -2183,11 +2184,11 @@ yyreduce:
         free((yyvsp[-7].type_id).name);
         free((yyvsp[-7].type_id).type);
     }
-#line 2187 "parser.tab.c"
+#line 2188 "parser.tab.c"
     break;
 
   case 70: /* $@13: %empty  */
-#line 734 "parser.y"
+#line 735 "parser.y"
                                   {
         SymbolTableEntry* result = search_symbol_table(symbol_table, (yyvsp[0].type_id).name, scope_no, get_current_enclosing_function());
         if (result && (!result->enclosing_function_name || 
@@ -2198,11 +2199,11 @@ yyreduce:
             exit(1);
         }
     }
-#line 2202 "parser.tab.c"
+#line 2203 "parser.tab.c"
     break;
 
   case 71: /* const_initialization: CONST_KEYWORD type_identifier $@13 ASSIGNMENT expression SEMICOLON  */
-#line 744 "parser.y"
+#line 745 "parser.y"
                                     {
         ValueType declared_type = string_to_value_type((yyvsp[-4].type_id).type);
         size_t declared_size = (yyvsp[-4].type_id).array_size;
@@ -2263,11 +2264,11 @@ yyreduce:
         free((yyvsp[-4].type_id).name);
         free((yyvsp[-4].type_id).type);
     }
-#line 2267 "parser.tab.c"
+#line 2268 "parser.tab.c"
     break;
 
   case 72: /* $@14: %empty  */
-#line 804 "parser.y"
+#line 805 "parser.y"
                                     {
         SymbolTableEntry* result = search_symbol_table(symbol_table, (yyvsp[0].type_id).name, scope_no, get_current_enclosing_function());
         if (result && (!result->enclosing_function_name || 
@@ -2278,11 +2279,11 @@ yyreduce:
             exit(1);
         }
     }
-#line 2282 "parser.tab.c"
+#line 2283 "parser.tab.c"
     break;
 
   case 73: /* const_initialization: CONST_KEYWORD type_identifier $@14 OPENING_SQUARE_BRACKETS INTEGER_LITERAL CLOSING_SQUARE_BRACKETS ASSIGNMENT OPENING_SQUARE_BRACKETS expr_list CLOSING_SQUARE_BRACKETS SEMICOLON  */
-#line 814 "parser.y"
+#line 815 "parser.y"
                                                                                                                                                    {
         ValueType declared_type = string_to_value_type((yyvsp[-9].type_id).type);
         ValueType element_type = declared_type;
@@ -2353,11 +2354,11 @@ yyreduce:
         free((yyvsp[-9].type_id).name);
         free((yyvsp[-9].type_id).type);
     }
-#line 2357 "parser.tab.c"
+#line 2358 "parser.tab.c"
     break;
 
   case 74: /* $@15: %empty  */
-#line 887 "parser.y"
+#line 888 "parser.y"
                     {
         SymbolTableEntry* result = search_symbol_table(symbol_table, (yyvsp[0].type_id).name, scope_no, get_current_enclosing_function());
         if (result && (!result->enclosing_function_name || 
@@ -2412,11 +2413,11 @@ yyreduce:
         free((yyvsp[0].type_id).name);
         free((yyvsp[0].type_id).type);
     }
-#line 2416 "parser.tab.c"
+#line 2417 "parser.tab.c"
     break;
 
   case 76: /* return_statement: RETURN_KEYWORD expression SEMICOLON  */
-#line 945 "parser.y"
+#line 946 "parser.y"
                                         {
         if (!get_current_enclosing_function()) {
             fprintf(stderr, "Return statement outside function at line %d\n", yylineno);
@@ -2443,11 +2444,11 @@ yyreduce:
             exit(1);
         }
     }
-#line 2447 "parser.tab.c"
+#line 2448 "parser.tab.c"
     break;
 
   case 77: /* $@16: %empty  */
-#line 974 "parser.y"
+#line 975 "parser.y"
                                      {
         SymbolTableEntry* result = search_symbol_table(symbol_table, (yyvsp[-2].sval), scope_no, get_current_enclosing_function());
         if (!result) {
@@ -2492,11 +2493,11 @@ yyreduce:
                 exit(1);
         }
     }
-#line 2496 "parser.tab.c"
+#line 2497 "parser.tab.c"
     break;
 
   case 79: /* $@17: %empty  */
-#line 1022 "parser.y"
+#line 1023 "parser.y"
                                                                             {
         SymbolTableEntry* result = search_symbol_table(symbol_table, (yyvsp[-4].sval), scope_no, get_current_enclosing_function());
         if (!result) {
@@ -2594,62 +2595,62 @@ yyreduce:
                 break;
         }
     }
-#line 2598 "parser.tab.c"
+#line 2599 "parser.tab.c"
     break;
 
   case 81: /* expression: boolean_expr  */
-#line 1124 "parser.y"
+#line 1125 "parser.y"
                  {
         (yyval.expr).expr_type = BOOL_EXPR;
         (yyval.expr).expr_value.int_value = (yyvsp[0].expr).expr_value.int_value;
         (yyval.expr).expr_return_type = BOOL_VALUE;
         (yyval.expr).associated_identifier = NULL;
     }
-#line 2609 "parser.tab.c"
+#line 2610 "parser.tab.c"
     break;
 
   case 82: /* expression: arithmetic_expr  */
-#line 1130 "parser.y"
+#line 1131 "parser.y"
                       { (yyval.expr) = (yyvsp[0].expr); }
-#line 2615 "parser.tab.c"
+#line 2616 "parser.tab.c"
     break;
 
   case 83: /* expression: function_call  */
-#line 1131 "parser.y"
+#line 1132 "parser.y"
                     { (yyval.expr) = (yyvsp[0].expr); }
-#line 2621 "parser.tab.c"
+#line 2622 "parser.tab.c"
     break;
 
   case 84: /* expression: STRING_LITERAL  */
-#line 1132 "parser.y"
+#line 1133 "parser.y"
                      {
         (yyval.expr).expr_type = STRING_EXPR;
         (yyval.expr).expr_value.char_array = strdup((yyvsp[0].sval));
         (yyval.expr).expr_return_type = STRING_VALUE;
         (yyval.expr).associated_identifier = NULL;
     }
-#line 2632 "parser.tab.c"
+#line 2633 "parser.tab.c"
     break;
 
   case 85: /* expression: CHARACTER_LITERAL  */
-#line 1138 "parser.y"
+#line 1139 "parser.y"
                         {
         (yyval.expr).expr_type = CHAR_EXPR;
         (yyval.expr).expr_value.char_value = (yyvsp[0].cval);
         (yyval.expr).expr_return_type = CHAR_VALUE;
         (yyval.expr).associated_identifier = NULL;
     }
-#line 2643 "parser.tab.c"
+#line 2644 "parser.tab.c"
     break;
 
   case 86: /* expression: array_element  */
-#line 1144 "parser.y"
+#line 1145 "parser.y"
                     { (yyval.expr) = (yyvsp[0].expr); }
-#line 2649 "parser.tab.c"
+#line 2650 "parser.tab.c"
     break;
 
   case 87: /* expression: IDENTIFIER  */
-#line 1145 "parser.y"
+#line 1146 "parser.y"
                  {
         SymbolTableEntry* result = search_symbol_table(symbol_table, (yyvsp[0].sval), scope_no, get_current_enclosing_function());
         if (!result) {
@@ -2692,11 +2693,11 @@ yyreduce:
                 exit(1);
         }
     }
-#line 2696 "parser.tab.c"
+#line 2697 "parser.tab.c"
     break;
 
   case 88: /* array_element: IDENTIFIER OPENING_SQUARE_BRACKETS INTEGER_LITERAL CLOSING_SQUARE_BRACKETS  */
-#line 1190 "parser.y"
+#line 1191 "parser.y"
                                                                                {
         SymbolTableEntry* result = search_symbol_table(symbol_table, (yyvsp[-3].sval), scope_no, get_current_enclosing_function());
         if (!result) {
@@ -2740,20 +2741,20 @@ yyreduce:
                 exit(1);
         }
     }
-#line 2744 "parser.tab.c"
+#line 2745 "parser.tab.c"
     break;
 
   case 89: /* expr_list: expression  */
-#line 1236 "parser.y"
+#line 1237 "parser.y"
                {
         (yyval.expr_lst).e = &(yyvsp[0].expr);
         (yyval.expr_lst).next_expr = NULL;
     }
-#line 2753 "parser.tab.c"
+#line 2754 "parser.tab.c"
     break;
 
   case 90: /* expr_list: expr_list COMMA expression  */
-#line 1240 "parser.y"
+#line 1241 "parser.y"
                                  {
         ExprList* new_node = (ExprList*)malloc(sizeof(ExprList));
         new_node->e = &(yyvsp[0].expr);
@@ -2765,11 +2766,11 @@ yyreduce:
         current->next_expr = new_node;
         (yyval.expr_lst) = (yyvsp[-2].expr_lst);
     }
-#line 2769 "parser.tab.c"
+#line 2770 "parser.tab.c"
     break;
 
   case 91: /* function_call: IDENTIFIER OPENING_PARENTHESIS expr_list CLOSING_PARENTHESIS  */
-#line 1254 "parser.y"
+#line 1255 "parser.y"
                                                                  {
         SymbolTableEntry* result = search_symbol_table(symbol_table, (yyvsp[-3].sval), scope_no, get_current_enclosing_function());
         if (!result) {
@@ -2817,11 +2818,11 @@ yyreduce:
         }
         scope_no = prev_scope_no;
     }
-#line 2821 "parser.tab.c"
+#line 2822 "parser.tab.c"
     break;
 
   case 92: /* function_call: IDENTIFIER OPENING_PARENTHESIS CLOSING_PARENTHESIS  */
-#line 1301 "parser.y"
+#line 1302 "parser.y"
                                                          {
         SymbolTableEntry* result = search_symbol_table(symbol_table, (yyvsp[-2].sval), scope_no, get_current_enclosing_function());
         if (!result) {
@@ -2852,11 +2853,11 @@ yyreduce:
         }
         scope_no = prev_scope_no;
     }
-#line 2856 "parser.tab.c"
+#line 2857 "parser.tab.c"
     break;
 
   case 93: /* boolean_expr: expression EQUAL arithmetic_expr  */
-#line 1334 "parser.y"
+#line 1335 "parser.y"
                                      {
         if ((yyvsp[-2].expr).expr_return_type != (yyvsp[0].expr).expr_return_type &&
             !((yyvsp[-2].expr).expr_return_type == INT_VALUE && (yyvsp[0].expr).expr_return_type == FLOAT_VALUE) &&
@@ -2878,11 +2879,11 @@ yyreduce:
             (yyval.expr).expr_value.int_value = ((yyvsp[-2].expr).expr_value.int_value == (yyvsp[0].expr).expr_value.int_value);
         }
     }
-#line 2882 "parser.tab.c"
+#line 2883 "parser.tab.c"
     break;
 
   case 94: /* boolean_expr: expression EQUAL function_call  */
-#line 1355 "parser.y"
+#line 1356 "parser.y"
                                      {
         if ((yyvsp[-2].expr).expr_return_type != (yyvsp[0].expr).expr_return_type &&
             !((yyvsp[-2].expr).expr_return_type == INT_VALUE && (yyvsp[0].expr).expr_return_type == FLOAT_VALUE) &&
@@ -2904,11 +2905,11 @@ yyreduce:
             (yyval.expr).expr_value.int_value = ((yyvsp[-2].expr).expr_value.int_value == (yyvsp[0].expr).expr_value.int_value);
         }
     }
-#line 2908 "parser.tab.c"
+#line 2909 "parser.tab.c"
     break;
 
   case 95: /* boolean_expr: expression NOT_EQUAL arithmetic_expr  */
-#line 1376 "parser.y"
+#line 1377 "parser.y"
                                            {
         if ((yyvsp[-2].expr).expr_return_type != (yyvsp[0].expr).expr_return_type &&
             !((yyvsp[-2].expr).expr_return_type == INT_VALUE && (yyvsp[0].expr).expr_return_type == FLOAT_VALUE) &&
@@ -2930,11 +2931,11 @@ yyreduce:
             (yyval.expr).expr_value.int_value = ((yyvsp[-2].expr).expr_value.int_value != (yyvsp[0].expr).expr_value.int_value);
         }
     }
-#line 2934 "parser.tab.c"
+#line 2935 "parser.tab.c"
     break;
 
   case 96: /* boolean_expr: expression NOT_EQUAL function_call  */
-#line 1397 "parser.y"
+#line 1398 "parser.y"
                                          {
         if ((yyvsp[-2].expr).expr_return_type != (yyvsp[0].expr).expr_return_type &&
             !((yyvsp[-2].expr).expr_return_type == INT_VALUE && (yyvsp[0].expr).expr_return_type == FLOAT_VALUE) &&
@@ -2956,11 +2957,11 @@ yyreduce:
             (yyval.expr).expr_value.int_value = ((yyvsp[-2].expr).expr_value.int_value != (yyvsp[0].expr).expr_value.int_value);
         }
     }
-#line 2960 "parser.tab.c"
+#line 2961 "parser.tab.c"
     break;
 
   case 97: /* boolean_expr: expression GREATER_OR_EQUAL arithmetic_expr  */
-#line 1418 "parser.y"
+#line 1419 "parser.y"
                                                   {
         if (((yyvsp[-2].expr).expr_return_type != INT_VALUE && (yyvsp[-2].expr).expr_return_type != FLOAT_VALUE) ||
             ((yyvsp[0].expr).expr_return_type != INT_VALUE && (yyvsp[0].expr).expr_return_type != FLOAT_VALUE)) {
@@ -2975,11 +2976,11 @@ yyreduce:
         float right = ((yyvsp[0].expr).expr_return_type == FLOAT_VALUE) ? (yyvsp[0].expr).expr_value.float_value : (yyvsp[0].expr).expr_value.int_value;
         (yyval.expr).expr_value.int_value = (left >= right);
     }
-#line 2979 "parser.tab.c"
+#line 2980 "parser.tab.c"
     break;
 
   case 98: /* boolean_expr: expression GREATER_OR_EQUAL function_call  */
-#line 1432 "parser.y"
+#line 1433 "parser.y"
                                                 {
         if (((yyvsp[-2].expr).expr_return_type != INT_VALUE && (yyvsp[-2].expr).expr_return_type != FLOAT_VALUE) ||
             ((yyvsp[0].expr).expr_return_type != INT_VALUE && (yyvsp[0].expr).expr_return_type != FLOAT_VALUE)) {
@@ -2994,11 +2995,11 @@ yyreduce:
         float right = ((yyvsp[0].expr).expr_return_type == FLOAT_VALUE) ? (yyvsp[0].expr).expr_value.float_value : (yyvsp[0].expr).expr_value.int_value;
         (yyval.expr).expr_value.int_value = (left >= right);
     }
-#line 2998 "parser.tab.c"
+#line 2999 "parser.tab.c"
     break;
 
   case 99: /* boolean_expr: expression LESS_OR_EQUAL arithmetic_expr  */
-#line 1446 "parser.y"
+#line 1447 "parser.y"
                                                {
         if (((yyvsp[-2].expr).expr_return_type != INT_VALUE && (yyvsp[-2].expr).expr_return_type != FLOAT_VALUE) ||
             ((yyvsp[0].expr).expr_return_type != INT_VALUE && (yyvsp[0].expr).expr_return_type != FLOAT_VALUE)) {
@@ -3013,11 +3014,11 @@ yyreduce:
         float right = ((yyvsp[0].expr).expr_return_type == FLOAT_VALUE) ? (yyvsp[0].expr).expr_value.float_value : (yyvsp[0].expr).expr_value.int_value;
         (yyval.expr).expr_value.int_value = (left <= right);
     }
-#line 3017 "parser.tab.c"
+#line 3018 "parser.tab.c"
     break;
 
   case 100: /* boolean_expr: expression LESS_OR_EQUAL function_call  */
-#line 1460 "parser.y"
+#line 1461 "parser.y"
                                              {
         if (((yyvsp[-2].expr).expr_return_type != INT_VALUE && (yyvsp[-2].expr).expr_return_type != FLOAT_VALUE) ||
             ((yyvsp[0].expr).expr_return_type != INT_VALUE && (yyvsp[0].expr).expr_return_type != FLOAT_VALUE)) {
@@ -3032,11 +3033,11 @@ yyreduce:
         float right = ((yyvsp[0].expr).expr_return_type == FLOAT_VALUE) ? (yyvsp[0].expr).expr_value.float_value : (yyvsp[0].expr).expr_value.int_value;
         (yyval.expr).expr_value.int_value = (left <= right);
     }
-#line 3036 "parser.tab.c"
+#line 3037 "parser.tab.c"
     break;
 
   case 101: /* boolean_expr: expression GREATER arithmetic_expr  */
-#line 1474 "parser.y"
+#line 1475 "parser.y"
                                          {
         if (((yyvsp[-2].expr).expr_return_type != INT_VALUE && (yyvsp[-2].expr).expr_return_type != FLOAT_VALUE) ||
             ((yyvsp[0].expr).expr_return_type != INT_VALUE && (yyvsp[0].expr).expr_return_type != FLOAT_VALUE)) {
@@ -3051,11 +3052,11 @@ yyreduce:
         float right = ((yyvsp[0].expr).expr_return_type == FLOAT_VALUE) ? (yyvsp[0].expr).expr_value.float_value : (yyvsp[0].expr).expr_value.int_value;
         (yyval.expr).expr_value.int_value = (left > right);
     }
-#line 3055 "parser.tab.c"
+#line 3056 "parser.tab.c"
     break;
 
   case 102: /* boolean_expr: expression GREATER function_call  */
-#line 1488 "parser.y"
+#line 1489 "parser.y"
                                        {
         if (((yyvsp[-2].expr).expr_return_type != INT_VALUE && (yyvsp[-2].expr).expr_return_type != FLOAT_VALUE) ||
             ((yyvsp[0].expr).expr_return_type != INT_VALUE && (yyvsp[0].expr).expr_return_type != FLOAT_VALUE)) {
@@ -3070,11 +3071,11 @@ yyreduce:
         float right = ((yyvsp[0].expr).expr_return_type == FLOAT_VALUE) ? (yyvsp[0].expr).expr_value.float_value : (yyvsp[0].expr).expr_value.int_value;
         (yyval.expr).expr_value.int_value = (left > right);
     }
-#line 3074 "parser.tab.c"
+#line 3075 "parser.tab.c"
     break;
 
   case 103: /* boolean_expr: expression LESS arithmetic_expr  */
-#line 1502 "parser.y"
+#line 1503 "parser.y"
                                       {
         if (((yyvsp[-2].expr).expr_return_type != INT_VALUE && (yyvsp[-2].expr).expr_return_type != FLOAT_VALUE) ||
             ((yyvsp[0].expr).expr_return_type != INT_VALUE && (yyvsp[0].expr).expr_return_type != FLOAT_VALUE)) {
@@ -3089,11 +3090,11 @@ yyreduce:
         float right = ((yyvsp[0].expr).expr_return_type == FLOAT_VALUE) ? (yyvsp[0].expr).expr_value.float_value : (yyvsp[0].expr).expr_value.int_value;
         (yyval.expr).expr_value.int_value = (left < right);
     }
-#line 3093 "parser.tab.c"
+#line 3094 "parser.tab.c"
     break;
 
   case 104: /* boolean_expr: expression LESS function_call  */
-#line 1516 "parser.y"
+#line 1517 "parser.y"
                                     {
         if (((yyvsp[-2].expr).expr_return_type != INT_VALUE && (yyvsp[-2].expr).expr_return_type != FLOAT_VALUE) ||
             ((yyvsp[0].expr).expr_return_type != INT_VALUE && (yyvsp[0].expr).expr_return_type != FLOAT_VALUE)) {
@@ -3108,23 +3109,23 @@ yyreduce:
         float right = ((yyvsp[0].expr).expr_return_type == FLOAT_VALUE) ? (yyvsp[0].expr).expr_value.float_value : (yyvsp[0].expr).expr_value.int_value;
         (yyval.expr).expr_value.int_value = (left < right);
     }
-#line 3112 "parser.tab.c"
+#line 3113 "parser.tab.c"
     break;
 
   case 105: /* arithmetic_expr: binary_expr  */
-#line 1532 "parser.y"
+#line 1533 "parser.y"
                               { (yyval.expr) = (yyvsp[0].expr); }
-#line 3118 "parser.tab.c"
+#line 3119 "parser.tab.c"
     break;
 
   case 106: /* arithmetic_expr: unary_expr  */
-#line 1533 "parser.y"
+#line 1534 "parser.y"
                              { (yyval.expr) = (yyvsp[0].expr); }
-#line 3124 "parser.tab.c"
+#line 3125 "parser.tab.c"
     break;
 
   case 107: /* binary_expr: binary_expr PLUS arithmetic_term  */
-#line 1536 "parser.y"
+#line 1537 "parser.y"
                                                {
                 if ((yyvsp[-2].expr).expr_return_type != INT_VALUE && (yyvsp[-2].expr).expr_return_type != FLOAT_VALUE ||
                     (yyvsp[0].expr).expr_return_type != INT_VALUE && (yyvsp[0].expr).expr_return_type != FLOAT_VALUE) {
@@ -3144,11 +3145,11 @@ yyreduce:
                     (yyval.expr).expr_value.int_value = (yyvsp[-2].expr).expr_value.int_value + (yyvsp[0].expr).expr_value.int_value;
                 }
             }
-#line 3148 "parser.tab.c"
+#line 3149 "parser.tab.c"
     break;
 
   case 108: /* binary_expr: binary_expr MINUS arithmetic_term  */
-#line 1555 "parser.y"
+#line 1556 "parser.y"
                                                 {
                 if ((yyvsp[-2].expr).expr_return_type != INT_VALUE && (yyvsp[-2].expr).expr_return_type != FLOAT_VALUE ||
                     (yyvsp[0].expr).expr_return_type != INT_VALUE && (yyvsp[0].expr).expr_return_type != FLOAT_VALUE) {
@@ -3168,17 +3169,17 @@ yyreduce:
                     (yyval.expr).expr_value.int_value = (yyvsp[-2].expr).expr_value.int_value - (yyvsp[0].expr).expr_value.int_value;
                 }
             }
-#line 3172 "parser.tab.c"
+#line 3173 "parser.tab.c"
     break;
 
   case 109: /* binary_expr: arithmetic_term  */
-#line 1574 "parser.y"
+#line 1575 "parser.y"
                               { (yyval.expr) = (yyvsp[0].expr); }
-#line 3178 "parser.tab.c"
+#line 3179 "parser.tab.c"
     break;
 
   case 110: /* arithmetic_term: arithmetic_term ASTRISK arithmetic_factor  */
-#line 1577 "parser.y"
+#line 1578 "parser.y"
                                                             {
                     if ((yyvsp[-2].expr).expr_return_type != INT_VALUE && (yyvsp[-2].expr).expr_return_type != FLOAT_VALUE ||
                         (yyvsp[0].expr).expr_return_type != INT_VALUE && (yyvsp[0].expr).expr_return_type != FLOAT_VALUE) {
@@ -3198,11 +3199,11 @@ yyreduce:
                         (yyval.expr).expr_value.int_value = (yyvsp[-2].expr).expr_value.int_value * (yyvsp[0].expr).expr_value.int_value;
                     }
                 }
-#line 3202 "parser.tab.c"
+#line 3203 "parser.tab.c"
     break;
 
   case 111: /* arithmetic_term: arithmetic_term DIVIDE arithmetic_factor  */
-#line 1596 "parser.y"
+#line 1597 "parser.y"
                                                            {
                     if ((yyvsp[-2].expr).expr_return_type != INT_VALUE && (yyvsp[-2].expr).expr_return_type != FLOAT_VALUE ||
                         (yyvsp[0].expr).expr_return_type != INT_VALUE && (yyvsp[0].expr).expr_return_type != FLOAT_VALUE) {
@@ -3228,11 +3229,11 @@ yyreduce:
                         (yyval.expr).expr_value.int_value = (yyvsp[-2].expr).expr_value.int_value / (yyvsp[0].expr).expr_value.int_value;
                     }
                 }
-#line 3232 "parser.tab.c"
+#line 3233 "parser.tab.c"
     break;
 
   case 112: /* arithmetic_term: arithmetic_term MODULO INTEGER_LITERAL  */
-#line 1621 "parser.y"
+#line 1622 "parser.y"
                                                          {
                     if ((yyvsp[-2].expr).expr_return_type != INT_VALUE) {
                         fprintf(stderr, "Modulo requires integer operand at line %d\n", yylineno);
@@ -3249,11 +3250,11 @@ yyreduce:
                     (yyval.expr).expr_value.int_value = (yyvsp[-2].expr).expr_value.int_value % (yyvsp[0].ival);
                     (yyval.expr).associated_identifier = NULL;
                 }
-#line 3253 "parser.tab.c"
+#line 3254 "parser.tab.c"
     break;
 
   case 113: /* arithmetic_term: arithmetic_term MODULO OPENING_PARENTHESIS expression CLOSING_PARENTHESIS  */
-#line 1637 "parser.y"
+#line 1638 "parser.y"
                                                                                             {
                     if ((yyvsp[-4].expr).expr_return_type != INT_VALUE || (yyvsp[-1].expr).expr_return_type != INT_VALUE) {
                         fprintf(stderr, "Modulo requires integer operands at line %d\n", yylineno);
@@ -3270,40 +3271,40 @@ yyreduce:
                     (yyval.expr).expr_value.int_value = (yyvsp[-4].expr).expr_value.int_value % (yyvsp[-1].expr).expr_value.int_value;
                     (yyval.expr).associated_identifier = NULL;
                 }
-#line 3274 "parser.tab.c"
+#line 3275 "parser.tab.c"
     break;
 
   case 114: /* arithmetic_term: arithmetic_factor  */
-#line 1653 "parser.y"
+#line 1654 "parser.y"
                                     { (yyval.expr) = (yyvsp[0].expr); }
-#line 3280 "parser.tab.c"
+#line 3281 "parser.tab.c"
     break;
 
   case 115: /* arithmetic_factor: bitwise_expr  */
-#line 1656 "parser.y"
+#line 1657 "parser.y"
                                  { (yyval.expr) = (yyvsp[0].expr); }
-#line 3286 "parser.tab.c"
+#line 3287 "parser.tab.c"
     break;
 
   case 116: /* arithmetic_factor: FLOAT_LITERAL  */
-#line 1657 "parser.y"
+#line 1658 "parser.y"
                                   {
                       (yyval.expr).expr_type = FLOAT_EXPR;
                       (yyval.expr).expr_value.float_value = (yyvsp[0].fval);
                       (yyval.expr).expr_return_type = FLOAT_VALUE;
                       (yyval.expr).associated_identifier = NULL;
                   }
-#line 3297 "parser.tab.c"
+#line 3298 "parser.tab.c"
     break;
 
   case 117: /* arithmetic_factor: OPENING_PARENTHESIS expression CLOSING_PARENTHESIS  */
-#line 1663 "parser.y"
+#line 1664 "parser.y"
                                                                        { (yyval.expr) = (yyvsp[-1].expr); }
-#line 3303 "parser.tab.c"
+#line 3304 "parser.tab.c"
     break;
 
   case 118: /* bitwise_expr: bitwise_expr BITWISE_OR bitwise_xor_expr  */
-#line 1666 "parser.y"
+#line 1667 "parser.y"
                                                         {
                  if ((yyvsp[-2].expr).expr_return_type != INT_VALUE || (yyvsp[0].expr).expr_return_type != INT_VALUE) {
                      fprintf(stderr, "Bitwise OR requires integer operands at line %d\n", yylineno);
@@ -3315,17 +3316,17 @@ yyreduce:
                  (yyval.expr).expr_value.int_value = (yyvsp[-2].expr).expr_value.int_value | (yyvsp[0].expr).expr_value.int_value;
                  (yyval.expr).associated_identifier = NULL;
              }
-#line 3319 "parser.tab.c"
+#line 3320 "parser.tab.c"
     break;
 
   case 119: /* bitwise_expr: bitwise_xor_expr  */
-#line 1677 "parser.y"
+#line 1678 "parser.y"
                                 { (yyval.expr) = (yyvsp[0].expr); }
-#line 3325 "parser.tab.c"
+#line 3326 "parser.tab.c"
     break;
 
   case 120: /* bitwise_xor_expr: bitwise_xor_expr BITWISE_XOR bitwise_and_expr  */
-#line 1680 "parser.y"
+#line 1681 "parser.y"
                                                                  {
                      if ((yyvsp[-2].expr).expr_return_type != INT_VALUE || (yyvsp[0].expr).expr_return_type != INT_VALUE) {
                          fprintf(stderr, "Bitwise XOR requires integer operands at line %d\n", yylineno);
@@ -3337,17 +3338,17 @@ yyreduce:
                      (yyval.expr).expr_value.int_value = (yyvsp[-2].expr).expr_value.int_value ^ (yyvsp[0].expr).expr_value.int_value;
                      (yyval.expr).associated_identifier = NULL;
                  }
-#line 3341 "parser.tab.c"
+#line 3342 "parser.tab.c"
     break;
 
   case 121: /* bitwise_xor_expr: bitwise_and_expr  */
-#line 1691 "parser.y"
+#line 1692 "parser.y"
                                     { (yyval.expr) = (yyvsp[0].expr); }
-#line 3347 "parser.tab.c"
+#line 3348 "parser.tab.c"
     break;
 
   case 122: /* bitwise_and_expr: bitwise_and_expr BITWISE_AND bitwise_not_expr  */
-#line 1694 "parser.y"
+#line 1695 "parser.y"
                                                                  {
                      if ((yyvsp[-2].expr).expr_return_type != INT_VALUE || (yyvsp[0].expr).expr_return_type != INT_VALUE) {
                          fprintf(stderr, "Bitwise AND requires integer operands at line %d\n", yylineno);
@@ -3359,17 +3360,17 @@ yyreduce:
                      (yyval.expr).expr_value.int_value = (yyvsp[-2].expr).expr_value.int_value & (yyvsp[0].expr).expr_value.int_value;
                      (yyval.expr).associated_identifier = NULL;
                  }
-#line 3363 "parser.tab.c"
+#line 3364 "parser.tab.c"
     break;
 
   case 123: /* bitwise_and_expr: bitwise_not_expr  */
-#line 1705 "parser.y"
+#line 1706 "parser.y"
                                     { (yyval.expr) = (yyvsp[0].expr); }
-#line 3369 "parser.tab.c"
+#line 3370 "parser.tab.c"
     break;
 
   case 124: /* bitwise_not_expr: BITWISE_NOT bitwise_not_expr  */
-#line 1708 "parser.y"
+#line 1709 "parser.y"
                                                 {
                      if ((yyvsp[0].expr).expr_return_type != INT_VALUE) {
                          fprintf(stderr, "Bitwise NOT requires integer operand at line %d\n", yylineno);
@@ -3381,22 +3382,22 @@ yyreduce:
                      (yyval.expr).expr_value.int_value = ~(yyvsp[0].expr).expr_value.int_value;
                      (yyval.expr).associated_identifier = NULL;
                  }
-#line 3385 "parser.tab.c"
+#line 3386 "parser.tab.c"
     break;
 
   case 125: /* bitwise_not_expr: INTEGER_LITERAL  */
-#line 1719 "parser.y"
+#line 1720 "parser.y"
                                    {
                      (yyval.expr).expr_type = INT_EXPR;
                      (yyval.expr).expr_return_type = INT_VALUE;
                      (yyval.expr).expr_value.int_value = (yyvsp[0].ival);
                      (yyval.expr).associated_identifier = NULL;
                  }
-#line 3396 "parser.tab.c"
+#line 3397 "parser.tab.c"
     break;
 
   case 126: /* unary_expr: IDENTIFIER INCREMENT  */
-#line 1728 "parser.y"
+#line 1729 "parser.y"
                          {
         SymbolTableEntry* result = search_symbol_table(symbol_table, (yyvsp[-1].sval), scope_no, get_current_enclosing_function());
         if (!result) {
@@ -3424,11 +3425,11 @@ yyreduce:
             (yyval.expr).expr_value.float_value = result->value.float_value++;
         }
     }
-#line 3428 "parser.tab.c"
+#line 3429 "parser.tab.c"
     break;
 
   case 127: /* unary_expr: IDENTIFIER DECREMENT  */
-#line 1755 "parser.y"
+#line 1756 "parser.y"
                            {
         SymbolTableEntry* result = search_symbol_table(symbol_table, (yyvsp[-1].sval), scope_no, get_current_enclosing_function());
         if (!result) {
@@ -3456,11 +3457,11 @@ yyreduce:
             (yyval.expr).expr_value.float_value = result->value.float_value--;
         }
     }
-#line 3460 "parser.tab.c"
+#line 3461 "parser.tab.c"
     break;
 
   case 128: /* unary_expr: MINUS IDENTIFIER  */
-#line 1782 "parser.y"
+#line 1783 "parser.y"
                        {
         SymbolTableEntry* result = search_symbol_table(symbol_table, (yyvsp[0].sval), scope_no, get_current_enclosing_function());
         if (!result) {
@@ -3483,11 +3484,11 @@ yyreduce:
             (yyval.expr).expr_value.float_value = -result->value.float_value;
         }
     }
-#line 3487 "parser.tab.c"
+#line 3488 "parser.tab.c"
     break;
 
   case 129: /* unary_expr: MINUS OPENING_PARENTHESIS expression CLOSING_PARENTHESIS  */
-#line 1804 "parser.y"
+#line 1805 "parser.y"
                                                                {
         if ((yyvsp[-1].expr).expr_return_type != INT_VALUE && (yyvsp[-1].expr).expr_return_type != FLOAT_VALUE) {
             fprintf(stderr, "Unary minus requires numeric operand at line %d\n", yylineno);
@@ -3504,50 +3505,50 @@ yyreduce:
             (yyval.expr).expr_value.float_value = -(yyvsp[-1].expr).expr_value.float_value;
         }
     }
-#line 3508 "parser.tab.c"
+#line 3509 "parser.tab.c"
     break;
 
   case 130: /* unary_expr: OPENING_PARENTHESIS expression CLOSING_PARENTHESIS INCREMENT  */
-#line 1820 "parser.y"
+#line 1821 "parser.y"
                                                                    {
         fprintf(stderr, "Increment on expression not supported at line %d\n", yylineno);
         free_symbol_table(symbol_table);
         exit(1);
     }
-#line 3518 "parser.tab.c"
+#line 3519 "parser.tab.c"
     break;
 
   case 131: /* unary_expr: OPENING_PARENTHESIS expression CLOSING_PARENTHESIS DECREMENT  */
-#line 1825 "parser.y"
+#line 1826 "parser.y"
                                                                    {
         fprintf(stderr, "Decrement on expression not supported at line %d\n", yylineno);
         free_symbol_table(symbol_table);
         exit(1);
     }
-#line 3528 "parser.tab.c"
+#line 3529 "parser.tab.c"
     break;
 
   case 132: /* $@18: %empty  */
-#line 1834 "parser.y"
+#line 1835 "parser.y"
                                                          { 
         scope_no++;
         push_function("main");
     }
-#line 3537 "parser.tab.c"
+#line 3538 "parser.tab.c"
     break;
 
   case 133: /* main_function: MAIN_KEYWORD OPENING_PARENTHESIS CLOSING_PARENTHESIS $@18 body  */
-#line 1838 "parser.y"
+#line 1839 "parser.y"
          {
         char* popped = pop_function();
         if (popped) free(popped);
         scope_no--;
     }
-#line 3547 "parser.tab.c"
+#line 3548 "parser.tab.c"
     break;
 
 
-#line 3551 "parser.tab.c"
+#line 3552 "parser.tab.c"
 
       default: break;
     }
@@ -3740,7 +3741,7 @@ yyreturnlab:
   return yyresult;
 }
 
-#line 1844 "parser.y"
+#line 1845 "parser.y"
 
 
 
@@ -3755,9 +3756,35 @@ int main(int argc, char* argv[]) {
         return 1;
     }
 
+    // Create filenames for symbol_table_file and symbol_table_changes_file
+    char* base_name = strtok(argv[1], ".");
+    char symbol_table_filename[256];
+    char symbol_table_changes_filename[256];
+    snprintf(symbol_table_filename, sizeof(symbol_table_filename), "%s_symbol_table.txt", base_name);
+    snprintf(symbol_table_changes_filename, sizeof(symbol_table_changes_filename), "%s_symbol_table_changes.txt", base_name);
+
+    // Open symbol_table_file for writing
+    symbol_table_file = fopen(symbol_table_filename, "w");
+    if (!symbol_table_file) {
+        fprintf(stderr, "Error: Cannot create symbol table file '%s'\n", symbol_table_filename);
+        fclose(yyin);
+        return 1;
+    }
+
+    // Open symbol_table_changes_file for writing
+    symbol_table_changes_file = fopen(symbol_table_changes_filename, "w");
+    if (!symbol_table_changes_file) {
+        fprintf(stderr, "Error: Cannot create symbol table changes file '%s'\n", symbol_table_changes_filename);
+        fclose(symbol_table_file);
+        fclose(yyin);
+        return 1;
+    }
+
     symbol_table = create_symbol_table();
     if (!symbol_table) {
         fprintf(stderr, "Error: Failed to create symbol table\n");
+        fclose(symbol_table_changes_file);
+        fclose(symbol_table_file);
         fclose(yyin);
         return 1;
     }
@@ -3765,6 +3792,8 @@ int main(int argc, char* argv[]) {
     yylineno = 1;
     int parse_result = yyparse();
     fclose(yyin);
+    fclose(symbol_table_file);
+    fclose(symbol_table_changes_file);
     if (parse_result == 0) {
         printf("Parsing successful.\n");
     } else {
