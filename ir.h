@@ -4,59 +4,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include "types.h"
 
-typedef enum InstructionType {
-    JMP,
-    NEG,
-    ADD,
-    SUB,
-    MUL,
-    DIV,
-    MOV,
-    CMP,
-    JGT,
-    JLT,
-    JEQ,
-    JNE,
-    JGE,
-    JLE,
-    AND,
-    NOT,
-    OR,
-    CALL,
-    RET,       // Consolidated RETURN and RET
-    PARAM,     // Renamed PUSH to PARAM for clarity (assuming function parameter)
-    FUNC,
-    ENDFUNC,
-    POP,       // Kept as extra instruction
-    MOD
-} InstructionType;
-
-typedef enum InstructionOperandType {
-    REGISTER,
-    IMMEDIATE_VALUE,
-    LABEL,
-    MEM_ADDR
-} InstructionOperandType;
-
-typedef struct Quadruple {
-    int address;
-    InstructionType instruction_type;
-    char* operand_1;
-    InstructionOperandType operand_1_type;
-    char* operand_2;
-    InstructionOperandType operand_2_type;
-    char* result;
-    InstructionOperandType result_type;
-} Quadruple;
-
-// Forward declaration for Instruction
-typedef struct Instruction Instruction;
-
-struct Instruction {
-    Quadruple quadruple;
-    Instruction* next_instruction;
-};
 
 Instruction* create_instruction(InstructionType type, 
                               char* op1, InstructionOperandType op1_type,

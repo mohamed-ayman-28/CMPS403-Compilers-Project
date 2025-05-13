@@ -74,20 +74,44 @@
 #include <stdlib.h>
 #include <stdbool.h>
 #include "symbol_table.h"
-#include "ir.h"
 
 void yyerror(const char *s);
 int yylex(void);
 extern FILE* yyin;
-extern int scope_no;
 extern int yylineno;
+extern FILE* symbol_table_file;
+
 
 SymbolTable* symbol_table = NULL;
 Parameter* curr_function_parameter_list = NULL;
 Parameter* curr_function_parameter_list_ptr = NULL;
 Parameter* curr_function_instructions_list = NULL;
 int inside_a_function_declaration_body = 0;
-char* current_enclosing_function = NULL;
+
+// Function stack for nested functions
+typedef struct FunctionStack {
+    char* function_name;
+    struct FunctionStack* next;
+} FunctionStack;
+
+char* concat_strings(const char* s1, const char* s2) {
+    if (!s1 || !s2) return NULL;  // handle null pointers
+
+    size_t len1 = strlen(s1);
+    size_t len2 = strlen(s2);
+
+    // +1 for null terminator
+    char* result = malloc(len1 + len2 + 1);
+    if (!result) {
+        fprintf(stderr, "Memory allocation failed\n");
+        return NULL;
+    }
+
+    strcpy(result, s1);
+    strcat(result, s2);
+
+    return result;
+}
 
 ValueType string_to_value_type(const char* type_str) {
     if (strcmp(type_str, "int") == 0) return INT_VALUE;
@@ -113,20 +137,76 @@ ValueType keyword_to_array_value_type(const char* keyword) {
     exit(1);
 }
 
-typedef enum EXPRESSION_TYPE {
-        BOOL_EXPR,
-        NUMERIC_EXPR,
-        FLOAT_EXPR,
-        INT_EXPR,
-        FUNCTION_CALL_EXPR,
-        ARRAY_ACCESS_EXPR,
-        CHAR_EXPR,
-        STRING_EXPR,
-        IDENTIFIER_EXPR
-} EXPRESSION_TYPE;
+FunctionStack* function_stack = NULL;
+
+void push_function(const char* name) {
+    FunctionStack* node = (FunctionStack*)malloc(sizeof(FunctionStack));
+    if (!node) {
+        fprintf(stderr, "Memory allocation for function stack failed at line %d\n", yylineno);
+        exit(1);
+    }
+    node->function_name = strdup(name);
+    if (!node->function_name) {
+        fprintf(stderr, "Memory allocation for function name failed at line %d\n", yylineno);
+        free(node);
+        exit(1);
+    }
+    node->next = function_stack;
+    function_stack = node;
+}
+
+char* pop_function(void) {
+    if (!function_stack) return NULL;
+    FunctionStack* node = function_stack;
+    char* name = node->function_name;
+    function_stack = node->next;
+    free(node);
+    return name;
+}
+
+char* get_current_enclosing_function(void) {
+    if (!function_stack) return NULL;
+    return function_stack->function_name;
+}
+
+char* get_prev_enclosing_function(void) {
+    if (!function_stack || !function_stack->next) return NULL;
+    return function_stack->next->function_name;
+}
+
+void free_function_stack(void) {
+    while (function_stack) {
+        FunctionStack* node = function_stack;
+        function_stack = node->next;
+        free(node->function_name);
+        free(node);
+    }
+}
+
+int init_compiler(void) {
+    symbol_table = create_symbol_table();
+    if (!symbol_table) {
+        fprintf(stderr, "Error: Failed to create symbol table\n");
+        return 0;
+    }
+    return 1;
+}
+
+void cleanup_compiler(void) {
+    free_symbol_table(symbol_table);
+    symbol_table = NULL;
+    free_function_stack();
+}
+
+void yyerror(const char *s) {
+    fprintf(stderr, "Error at line %d: %s\n", yylineno, s);
+    free_function_stack();
+    free_symbol_table(symbol_table);
+    exit(1);
+}
 
 
-#line 130 "parser.tab.c"
+#line 210 "parser.tab.c"
 
 # ifndef YY_CAST
 #  ifdef __cplusplus
@@ -667,20 +747,20 @@ static const yytype_int8 yytranslate[] =
 /* YYRLINE[YYN] -- Source line where rule number YYN was defined.  */
 static const yytype_int16 yyrline[] =
 {
-       0,   157,   157,   157,   161,   162,   168,   173,   168,   196,
-     201,   196,   217,   217,   240,   240,   259,   287,   313,   318,
-     326,   327,   328,   329,   330,   335,   335,   350,   352,   355,
-     356,   357,   358,   359,   360,   361,   362,   363,   364,   365,
-     366,   367,   368,   371,   374,   375,   378,   379,   382,   385,
-     386,   387,   390,   413,   441,   469,   470,   473,   476,   479,
-     492,   479,   495,   498,   499,   502,   507,   507,   572,   572,
-     654,   654,   724,   724,   807,   807,   865,   894,   894,   942,
-     942,  1044,  1050,  1051,  1052,  1058,  1064,  1065,  1110,  1156,
-    1160,  1174,  1221,  1254,  1275,  1296,  1317,  1338,  1352,  1366,
-    1380,  1394,  1408,  1422,  1436,  1452,  1453,  1456,  1475,  1494,
-    1497,  1516,  1541,  1557,  1573,  1576,  1577,  1583,  1586,  1597,
-    1600,  1611,  1614,  1625,  1628,  1639,  1647,  1674,  1701,  1723,
-    1739,  1744,  1753,  1753
+       0,   228,   228,   228,   232,   233,   239,   244,   239,   268,
+     273,   268,   290,   290,   314,   314,   334,   363,   390,   395,
+     403,   404,   405,   406,   407,   412,   412,   427,   429,   432,
+     433,   434,   435,   436,   437,   438,   439,   440,   441,   442,
+     443,   444,   445,   448,   451,   452,   455,   456,   459,   462,
+     463,   464,   468,   491,   519,   547,   548,   551,   554,   558,
+     571,   558,   575,   578,   579,   582,   587,   587,   652,   652,
+     734,   734,   804,   804,   887,   887,   945,   974,   974,  1022,
+    1022,  1124,  1130,  1131,  1132,  1138,  1144,  1145,  1190,  1236,
+    1240,  1254,  1301,  1334,  1355,  1376,  1397,  1418,  1432,  1446,
+    1460,  1474,  1488,  1502,  1516,  1532,  1533,  1536,  1555,  1574,
+    1577,  1596,  1621,  1637,  1653,  1656,  1657,  1663,  1666,  1677,
+    1680,  1691,  1694,  1705,  1708,  1719,  1728,  1755,  1782,  1804,
+    1820,  1825,  1834,  1834
 };
 #endif
 
@@ -1448,38 +1528,38 @@ yyreduce:
   switch (yyn)
     {
   case 2: /* $@1: %empty  */
-#line 157 "parser.y"
+#line 228 "parser.y"
     { scope_no++; }
-#line 1454 "parser.tab.c"
+#line 1534 "parser.tab.c"
     break;
 
   case 3: /* program: $@1 functions main_function  */
-#line 157 "parser.y"
+#line 228 "parser.y"
                                             { delete_scope(symbol_table, scope_no); scope_no--;}
-#line 1460 "parser.tab.c"
+#line 1540 "parser.tab.c"
     break;
 
   case 6: /* $@2: %empty  */
-#line 168 "parser.y"
+#line 239 "parser.y"
                                         {
+        scope_no++;
         curr_function_parameter_list = NULL;
-        char* prev_enclosing_function = current_enclosing_function;
-        current_enclosing_function = strdup((yyvsp[-1].sval));
+        push_function((yyvsp[-1].sval));
     }
-#line 1470 "parser.tab.c"
+#line 1550 "parser.tab.c"
     break;
 
   case 7: /* $@3: %empty  */
-#line 173 "parser.y"
+#line 244 "parser.y"
                                            {
         inside_a_function_declaration_body = 1;
         curr_function_instructions_list = NULL;
     }
-#line 1479 "parser.tab.c"
+#line 1559 "parser.tab.c"
     break;
 
   case 8: /* function: type IDENTIFIER OPENING_PARENTHESIS $@2 function_arguments CLOSING_PARENTHESIS $@3 body  */
-#line 177 "parser.y"
+#line 248 "parser.y"
          {
         Value val;
         val.function = (yyvsp[0].instruction);
@@ -1490,67 +1570,69 @@ yyreduce:
             char* size_str = strchr((yyvsp[-7].sval), '[') + 1;
             array_size = atoi(size_str);
         }
-        insert_symbol(symbol_table, (yyvsp[-6].sval), (yyvsp[-7].sval), val, FUNCTION, scope_no, 1, 0, array_size > 0, (yyvsp[-3].param_list), yylineno, array_size, prev_enclosing_function);
+        insert_symbol(symbol_table, (yyvsp[-6].sval), (yyvsp[-7].sval), val, FUNCTION, scope_no, 1, 0, array_size > 0, (yyvsp[-3].param_list), yylineno, array_size, get_prev_enclosing_function());
         inside_a_function_declaration_body = 0;
         curr_function_parameter_list = NULL;
         curr_function_parameter_list_ptr = NULL;
         curr_function_instructions_list = NULL;
-        free(current_enclosing_function);
-        current_enclosing_function = prev_enclosing_function;
+        char* popped = pop_function();
+        if (popped) free(popped);
+        scope_no--;
         free((yyvsp[-7].sval));
     }
-#line 1503 "parser.tab.c"
+#line 1584 "parser.tab.c"
     break;
 
   case 9: /* $@4: %empty  */
-#line 196 "parser.y"
+#line 268 "parser.y"
                                                        {
+        scope_no++;
         curr_function_parameter_list = NULL;
-        char* prev_enclosing_function = current_enclosing_function;
-        current_enclosing_function = strdup((yyvsp[-1].sval));
+        push_function((yyvsp[-1].sval));
     }
-#line 1513 "parser.tab.c"
+#line 1594 "parser.tab.c"
     break;
 
   case 10: /* $@5: %empty  */
-#line 201 "parser.y"
+#line 273 "parser.y"
                                            {
         inside_a_function_declaration_body = 1;
         curr_function_instructions_list = NULL;
     }
-#line 1522 "parser.tab.c"
+#line 1603 "parser.tab.c"
     break;
 
   case 11: /* function: VOID_TYPE_KEYWORD IDENTIFIER OPENING_PARENTHESIS $@4 function_arguments CLOSING_PARENTHESIS $@5 body  */
-#line 205 "parser.y"
+#line 277 "parser.y"
          {
         Value val;
         val.function = (yyvsp[0].instruction);
         ValueType return_type = string_to_value_type("void");
-        insert_symbol(symbol_table, (yyvsp[-6].sval), "void", val, FUNCTION, scope_no, 1, 0, 0, (yyvsp[-3].param_list), yylineno, 0, prev_enclosing_function);
+        insert_symbol(symbol_table, (yyvsp[-6].sval), "void", val, FUNCTION, scope_no, 1, 0, 0, (yyvsp[-3].param_list), yylineno, 0, get_prev_enclosing_function());
         inside_a_function_declaration_body = 0;
         curr_function_parameter_list = NULL;
         curr_function_parameter_list_ptr = NULL;
         curr_function_instructions_list = NULL;
-        free(current_enclosing_function);
-        current_enclosing_function = prev_enclosing_function;
+        char* popped = pop_function();
+        if (popped) free(popped);
+        scope_no--;
     }
-#line 1539 "parser.tab.c"
+#line 1621 "parser.tab.c"
     break;
 
   case 12: /* $@6: %empty  */
-#line 217 "parser.y"
+#line 290 "parser.y"
                                                               {
+        scope_no++;
         inside_a_function_declaration_body = 1;
         curr_function_instructions_list = NULL;
-        char* prev_enclosing_function = current_enclosing_function;
-        current_enclosing_function = strdup((yyvsp[-2].sval));
+        push_function((yyvsp[-2].sval));
     }
-#line 1550 "parser.tab.c"
+#line 1632 "parser.tab.c"
     break;
 
   case 13: /* function: type IDENTIFIER OPENING_PARENTHESIS CLOSING_PARENTHESIS $@6 body  */
-#line 223 "parser.y"
+#line 296 "parser.y"
          {
         Value val;
         val.function = (yyvsp[0].instruction);
@@ -1561,44 +1643,46 @@ yyreduce:
             char* size_str = strchr((yyvsp[-5].sval), '[') + 1;
             array_size = atoi(size_str);
         }
-        insert_symbol(symbol_table, (yyvsp[-4].sval), (yyvsp[-5].sval), val, FUNCTION, scope_no, 1, 0, array_size > 0, NULL, yylineno, array_size, prev_enclosing_function);
+        insert_symbol(symbol_table, (yyvsp[-4].sval), (yyvsp[-5].sval), val, FUNCTION, scope_no, 1, 0, array_size > 0, NULL, yylineno, array_size, get_prev_enclosing_function());
         inside_a_function_declaration_body = 0;
         curr_function_instructions_list = NULL;
-        free(current_enclosing_function);
-        current_enclosing_function = prev_enclosing_function;
+        char* popped = pop_function();
+        if (popped) free(popped);
+        scope_no--;
         free((yyvsp[-5].sval));
     }
-#line 1572 "parser.tab.c"
+#line 1655 "parser.tab.c"
     break;
 
   case 14: /* $@7: %empty  */
-#line 240 "parser.y"
+#line 314 "parser.y"
                                                                            {
+        scope_no++;
         inside_a_function_declaration_body = 1;
         curr_function_instructions_list = NULL;
-        char* prev_enclosing_function = current_enclosing_function;
-        current_enclosing_function = strdup((yyvsp[-2].sval));
+        push_function((yyvsp[-2].sval));
     }
-#line 1583 "parser.tab.c"
+#line 1666 "parser.tab.c"
     break;
 
   case 15: /* function: VOID_TYPE_KEYWORD IDENTIFIER OPENING_PARENTHESIS CLOSING_PARENTHESIS $@7 body  */
-#line 246 "parser.y"
+#line 320 "parser.y"
          {
         Value val;
         val.function = (yyvsp[0].instruction);
         ValueType return_type = string_to_value_type("void");
-        insert_symbol(symbol_table, (yyvsp[-4].sval), "void", val, FUNCTION, scope_no, 1, 0, 0, NULL, yylineno, 0, prev_enclosing_function);
+        insert_symbol(symbol_table, (yyvsp[-4].sval), "void", val, FUNCTION, scope_no, 1, 0, 0, NULL, yylineno, 0, get_prev_enclosing_function());
         inside_a_function_declaration_body = 0;
         curr_function_instructions_list = NULL;
-        free(current_enclosing_function);
-        current_enclosing_function = prev_enclosing_function;
+        char* popped = pop_function();
+        if (popped) free(popped);
+        scope_no--;
     }
-#line 1598 "parser.tab.c"
+#line 1682 "parser.tab.c"
     break;
 
   case 16: /* function_arguments: type_identifier  */
-#line 259 "parser.y"
+#line 334 "parser.y"
                     {
         if (!curr_function_parameter_list) {
             curr_function_parameter_list = create_parameter((yyvsp[0].type_id).name, (yyvsp[0].type_id).type);
@@ -1607,6 +1691,7 @@ yyreduce:
             curr_function_parameter_list_ptr->next = create_parameter((yyvsp[0].type_id).name, (yyvsp[0].type_id).type);
             curr_function_parameter_list_ptr = curr_function_parameter_list_ptr->next;
         }
+        curr_function_parameter_list_ptr->array_length = (yyvsp[0].type_id).array_size;
         Value val;
         memset(&val, 0, sizeof(Value));
         ValueType param_type = string_to_value_type((yyvsp[0].type_id).type);
@@ -1614,24 +1699,24 @@ yyreduce:
         if ((yyvsp[0].type_id).array_size > 0) {
             param_type = keyword_to_array_value_type((yyvsp[0].type_id).type);
         }
-        SymbolTableEntry* result = search_symbol_table(symbol_table, (yyvsp[0].type_id).name, scope_no + 1);
+        SymbolTableEntry* result = search_symbol_table(symbol_table, (yyvsp[0].type_id).name, scope_no, get_current_enclosing_function());
         if (result && (!result->enclosing_function_name || 
-                       (current_enclosing_function && 
-                        strcmp(result->enclosing_function_name, current_enclosing_function) == 0))) {
+                       (get_current_enclosing_function() && 
+                        strcmp(result->enclosing_function_name, get_current_enclosing_function()) == 0))) {
             fprintf(stderr, "Cannot re-declare parameter '%s' at line %d\n", (yyvsp[0].type_id).name, yylineno);
             free_symbol_table(symbol_table);
             exit(1);
         }
-        insert_symbol(symbol_table, (yyvsp[0].type_id).name, (yyvsp[0].type_id).type, val, param_type, scope_no + 1, 0, 0, param_size > 0, NULL, yylino, param_size, current_enclosing_function);
+        insert_symbol(symbol_table, (yyvsp[0].type_id).name, (yyvsp[0].type_id).type, val, param_type, scope_no, 0, 0, param_size > 0, NULL, yylineno, param_size, get_current_enclosing_function());
         free((yyvsp[0].type_id).name);
         free((yyvsp[0].type_id).type);
         (yyval.param_list) = curr_function_parameter_list;
     }
-#line 1631 "parser.tab.c"
+#line 1716 "parser.tab.c"
     break;
 
   case 17: /* function_arguments: function_arguments COMMA type_identifier  */
-#line 287 "parser.y"
+#line 363 "parser.y"
                                                {
         curr_function_parameter_list_ptr->next = create_parameter((yyvsp[0].type_id).name, (yyvsp[0].type_id).type);
         curr_function_parameter_list_ptr = curr_function_parameter_list_ptr->next;
@@ -1639,85 +1724,86 @@ yyreduce:
         memset(&val, 0, sizeof(Value));
         ValueType param_type = string_to_value_type((yyvsp[0].type_id).type);
         size_t param_size = (yyvsp[0].type_id).array_size;
+        curr_function_parameter_list_ptr->array_length = (yyvsp[0].type_id).array_size;
         if ((yyvsp[0].type_id).array_size > 0) {
             param_type = keyword_to_array_value_type((yyvsp[0].type_id).type);
         }
-        SymbolTableEntry* result = search_symbol_table(symbol_table, (yyvsp[0].type_id).name, scope_no + 1);
+        SymbolTableEntry* result = search_symbol_table(symbol_table, (yyvsp[0].type_id).name, scope_no, get_current_enclosing_function());
         if (result && (!result->enclosing_function_name || 
-                       (current_enclosing_function && 
-                        strcmp(result->enclosing_function_name, current_enclosing_function) == 0))) {
-            fprintf(stderr, "Cannot re-declare parameter '%s' at line %d\n", (yyvsp[0].type_id).name, yylino);
+                       (get_current_enclosing_function() && 
+                        strcmp(result->enclosing_function_name, get_current_enclosing_function()) == 0))) {
+            fprintf(stderr, "Cannot re-declare parameter '%s' at line %d\n", (yyvsp[0].type_id).name, yylineno);
             free_symbol_table(symbol_table);
             exit(1);
         }
-        insert_symbol(symbol_table, (yyvsp[0].type_id).name, (yyvsp[0].type_id).type, val, param_type, scope_no + 1, 0, 0, param_size > 0, NULL, yylino, param_size, current_enclosing_function);
+        insert_symbol(symbol_table, (yyvsp[0].type_id).name, (yyvsp[0].type_id).type, val, param_type, scope_no, 0, 0, param_size > 0, NULL, yylineno, param_size, get_current_enclosing_function());
         free((yyvsp[0].type_id).name);
         free((yyvsp[0].type_id).type);
         (yyval.param_list) = curr_function_parameter_list;
     }
-#line 1659 "parser.tab.c"
+#line 1745 "parser.tab.c"
     break;
 
   case 18: /* type_identifier: type IDENTIFIER  */
-#line 313 "parser.y"
+#line 390 "parser.y"
                     {
         (yyval.type_id).type = (yyvsp[-1].sval);
         (yyval.type_id).name = (yyvsp[0].sval);
         (yyval.type_id).array_size = 0; // Default for scalar types
     }
-#line 1669 "parser.tab.c"
+#line 1755 "parser.tab.c"
     break;
 
   case 19: /* type_identifier: type OPENING_SQUARE_BRACKETS INTEGER_LITERAL CLOSING_SQUARE_BRACKETS IDENTIFIER  */
-#line 318 "parser.y"
+#line 395 "parser.y"
                                                                                       {
-        (yyval.type_id).type = (yyvsp[-4].sval);
+        (yyval.type_id).type = concat_strings("a", (yyvsp[-4].sval));
         (yyval.type_id).name = (yyvsp[0].sval);
         (yyval.type_id).array_size = (yyvsp[-2].ival);
     }
-#line 1679 "parser.tab.c"
+#line 1765 "parser.tab.c"
     break;
 
   case 20: /* type: INT_TYPE_KEYWORD  */
-#line 326 "parser.y"
+#line 403 "parser.y"
                        { (yyval.sval) = strdup("int"); }
-#line 1685 "parser.tab.c"
+#line 1771 "parser.tab.c"
     break;
 
   case 21: /* type: FLOAT_TYPE_KEYWORD  */
-#line 327 "parser.y"
+#line 404 "parser.y"
                            { (yyval.sval) = strdup("float"); }
-#line 1691 "parser.tab.c"
+#line 1777 "parser.tab.c"
     break;
 
   case 22: /* type: STRING_TYPE_KEYWORD  */
-#line 328 "parser.y"
+#line 405 "parser.y"
                             { (yyval.sval) = strdup("string"); }
-#line 1697 "parser.tab.c"
+#line 1783 "parser.tab.c"
     break;
 
   case 23: /* type: CHAR_TYPE_KEYWORD  */
-#line 329 "parser.y"
+#line 406 "parser.y"
                           { (yyval.sval) = strdup("char"); }
-#line 1703 "parser.tab.c"
+#line 1789 "parser.tab.c"
     break;
 
   case 24: /* type: BOOL_TYPE_KEYWORD  */
-#line 330 "parser.y"
+#line 407 "parser.y"
                           { (yyval.sval) = strdup("bool"); }
-#line 1709 "parser.tab.c"
+#line 1795 "parser.tab.c"
     break;
 
   case 25: /* $@8: %empty  */
-#line 335 "parser.y"
+#line 412 "parser.y"
      { 
         scope_no++;
     }
-#line 1717 "parser.tab.c"
+#line 1803 "parser.tab.c"
     break;
 
   case 26: /* body: $@8 OPENING_CURLY_BRACE statements CLOSING_CURLY_BRACE  */
-#line 340 "parser.y"
+#line 417 "parser.y"
                         { 
         if(!inside_a_function_declaration_body) {
             delete_scope(symbol_table, scope_no); 
@@ -1725,237 +1811,237 @@ yyreduce:
         scope_no--;
         (yyval.instruction) = (yyvsp[-1].instruction); 
     }
-#line 1729 "parser.tab.c"
+#line 1815 "parser.tab.c"
     break;
 
   case 27: /* statements: statement statements  */
-#line 351 "parser.y"
+#line 428 "parser.y"
                {(yyval.instruction) = NULL;}
-#line 1735 "parser.tab.c"
+#line 1821 "parser.tab.c"
     break;
 
   case 28: /* statements: %empty  */
-#line 352 "parser.y"
+#line 429 "parser.y"
                   {(yyval.instruction) = NULL;}
-#line 1741 "parser.tab.c"
+#line 1827 "parser.tab.c"
     break;
 
   case 29: /* statement: body SEMICOLON  */
-#line 355 "parser.y"
+#line 432 "parser.y"
                           {(yyval.instruction) = NULL;}
-#line 1747 "parser.tab.c"
+#line 1833 "parser.tab.c"
     break;
 
   case 30: /* statement: assignment  */
-#line 356 "parser.y"
+#line 433 "parser.y"
                       {(yyval.instruction) = NULL;}
-#line 1753 "parser.tab.c"
+#line 1839 "parser.tab.c"
     break;
 
   case 31: /* statement: array_assignment  */
-#line 357 "parser.y"
+#line 434 "parser.y"
                             {(yyval.instruction) = NULL;}
-#line 1759 "parser.tab.c"
+#line 1845 "parser.tab.c"
     break;
 
   case 32: /* statement: return_statement  */
-#line 358 "parser.y"
+#line 435 "parser.y"
                             {(yyval.instruction) = NULL;}
-#line 1765 "parser.tab.c"
+#line 1851 "parser.tab.c"
     break;
 
   case 33: /* statement: expression SEMICOLON  */
-#line 359 "parser.y"
+#line 436 "parser.y"
                                 {(yyval.instruction) = NULL;}
-#line 1771 "parser.tab.c"
+#line 1857 "parser.tab.c"
     break;
 
   case 34: /* statement: initialization  */
-#line 360 "parser.y"
+#line 437 "parser.y"
                           {(yyval.instruction) = NULL;}
-#line 1777 "parser.tab.c"
+#line 1863 "parser.tab.c"
     break;
 
   case 35: /* statement: variable_declaration  */
-#line 361 "parser.y"
+#line 438 "parser.y"
                                 {(yyval.instruction) = NULL;}
-#line 1783 "parser.tab.c"
+#line 1869 "parser.tab.c"
     break;
 
   case 36: /* statement: const_initialization  */
-#line 362 "parser.y"
+#line 439 "parser.y"
                                 {(yyval.instruction) = NULL;}
-#line 1789 "parser.tab.c"
+#line 1875 "parser.tab.c"
     break;
 
   case 37: /* statement: if_statement  */
-#line 363 "parser.y"
+#line 440 "parser.y"
                         {(yyval.instruction) = NULL;}
-#line 1795 "parser.tab.c"
+#line 1881 "parser.tab.c"
     break;
 
   case 38: /* statement: for_statement  */
-#line 364 "parser.y"
+#line 441 "parser.y"
                          {(yyval.instruction) = NULL;}
-#line 1801 "parser.tab.c"
+#line 1887 "parser.tab.c"
     break;
 
   case 39: /* statement: while_statement  */
-#line 365 "parser.y"
+#line 442 "parser.y"
                            {(yyval.instruction) = NULL;}
-#line 1807 "parser.tab.c"
+#line 1893 "parser.tab.c"
     break;
 
   case 40: /* statement: do_while_statement  */
-#line 366 "parser.y"
+#line 443 "parser.y"
                               {(yyval.instruction) = NULL;}
-#line 1813 "parser.tab.c"
+#line 1899 "parser.tab.c"
     break;
 
   case 41: /* statement: switch_statement  */
-#line 367 "parser.y"
+#line 444 "parser.y"
                             {(yyval.instruction) = NULL;}
-#line 1819 "parser.tab.c"
+#line 1905 "parser.tab.c"
     break;
 
   case 42: /* statement: function  */
-#line 368 "parser.y"
+#line 445 "parser.y"
                     {(yyval.instruction) = NULL;}
-#line 1825 "parser.tab.c"
+#line 1911 "parser.tab.c"
     break;
 
   case 52: /* loop_update: IDENTIFIER ASSIGNMENT expression  */
-#line 390 "parser.y"
-                                                            {
-                              SymbolTableEntry* result = search_symbol_table(symbol_table, (yyvsp[-2].sval), scope_no);
-                              if(!result){
-                                  fprintf(stderr, "Undeclared identifier '%s' at line %d\n", (yyvsp[-2].sval), yylineno);
-                                  free_symbol_table(symbol_table);
-                                  exit(1);
-                              }
-                              if(result->is_function){
-                                fprintf(stderr, "Cannot use function '%s' at line %d as a loop variable", (yyvsp[-2].sval), yylineno);
-                                free_symbol_table(symbol_table);
-                                exit(1);
-                              }
-                              if(result->is_constant){
-                                fprintf(stderr, "Cannot use const identifier '%s' at line %d as a loop variable", (yyvsp[-2].sval), yylineno);
-                                free_symbol_table(symbol_table);
-                                exit(1);
-                              }
-                              if (result->value_type != (yyvsp[0].expr).expr_return_type) {
-                                  fprintf(stderr, "Type mismatch in loop update for '%s' at line %d\n", (yyvsp[-2].sval), yylineno);
-                                  free_symbol_table(symbol_table);
-                                  exit(1);
-                              }
-                          }
-#line 1853 "parser.tab.c"
+#line 468 "parser.y"
+                                     {
+        SymbolTableEntry* result = search_symbol_table(symbol_table, (yyvsp[-2].sval), scope_no, get_current_enclosing_function());
+        if (!result) {
+            fprintf(stderr, "Undeclared identifier '%s' at line %d\n", (yyvsp[-2].sval), yylineno);
+            free_symbol_table(symbol_table);
+            exit(1);
+        }
+        if (result->is_function) {
+            fprintf(stderr, "Cannot use function '%s' at line %d as a loop variable\n", (yyvsp[-2].sval), yylineno);
+            free_symbol_table(symbol_table);
+            exit(1);
+        }
+        if (result->is_constant) {
+            fprintf(stderr, "Cannot use const identifier '%s' at line %d as a loop variable\n", (yyvsp[-2].sval), yylineno);
+            free_symbol_table(symbol_table);
+            exit(1);
+        }
+        if (result->value_type != (yyvsp[0].expr).expr_return_type) {
+            fprintf(stderr, "Type mismatch in loop update for '%s' at line %d\n", (yyvsp[-2].sval), yylineno);
+            free_symbol_table(symbol_table);
+            exit(1);
+        }
+    }
+#line 1939 "parser.tab.c"
     break;
 
   case 53: /* loop_update: IDENTIFIER INCREMENT  */
-#line 413 "parser.y"
-                                           {
-                        SymbolTableEntry* result = search_symbol_table(symbol_table, (yyvsp[-1].sval), scope_no);
-                        if (!result) {
-                            fprintf(stderr, "Undeclared identifier '%s' at line %d\n", (yyvsp[-1].sval), yylineno);
-                            free_symbol_table(symbol_table);
-                            exit(1);
-                        }
-                        if (result->is_function) {
-                            fprintf(stderr, "Cannot use function '%s' at line %d as a loop variable\n", (yyvsp[-1].sval), yylineno);
-                            free_symbol_table(symbol_table);
-                            exit(1);
-                        }
-                        if (result->is_constant) {
-                            fprintf(stderr, "Cannot use const identifier '%s' at line %d as a loop variable\n", (yyvsp[-1].sval), yylineno);
-                            free_symbol_table(symbol_table);
-                            exit(1);
-                        }
-                        if (result->value_type != INT_VALUE && result->value_type != FLOAT_VALUE) {
-                            fprintf(stderr, "Increment requires numeric operand at line %d\n", (yyvsp[-1].sval), yylineno);
-                            free_symbol_table(symbol_table);
-                            exit(1);
-                        }
-                        if (result->value_type == INT_VALUE) {
-                            result->value.int_value++;
-                        } else {
-                            result->value.float_value++;
-                        }
-                    }
-#line 1886 "parser.tab.c"
+#line 491 "parser.y"
+                           {
+        SymbolTableEntry* result = search_symbol_table(symbol_table, (yyvsp[-1].sval), scope_no, get_current_enclosing_function());
+        if (!result) {
+            fprintf(stderr, "Undeclared identifier '%s' at line %d\n", (yyvsp[-1].sval), yylineno);
+            free_symbol_table(symbol_table);
+            exit(1);
+        }
+        if (result->is_function) {
+            fprintf(stderr, "Cannot use function '%s' at line %d as a loop variable\n", (yyvsp[-1].sval), yylineno);
+            free_symbol_table(symbol_table);
+            exit(1);
+        }
+        if (result->is_constant) {
+            fprintf(stderr, "Cannot use const identifier '%s' at line %d as a loop variable\n", (yyvsp[-1].sval), yylineno);
+            free_symbol_table(symbol_table);
+            exit(1);
+        }
+        if (result->value_type != INT_VALUE && result->value_type != FLOAT_VALUE) {
+            fprintf(stderr, "Increment requires numeric operand at line %d\n", yylineno);
+            free_symbol_table(symbol_table);
+            exit(1);
+        }
+        if (result->value_type == INT_VALUE) {
+            result->value.int_value++;
+        } else {
+            result->value.float_value++;
+        }
+    }
+#line 1972 "parser.tab.c"
     break;
 
   case 54: /* loop_update: IDENTIFIER DECREMENT  */
-#line 441 "parser.y"
-                                           {
-                        SymbolTableEntry* result = search_symbol_table(symbol_table, (yyvsp[-1].sval), scope_no);
-                        if (!result) {
-                            fprintf(stderr, "Undeclared identifier '%s' at line %d\n", (yyvsp[-1].sval), yylineno);
-                            free_symbol_table(symbol_table);
-                            exit(1);
-                        }
-                        if (result->is_function) {
-                            fprintf(stderr, "Cannot use function '%s' at line %d as a loop variable\n", (yyvsp[-1].sval), yylineno);
-                            free_symbol_table(symbol_table);
-                            exit(1);
-                        }
-                        if (result->is_constant) {
-                            fprintf(stderr, "Cannot use const identifier '%s' at line %d as a loop variable\n", (yyvsp[-1].sval), yylineno);
-                            free_symbol_table(symbol_table);
-                            exit(1);
-                        }
-                        if (result->value_type != INT_VALUE && result->value_type != FLOAT_VALUE) {
-                            fprintf(stderr, "Decrement requires numeric operand at line %d\n", (yyvsp[-1].sval), yylineno);
-                            free_symbol_table(symbol_table);
-                            exit(1);
-                        }
-                        if (result->value_type == INT_VALUE) {
-                            result->value.int_value--;
-                        } else {
-                            result->value.float_value--;
-                        }
-                    }
-#line 1919 "parser.tab.c"
+#line 519 "parser.y"
+                           {
+        SymbolTableEntry* result = search_symbol_table(symbol_table, (yyvsp[-1].sval), scope_no, get_current_enclosing_function());
+        if (!result) {
+            fprintf(stderr, "Undeclared identifier '%s' at line %d\n", (yyvsp[-1].sval), yylineno);
+            free_symbol_table(symbol_table);
+            exit(1);
+        }
+        if (result->is_function) {
+            fprintf(stderr, "Cannot use function '%s' at line %d as a loop variable\n", (yyvsp[-1].sval), yylineno);
+            free_symbol_table(symbol_table);
+            exit(1);
+        }
+        if (result->is_constant) {
+            fprintf(stderr, "Cannot use const identifier '%s' at line %d as a loop variable\n", (yyvsp[-1].sval), yylineno);
+            free_symbol_table(symbol_table);
+            exit(1);
+        }
+        if (result->value_type != INT_VALUE && result->value_type != FLOAT_VALUE) {
+            fprintf(stderr, "Decrement requires numeric operand at line %d\n", yylineno);
+            free_symbol_table(symbol_table);
+            exit(1);
+        }
+        if (result->value_type == INT_VALUE) {
+            result->value.int_value--;
+        } else {
+            result->value.float_value--;
+        }
+    }
+#line 2005 "parser.tab.c"
     break;
 
   case 59: /* $@9: %empty  */
-#line 479 "parser.y"
-                                                                        {
-                              SymbolTableEntry* result = search_symbol_table(symbol_table, (yyvsp[0].sval), scope_no);
-                              if(!result){
-                                  fprintf(stderr, "Undeclared identifier '%s' at line %d\n", (yyvsp[0].sval), yylineno);
-                                  free_symbol_table(symbol_table);
-                                  exit(1);
-                              }
-                              if(result->value_type != INT_VALUE){
-                                fprintf(stderr, "Cannot use non-integer '%s' at line %d as a switch statement variable", (yyvsp[0].sval), yylineno);
-                                free_symbol_table(symbol_table);
-                                exit(1);
-                              }
-                          }
-#line 1937 "parser.tab.c"
+#line 558 "parser.y"
+                                                  {
+        SymbolTableEntry* result = search_symbol_table(symbol_table, (yyvsp[0].sval), scope_no, get_current_enclosing_function());
+        if (!result) {
+            fprintf(stderr, "Undeclared identifier '%s' at line %d\n", (yyvsp[0].sval), yylineno);
+            free_symbol_table(symbol_table);
+            exit(1);
+        }
+        if (result->value_type != INT_VALUE) {
+            fprintf(stderr, "Cannot use non-integer '%s' at line %d as a switch statement variable\n", (yyvsp[0].sval), yylineno);
+            free_symbol_table(symbol_table);
+            exit(1);
+        }
+    }
+#line 2023 "parser.tab.c"
     break;
 
   case 60: /* $@10: %empty  */
-#line 492 "parser.y"
-                                                                   {scope_no++;}
-#line 1943 "parser.tab.c"
+#line 571 "parser.y"
+                                            {scope_no++;}
+#line 2029 "parser.tab.c"
     break;
 
   case 61: /* switch_statement: SWITCH_KEYWORD OPENING_PARENTHESIS IDENTIFIER $@9 CLOSING_PARENTHESIS OPENING_CURLY_BRACE $@10 case_list default_case CLOSING_CURLY_BRACE  */
-#line 492 "parser.y"
-                                                                                                                            { delete_scope(symbol_table, scope_no); scope_no--;}
-#line 1949 "parser.tab.c"
+#line 572 "parser.y"
+                                               { delete_scope(symbol_table, scope_no); scope_no--;}
+#line 2035 "parser.tab.c"
     break;
 
   case 66: /* $@11: %empty  */
-#line 507 "parser.y"
+#line 587 "parser.y"
                                           {
-        SymbolTableEntry* result = search_symbol_table(symbol_table, (yyvsp[-2].type_id).name, scope_no);
-        if (result && (!result->enclosing_function_name && !current_enclosing_function ||
-                       (result->enclosing_function_name && current_enclosing_function &&
-                        strcmp(result->enclosing_function_name, current_enclosing_function) == 0))) {
-            fprintf(stderr, "Cannot re-declare identifier '%s' at line %d\n", (yyvsp[-2].type_id).name, yylino);
+        SymbolTableEntry* result = search_symbol_table(symbol_table, (yyvsp[-2].type_id).name, scope_no, get_current_enclosing_function());
+        if (result && (!result->enclosing_function_name || 
+                       (get_current_enclosing_function() && 
+                        strcmp(result->enclosing_function_name, get_current_enclosing_function()) == 0))) {
+            fprintf(stderr, "Cannot re-declare identifier '%s' at line %d\n", (yyvsp[-2].type_id).name, yylineno);
             free_symbol_table(symbol_table);
             exit(1);
         }
@@ -1966,7 +2052,7 @@ yyreduce:
         }
         if (declared_type != (yyvsp[0].expr).expr_return_type || 
             (declared_type >= INT_ARRAY_VALUE && declared_size != (yyvsp[0].expr).array_length)) {
-            fprintf(stderr, "Type or size mismatch in initialization at line %d\n", (yyvsp[-2].type_id).name, yylino);
+            fprintf(stderr, "Type or size mismatch in initialization at line %d\n", yylineno);
             free_symbol_table(symbol_table);
             exit(1);
         }
@@ -2010,21 +2096,21 @@ yyreduce:
                 }
                 break;
         }
-        insert_symbol(symbol_table, (yyvsp[-2].type_id).name, (yyvsp[-2].type_id).type, val, declared_type, scope_no, 0, 0, declared_size > 0, NULL, yylino, declared_size, current_enclosing_function);
+        insert_symbol(symbol_table, (yyvsp[-2].type_id).name, (yyvsp[-2].type_id).type, val, declared_type, scope_no, 0, 0, declared_size > 0, NULL, yylineno, declared_size, get_current_enclosing_function());
         free((yyvsp[-2].type_id).name);
         free((yyvsp[-2].type_id).type);
     }
-#line 2018 "parser.tab.c"
+#line 2104 "parser.tab.c"
     break;
 
   case 68: /* $@12: %empty  */
-#line 572 "parser.y"
+#line 652 "parser.y"
                                                                                                                                                            {
-        SymbolTableEntry* result = search_symbol_table(symbol_table, (yyvsp[-7].type_id).name, scope_no);
-        if (result && (!result->enclosing_function_name && !current_enclosing_function ||
-                       (result->enclosing_function_name && current_enclosing_function &&
-                        strcmp(result->enclosing_function_name, current_enclosing_function) == 0))) {
-            fprintf(stderr, "Cannot re-declare identifier '%s' at line %d\n", (yyvsp[-7].type_id).name, yylino);
+        SymbolTableEntry* result = search_symbol_table(symbol_table, (yyvsp[-7].type_id).name, scope_no, get_current_enclosing_function());
+        if (result && (!result->enclosing_function_name || 
+                       (get_current_enclosing_function() && 
+                        strcmp(result->enclosing_function_name, get_current_enclosing_function()) == 0))) {
+            fprintf(stderr, "Cannot re-declare identifier '%s' at line %d\n", (yyvsp[-7].type_id).name, yylineno);
             free_symbol_table(symbol_table);
             exit(1);
         }
@@ -2035,18 +2121,18 @@ yyreduce:
             declared_type = keyword_to_array_value_type((yyvsp[-7].type_id).type + 1);
         }
         size_t provided_size = 0;
-        struct expr_lst* current = &(yyvsp[-1].expr_lst);
+        ExprList* current = &((yyvsp[-1].expr_lst));
         while (current && current->e) {
             provided_size++;
             if (current->e->expr_return_type != element_type) {
-                fprintf(stderr, "Type mismatch in array initialization at line %d\n", yylino);
+                fprintf(stderr, "Type mismatch in array initialization at line %d\n", yylineno);
                 free_symbol_table(symbol_table);
                 exit(1);
             }
             current = current->next_expr;
         }
         if (provided_size > declared_size) {
-            fprintf(stderr, "Too many initializers for array '%s' at line %d\n", (yyvsp[-7].type_id).name, yylino);
+            fprintf(stderr, "Too many initializers for array '%s' at line %d\n", (yyvsp[-7].type_id).name, yylineno);
             free_symbol_table(symbol_table);
             exit(1);
         }
@@ -2089,34 +2175,34 @@ yyreduce:
                 }
                 break;
             default:
-                fprintf(stderr, "Unsupported array type at line %d\n", yylino);
+                fprintf(stderr, "Unsupported array type at line %d\n", yylineno);
                 free_symbol_table(symbol_table);
                 exit(1);
         }
-        insert_symbol(symbol_table, (yyvsp[-7].type_id).name, (yyvsp[-7].type_id).type, val, declared_type, scope_no, 0, 0, 1, NULL, yylino, declared_size, current_enclosing_function);
+        insert_symbol(symbol_table, (yyvsp[-7].type_id).name, (yyvsp[-7].type_id).type, val, declared_type, scope_no, 0, 0, 1, NULL, yylineno, declared_size, get_current_enclosing_function());
         free((yyvsp[-7].type_id).name);
         free((yyvsp[-7].type_id).type);
     }
-#line 2101 "parser.tab.c"
+#line 2187 "parser.tab.c"
     break;
 
   case 70: /* $@13: %empty  */
-#line 654 "parser.y"
+#line 734 "parser.y"
                                   {
-        SymbolTableEntry* result = search_symbol_table(symbol_table, (yyvsp[0].type_id).name, scope_no);
-        if (result && (!result->enclosing_function_name && !current_enclosing_function ||
-                       (result->enclosing_function_name && current_enclosing_function &&
-                        strcmp(result->enclosing_function_name, current_enclosing_function) == 0))) {
-            fprintf(stderr, "Cannot re-declare identifier '%s' at line %d\n", (yyvsp[0].type_id).name, yylino);
+        SymbolTableEntry* result = search_symbol_table(symbol_table, (yyvsp[0].type_id).name, scope_no, get_current_enclosing_function());
+        if (result && (!result->enclosing_function_name || 
+                       (get_current_enclosing_function() && 
+                        strcmp(result->enclosing_function_name, get_current_enclosing_function()) == 0))) {
+            fprintf(stderr, "Cannot re-declare identifier '%s' at line %d\n", (yyvsp[0].type_id).name, yylineno);
             free_symbol_table(symbol_table);
             exit(1);
         }
     }
-#line 2116 "parser.tab.c"
+#line 2202 "parser.tab.c"
     break;
 
   case 71: /* const_initialization: CONST_KEYWORD type_identifier $@13 ASSIGNMENT expression SEMICOLON  */
-#line 664 "parser.y"
+#line 744 "parser.y"
                                     {
         ValueType declared_type = string_to_value_type((yyvsp[-4].type_id).type);
         size_t declared_size = (yyvsp[-4].type_id).array_size;
@@ -2125,7 +2211,7 @@ yyreduce:
         }
         if (declared_type != (yyvsp[-1].expr).expr_return_type || 
             (declared_type >= INT_ARRAY_VALUE && declared_size != (yyvsp[-1].expr).array_length)) {
-            fprintf(stderr, "Type mismatch in constant initialization at line %d\n", (yyvsp[-4].type_id).name, yylino);
+            fprintf(stderr, "Type mismatch in constant initialization at line %d\n", yylineno);
             free_symbol_table(symbol_table);
             exit(1);
         }
@@ -2169,34 +2255,34 @@ yyreduce:
                 }
                 break;
             default:
-                fprintf(stderr, "Unsupported type in constant initialization at line %d\n", yylino);
+                fprintf(stderr, "Unsupported type in constant initialization at line %d\n", yylineno);
                 free_symbol_table(symbol_table);
                 exit(1);
         }
-        insert_symbol(symbol_table, (yyvsp[-4].type_id).name, (yyvsp[-4].type_id).type, val, declared_type, scope_no, 0, 1, declared_size > 0, NULL, yylino, declared_size, current_enclosing_function);
+        insert_symbol(symbol_table, (yyvsp[-4].type_id).name, (yyvsp[-4].type_id).type, val, declared_type, scope_no, 0, 1, declared_size > 0, NULL, yylineno, declared_size, get_current_enclosing_function());
         free((yyvsp[-4].type_id).name);
         free((yyvsp[-4].type_id).type);
     }
-#line 2181 "parser.tab.c"
+#line 2267 "parser.tab.c"
     break;
 
   case 72: /* $@14: %empty  */
-#line 724 "parser.y"
+#line 804 "parser.y"
                                     {
-        SymbolTableEntry* result = search_symbol_table(symbol_table, (yyvsp[0].type_id).name, scope_no);
-        if (result && (!result->enclosing_function_name && !current_enclosing_function ||
-                       (result->enclosing_function_name && current_enclosing_function &&
-                        strcmp(result->enclosing_function_name, current_enclosing_function) == 0))) {
-            fprintf(stderr, "Cannot re-declare identifier '%s' at line %d\n", (yyvsp[0].type_id).name, yylino);
+        SymbolTableEntry* result = search_symbol_table(symbol_table, (yyvsp[0].type_id).name, scope_no, get_current_enclosing_function());
+        if (result && (!result->enclosing_function_name || 
+                       (get_current_enclosing_function() && 
+                        strcmp(result->enclosing_function_name, get_current_enclosing_function()) == 0))) {
+            fprintf(stderr, "Cannot re-declare identifier '%s' at line %d\n", (yyvsp[0].type_id).name, yylineno);
             free_symbol_table(symbol_table);
             exit(1);
         }
     }
-#line 2196 "parser.tab.c"
+#line 2282 "parser.tab.c"
     break;
 
   case 73: /* const_initialization: CONST_KEYWORD type_identifier $@14 OPENING_SQUARE_BRACKETS INTEGER_LITERAL CLOSING_SQUARE_BRACKETS ASSIGNMENT OPENING_SQUARE_BRACKETS expr_list CLOSING_SQUARE_BRACKETS SEMICOLON  */
-#line 734 "parser.y"
+#line 814 "parser.y"
                                                                                                                                                    {
         ValueType declared_type = string_to_value_type((yyvsp[-9].type_id).type);
         ValueType element_type = declared_type;
@@ -2205,79 +2291,79 @@ yyreduce:
             declared_type = keyword_to_array_value_type((yyvsp[-9].type_id).type);
         }
         size_t provided_size = 0;
-        struct expr_lst* current = &(yyvsp[-2].expr_lst);
+        ExprList* current = &((yyvsp[-2].expr_lst));
         while (current && current->e) {
             provided_size++;
             if (current->e->expr_return_type != element_type) {
-                fprintf(stderr, "Type mismatch in constant array initialization at line %d\n", yylino);
+                fprintf(stderr, "Type mismatch in constant array initialization at line %d\n", yylineno);
+                free_symbol_table(symbol_table);
+                exit(1);
+            }
+            current = current->next_expr;
+        }
+        if (provided_size > declared_size) {
+            fprintf(stderr, "Too many initializers for constant array '%s' at line %d\n", (yyvsp[-9].type_id).name, yylineno);
             free_symbol_table(symbol_table);
             exit(1);
         }
-        current = current->next_expr;
+        Value val;
+        switch (declared_type) {
+            case INT_ARRAY_VALUE:
+                val.int_array = (int*)calloc(declared_size, sizeof(int));
+                current = &(yyvsp[-2].expr_lst);
+                for (size_t i = 0; i < provided_size && current && current->e; i++) {
+                    val.int_array[i] = current->e->expr_value.int_value;
+                    current = current->next_expr;
+                }
+                break;
+            case FLOAT_ARRAY_VALUE:
+                val.float_array = (double*)calloc(declared_size, sizeof(double));
+                current = &(yyvsp[-2].expr_lst);
+                for (size_t i = 0; i < provided_size && current && current->e; i++) {
+                    val.float_array[i] = current->e->expr_value.float_value;
+                    current = current->next_expr;
+                }
+                break;
+            case CHAR_ARRAY_VALUE:
+                val.char_array = (char*)calloc(declared_size, sizeof(char));
+                current = &(yyvsp[-2].expr_lst);
+                for (size_t i = 0; i < provided_size && current && current->e; i++) {
+                    val.char_array[i] = current->e->expr_value.char_value;
+                    current = current->next_expr;
+                }
+                break;
+            case STRING_ARRAY_VALUE:
+                val.string_array = (char**)malloc(declared_size * sizeof(char*));
+                for (size_t i = 0; i < declared_size; i++) {
+                    val.string_array[i] = strdup("");
+                }
+                current = &(yyvsp[-2].expr_lst);
+                for (size_t i = 0; i < provided_size && current && current->e; i++) {
+                    free(val.string_array[i]);
+                    val.string_array[i] = strdup(current->e->expr_value.char_array);
+                    current = current->next_expr;
+                }
+                break;
+            default:
+                fprintf(stderr, "Unsupported array type at line %d\n", yylineno);
+                free_symbol_table(symbol_table);
+                exit(1);
+        }
+        insert_symbol(symbol_table, (yyvsp[-9].type_id).name, (yyvsp[-9].type_id).type, val, declared_type, scope_no, 0, 1, declared_size > 0, NULL, yylineno, declared_size, get_current_enclosing_function());
+        free((yyvsp[-9].type_id).name);
+        free((yyvsp[-9].type_id).type);
     }
-    if (provided_size > declared_size) {
-        fprintf(stderr, "Too many initializers for constant array '%s' at line %d\n", (yyvsp[-9].type_id).name, yylino);
-        free_symbol_table(symbol_table);
-        exit(1);
-    }
-    Value val;
-    switch (declared_type) {
-        case INT_ARRAY_VALUE:
-            val.int_array = (int*)calloc(declared_size, sizeof(int));
-            current = &(yyvsp[-2].expr_lst);
-            for (size_t i = 0; i < provided_size && current && current->e; i++) {
-                val.int_array[i] = current->e->expr_value.int_value;
-                current = current->next_expr;
-            }
-            break;
-        case FLOAT_ARRAY_VALUE:
-            val.float_array = (double*)calloc(declared_size, sizeof(double));
-            current = &(yyvsp[-2].expr_lst);
-            for (size_t i = 0; i < provided_size && current && current->e; i++) {
-                val.float_array[i] = current->e->expr_value.float_value;
-                current = current->next_expr;
-            }
-            break;
-        case CHAR_ARRAY_VALUE:
-            val.char_array = (char*)calloc(declared_size, sizeof(char));
-            current = &(yyvsp[-2].expr_lst);
-            for (size_t i = 0; i < provided_size && current && current->e; i++) {
-                val.char_array[i] = current->e->expr_value.char_value;
-                current = current->next_expr;
-            }
-            break;
-        case STRING_ARRAY_VALUE:
-            val.string_array = (char**)malloc(declared_size * sizeof(char*));
-            for (size_t i = 0; i < declared_size; i++) {
-                val.string_array[i] = strdup("");
-            }
-            current = &(yyvsp[-2].expr_lst);
-            for (size_t i = 0; i < provided_size && current && current->e; i++) {
-                free(val.string_array[i]);
-                val.string_array[i] = strdup(current->e->expr_value.char_array);
-                current = current->next_expr;
-            }
-            break;
-        default:
-            fprintf(stderr, "Unsupported array type at line %d\n", yylino);
-            free_symbol_table(symbol_table);
-            exit(1);
-    }
-    insert_symbol(symbol_table, (yyvsp[-9].type_id).name, (yyvsp[-9].type_id).type, val, declared_type, scope_no, 0, 1, declared_size > 0, NULL, yylino, declared_size, current_enclosing_function);
-    free((yyvsp[-9].type_id).name);
-    free((yyvsp[-9].type_id).type);
-}
-#line 2271 "parser.tab.c"
+#line 2357 "parser.tab.c"
     break;
 
   case 74: /* $@15: %empty  */
-#line 807 "parser.y"
+#line 887 "parser.y"
                     {
-        SymbolTableEntry* result = search_symbol_table(symbol_table, (yyvsp[0].type_id).name, scope_no);
-        if (result && (!result->enclosing_function_name && !current_enclosing_function ||
-                       (result->enclosing_function_name && current_enclosing_function &&
-                        strcmp(result->enclosing_function_name, current_enclosing_function) == 0))) {
-            fprintf(stderr, "Cannot re-declare identifier '%s' at line %d\n", (yyvsp[0].type_id).name, yylino);
+        SymbolTableEntry* result = search_symbol_table(symbol_table, (yyvsp[0].type_id).name, scope_no, get_current_enclosing_function());
+        if (result && (!result->enclosing_function_name || 
+                       (get_current_enclosing_function() && 
+                        strcmp(result->enclosing_function_name, get_current_enclosing_function()) == 0))) {
+            fprintf(stderr, "Cannot re-declare identifier '%s' at line %d\n", (yyvsp[0].type_id).name, yylineno);
             free_symbol_table(symbol_table);
             exit(1);
         }
@@ -2287,7 +2373,7 @@ yyreduce:
             declared_type = keyword_to_array_value_type((yyvsp[0].type_id).type);
         }
         if (declared_size > 0 && declared_size <= 0) {
-            fprintf(stderr, "Array size must be positive at line %d\n", yylino);
+            fprintf(stderr, "Array size must be positive at line %d\n", yylineno);
             free_symbol_table(symbol_table);
             exit(1);
         }
@@ -2322,24 +2408,24 @@ yyreduce:
                 }
                 break;
         }
-        insert_symbol(symbol_table, (yyvsp[0].type_id).name, (yyvsp[0].type_id).type, val, declared_type, scope_no, 0, 0, declared_size > 0, NULL, yylino, declared_size, current_enclosing_function);
+        insert_symbol(symbol_table, (yyvsp[0].type_id).name, (yyvsp[0].type_id).type, val, declared_type, scope_no, 0, 0, declared_size > 0, NULL, yylineno, declared_size, get_current_enclosing_function());
         free((yyvsp[0].type_id).name);
         free((yyvsp[0].type_id).type);
     }
-#line 2330 "parser.tab.c"
+#line 2416 "parser.tab.c"
     break;
 
   case 76: /* return_statement: RETURN_KEYWORD expression SEMICOLON  */
-#line 865 "parser.y"
+#line 945 "parser.y"
                                         {
-        if (!current_enclosing_function) {
-            fprintf(stderr, "Return statement outside function at line %d\n", yylino);
+        if (!get_current_enclosing_function()) {
+            fprintf(stderr, "Return statement outside function at line %d\n", yylineno);
             free_symbol_table(symbol_table);
             exit(1);
         }
-        SymbolTableEntry* func = search_symbol_table(symbol_table, current_enclosing_function, scope_no);
+        SymbolTableEntry* func = search_symbol_table(symbol_table, get_current_enclosing_function(), scope_no, get_current_enclosing_function());
         if (!func) {
-            fprintf(stderr, "Function '%s' not found at line %d\n", current_enclosing_function\, yylino);
+            fprintf(stderr, "Function '%s' not found at line %d\n", get_current_enclosing_function(), yylineno);
             free_symbol_table(symbol_table);
             exit(1);
         }
@@ -2352,18 +2438,18 @@ yyreduce:
         }
         if (return_type != (yyvsp[-1].expr).expr_return_type || 
             (return_type >= INT_ARRAY_VALUE && return_size != (yyvsp[-1].expr).array_length)) {
-            fprintf(stderr, "Return type mismatch in function '%s' at line %d\n", current_enclosing_function, yylino);
+            fprintf(stderr, "Return type mismatch in function '%s' at line %d\n", get_current_enclosing_function(), yylineno);
             free_symbol_table(symbol_table);
             exit(1);
         }
     }
-#line 2361 "parser.tab.c"
+#line 2447 "parser.tab.c"
     break;
 
   case 77: /* $@16: %empty  */
-#line 894 "parser.y"
+#line 974 "parser.y"
                                      {
-        SymbolTableEntry* result = search_symbol_table(symbol_table, (yyvsp[-2].sval), scope_no);
+        SymbolTableEntry* result = search_symbol_table(symbol_table, (yyvsp[-2].sval), scope_no, get_current_enclosing_function());
         if (!result) {
             fprintf(stderr, "Undeclared identifier '%s' at line %d\n", (yyvsp[-2].sval), yylineno);
             free_symbol_table(symbol_table);
@@ -2406,13 +2492,13 @@ yyreduce:
                 exit(1);
         }
     }
-#line 2410 "parser.tab.c"
+#line 2496 "parser.tab.c"
     break;
 
   case 79: /* $@17: %empty  */
-#line 942 "parser.y"
+#line 1022 "parser.y"
                                                                             {
-        SymbolTableEntry* result = search_symbol_table(symbol_table, (yyvsp[-4].sval), scope_no);
+        SymbolTableEntry* result = search_symbol_table(symbol_table, (yyvsp[-4].sval), scope_no, get_current_enclosing_function());
         if (!result) {
             fprintf(stderr, "Undeclared identifier '%s' at line %d\n", (yyvsp[-4].sval), yylineno);
             free_symbol_table(symbol_table);
@@ -2445,7 +2531,7 @@ yyreduce:
         }
         size_t array_size = result->array_length;
         size_t provided_size = 0;
-        expr_lst* current = &(yyvsp[-1].expr_lst);
+        ExprList* current = &((yyvsp[-1].expr_lst));
         while (current) {
             provided_size++;
             if (current->e->expr_return_type != element_type) {
@@ -2508,64 +2594,64 @@ yyreduce:
                 break;
         }
     }
-#line 2512 "parser.tab.c"
+#line 2598 "parser.tab.c"
     break;
 
   case 81: /* expression: boolean_expr  */
-#line 1044 "parser.y"
+#line 1124 "parser.y"
                  {
         (yyval.expr).expr_type = BOOL_EXPR;
         (yyval.expr).expr_value.int_value = (yyvsp[0].expr).expr_value.int_value;
         (yyval.expr).expr_return_type = BOOL_VALUE;
         (yyval.expr).associated_identifier = NULL;
     }
-#line 2523 "parser.tab.c"
+#line 2609 "parser.tab.c"
     break;
 
   case 82: /* expression: arithmetic_expr  */
-#line 1050 "parser.y"
+#line 1130 "parser.y"
                       { (yyval.expr) = (yyvsp[0].expr); }
-#line 2529 "parser.tab.c"
+#line 2615 "parser.tab.c"
     break;
 
   case 83: /* expression: function_call  */
-#line 1051 "parser.y"
+#line 1131 "parser.y"
                     { (yyval.expr) = (yyvsp[0].expr); }
-#line 2535 "parser.tab.c"
+#line 2621 "parser.tab.c"
     break;
 
   case 84: /* expression: STRING_LITERAL  */
-#line 1052 "parser.y"
+#line 1132 "parser.y"
                      {
         (yyval.expr).expr_type = STRING_EXPR;
         (yyval.expr).expr_value.char_array = strdup((yyvsp[0].sval));
         (yyval.expr).expr_return_type = STRING_VALUE;
         (yyval.expr).associated_identifier = NULL;
     }
-#line 2546 "parser.tab.c"
+#line 2632 "parser.tab.c"
     break;
 
   case 85: /* expression: CHARACTER_LITERAL  */
-#line 1058 "parser.y"
+#line 1138 "parser.y"
                         {
         (yyval.expr).expr_type = CHAR_EXPR;
         (yyval.expr).expr_value.char_value = (yyvsp[0].cval);
         (yyval.expr).expr_return_type = CHAR_VALUE;
         (yyval.expr).associated_identifier = NULL;
     }
-#line 2557 "parser.tab.c"
+#line 2643 "parser.tab.c"
     break;
 
   case 86: /* expression: array_element  */
-#line 1064 "parser.y"
+#line 1144 "parser.y"
                     { (yyval.expr) = (yyvsp[0].expr); }
-#line 2563 "parser.tab.c"
+#line 2649 "parser.tab.c"
     break;
 
   case 87: /* expression: IDENTIFIER  */
-#line 1065 "parser.y"
+#line 1145 "parser.y"
                  {
-        SymbolTableEntry* result = search_symbol_table(symbol_table, (yyvsp[0].sval), scope_no);
+        SymbolTableEntry* result = search_symbol_table(symbol_table, (yyvsp[0].sval), scope_no, get_current_enclosing_function());
         if (!result) {
             fprintf(stderr, "Undeclared identifier '%s' at line %d\n", (yyvsp[0].sval), yylineno);
             free_symbol_table(symbol_table);
@@ -2606,13 +2692,13 @@ yyreduce:
                 exit(1);
         }
     }
-#line 2610 "parser.tab.c"
+#line 2696 "parser.tab.c"
     break;
 
   case 88: /* array_element: IDENTIFIER OPENING_SQUARE_BRACKETS INTEGER_LITERAL CLOSING_SQUARE_BRACKETS  */
-#line 1110 "parser.y"
+#line 1190 "parser.y"
                                                                                {
-        SymbolTableEntry* result = search_symbol_table(symbol_table, (yyvsp[-3].sval), scope_no);
+        SymbolTableEntry* result = search_symbol_table(symbol_table, (yyvsp[-3].sval), scope_no, get_current_enclosing_function());
         if (!result) {
             fprintf(stderr, "Undeclared identifier '%s' at line %d\n", (yyvsp[-3].sval), yylineno);
             free_symbol_table(symbol_table);
@@ -2654,50 +2740,50 @@ yyreduce:
                 exit(1);
         }
     }
-#line 2658 "parser.tab.c"
+#line 2744 "parser.tab.c"
     break;
 
   case 89: /* expr_list: expression  */
-#line 1156 "parser.y"
+#line 1236 "parser.y"
                {
         (yyval.expr_lst).e = &(yyvsp[0].expr);
         (yyval.expr_lst).next_expr = NULL;
     }
-#line 2667 "parser.tab.c"
+#line 2753 "parser.tab.c"
     break;
 
   case 90: /* expr_list: expr_list COMMA expression  */
-#line 1160 "parser.y"
+#line 1240 "parser.y"
                                  {
-        expr_lst* new_node = (expr_lst*)malloc(sizeof(expr_lst));
+        ExprList* new_node = (ExprList*)malloc(sizeof(ExprList));
         new_node->e = &(yyvsp[0].expr);
         new_node->next_expr = NULL;
-        expr_lst* current = &(yyvsp[-2].expr_lst);
+        ExprList* current = &((yyvsp[-2].expr_lst));
         while (current->next_expr) {
             current = current->next_expr;
         }
         current->next_expr = new_node;
         (yyval.expr_lst) = (yyvsp[-2].expr_lst);
     }
-#line 2683 "parser.tab.c"
+#line 2769 "parser.tab.c"
     break;
 
   case 91: /* function_call: IDENTIFIER OPENING_PARENTHESIS expr_list CLOSING_PARENTHESIS  */
-#line 1174 "parser.y"
+#line 1254 "parser.y"
                                                                  {
-        SymbolTableEntry* result = search_symbol_table(symbol_table, (yyvsp[-3].sval), scope_no);
+        SymbolTableEntry* result = search_symbol_table(symbol_table, (yyvsp[-3].sval), scope_no, get_current_enclosing_function());
         if (!result) {
-            fprintf(stderr, "Undeclared identifier '%s' at line %d\n", (yyvsp[-3].sval), yylino);
+            fprintf(stderr, "Undeclared identifier '%s' at line %d\n", (yyvsp[-3].sval), yylineno);
             free_symbol_table(symbol_table);
             exit(1);
         }
         if (!result->is_function) {
-            fprintf(stderr, "'%s' is not a function at line %d\n", (yyvsp[-3].sval), yylino);
+            fprintf(stderr, "'%s' is not a function at line %d\n", (yyvsp[-3].sval), yylineno);
             free_symbol_table(symbol_table);
             exit(1);
         }
         Parameter* param = result->parameters;
-        struct expr_lst* arg = &(yyvsp[-1].expr_lst);
+        ExprList* arg = &((yyvsp[-1].expr_lst));
         while (param && arg && arg->e) {
             ValueType param_type = string_to_value_type(param->type);
             size_t param_size = param->array_length;
@@ -2706,7 +2792,7 @@ yyreduce:
             }
             if (param_type != arg->e->expr_return_type || 
                 (param_type >= INT_ARRAY_VALUE && param_size != arg->e->array_length)) {
-                fprintf(stderr, "Parameter type or size mismatch for '%s' at line %d\n", (yyvsp[-3].sval), yylino);
+                fprintf(stderr, "Parameter type or size mismatch for '%s' at line %d\n", (yyvsp[-3].sval), yylineno);
                 free_symbol_table(symbol_table);
                 exit(1);
             }
@@ -2714,12 +2800,12 @@ yyreduce:
             arg = arg->next_expr;
         }
         if ((param && !param->next) || (arg && !arg->next_expr)) {
-            fprintf(stderr, "Incorrect number of arguments for '%s' at line %d\n", (yyvsp[-3].sval), yylino);
+            fprintf(stderr, "Incorrect number of arguments for '%s' at line %d\n", (yyvsp[-3].sval), yylineno);
             free_symbol_table(symbol_table);
             exit(1);
         }
         int prev_scope_no = scope_no;
-        scope_no = result->scope_no;
+        scope_no = result->scope_no + 1;
         (yyval.expr).expr_type = FUNCTION_CALL_EXPR;
         (yyval.expr).associated_identifier = strdup((yyvsp[-3].sval));
         (yyval.expr).expr_return_type = string_to_value_type(result->type);
@@ -2731,30 +2817,30 @@ yyreduce:
         }
         scope_no = prev_scope_no;
     }
-#line 2735 "parser.tab.c"
+#line 2821 "parser.tab.c"
     break;
 
   case 92: /* function_call: IDENTIFIER OPENING_PARENTHESIS CLOSING_PARENTHESIS  */
-#line 1221 "parser.y"
+#line 1301 "parser.y"
                                                          {
-        SymbolTableEntry* result = search_symbol_table(symbol_table, (yyvsp[-2].sval), scope_no);
+        SymbolTableEntry* result = search_symbol_table(symbol_table, (yyvsp[-2].sval), scope_no, get_current_enclosing_function());
         if (!result) {
-            fprintf(stderr, "Undeclared identifier '%s' at line %d\n", (yyvsp[-2].sval), yylino);
+            fprintf(stderr, "Undeclared identifier '%s' at line %d\n", (yyvsp[-2].sval), yylineno);
             free_symbol_table(symbol_table);
             exit(1);
         }
         if (!result->is_function) {
-            fprintf(stderr, "'%s' is not a function at line %d\n", (yyvsp[-2].sval), yylino);
+            fprintf(stderr, "'%s' is not a function at line %d\n", (yyvsp[-2].sval), yylineno);
             free_symbol_table(symbol_table);
             exit(1);
         }
         if (result->parameters) {
-            fprintf(stderr, "'%s' expects parameters at line %d\n", (yyvsp[-2].sval), yylino);
+            fprintf(stderr, "'%s' expects parameters at line %d\n", (yyvsp[-2].sval), yylineno);
             free_symbol_table(symbol_table);
             exit(1);
         }
         int prev_scope_no = scope_no;
-        scope_no = result->scope_no;
+        scope_no = result->scope_no + 1;
         (yyval.expr).expr_type = FUNCTION_CALL_EXPR;
         (yyval.expr).associated_identifier = strdup((yyvsp[-2].sval));
         (yyval.expr).expr_return_type = string_to_value_type(result->type);
@@ -2766,11 +2852,11 @@ yyreduce:
         }
         scope_no = prev_scope_no;
     }
-#line 2770 "parser.tab.c"
+#line 2856 "parser.tab.c"
     break;
 
   case 93: /* boolean_expr: expression EQUAL arithmetic_expr  */
-#line 1254 "parser.y"
+#line 1334 "parser.y"
                                      {
         if ((yyvsp[-2].expr).expr_return_type != (yyvsp[0].expr).expr_return_type &&
             !((yyvsp[-2].expr).expr_return_type == INT_VALUE && (yyvsp[0].expr).expr_return_type == FLOAT_VALUE) &&
@@ -2792,11 +2878,11 @@ yyreduce:
             (yyval.expr).expr_value.int_value = ((yyvsp[-2].expr).expr_value.int_value == (yyvsp[0].expr).expr_value.int_value);
         }
     }
-#line 2796 "parser.tab.c"
+#line 2882 "parser.tab.c"
     break;
 
   case 94: /* boolean_expr: expression EQUAL function_call  */
-#line 1275 "parser.y"
+#line 1355 "parser.y"
                                      {
         if ((yyvsp[-2].expr).expr_return_type != (yyvsp[0].expr).expr_return_type &&
             !((yyvsp[-2].expr).expr_return_type == INT_VALUE && (yyvsp[0].expr).expr_return_type == FLOAT_VALUE) &&
@@ -2818,11 +2904,11 @@ yyreduce:
             (yyval.expr).expr_value.int_value = ((yyvsp[-2].expr).expr_value.int_value == (yyvsp[0].expr).expr_value.int_value);
         }
     }
-#line 2822 "parser.tab.c"
+#line 2908 "parser.tab.c"
     break;
 
   case 95: /* boolean_expr: expression NOT_EQUAL arithmetic_expr  */
-#line 1296 "parser.y"
+#line 1376 "parser.y"
                                            {
         if ((yyvsp[-2].expr).expr_return_type != (yyvsp[0].expr).expr_return_type &&
             !((yyvsp[-2].expr).expr_return_type == INT_VALUE && (yyvsp[0].expr).expr_return_type == FLOAT_VALUE) &&
@@ -2844,11 +2930,11 @@ yyreduce:
             (yyval.expr).expr_value.int_value = ((yyvsp[-2].expr).expr_value.int_value != (yyvsp[0].expr).expr_value.int_value);
         }
     }
-#line 2848 "parser.tab.c"
+#line 2934 "parser.tab.c"
     break;
 
   case 96: /* boolean_expr: expression NOT_EQUAL function_call  */
-#line 1317 "parser.y"
+#line 1397 "parser.y"
                                          {
         if ((yyvsp[-2].expr).expr_return_type != (yyvsp[0].expr).expr_return_type &&
             !((yyvsp[-2].expr).expr_return_type == INT_VALUE && (yyvsp[0].expr).expr_return_type == FLOAT_VALUE) &&
@@ -2870,11 +2956,11 @@ yyreduce:
             (yyval.expr).expr_value.int_value = ((yyvsp[-2].expr).expr_value.int_value != (yyvsp[0].expr).expr_value.int_value);
         }
     }
-#line 2874 "parser.tab.c"
+#line 2960 "parser.tab.c"
     break;
 
   case 97: /* boolean_expr: expression GREATER_OR_EQUAL arithmetic_expr  */
-#line 1338 "parser.y"
+#line 1418 "parser.y"
                                                   {
         if (((yyvsp[-2].expr).expr_return_type != INT_VALUE && (yyvsp[-2].expr).expr_return_type != FLOAT_VALUE) ||
             ((yyvsp[0].expr).expr_return_type != INT_VALUE && (yyvsp[0].expr).expr_return_type != FLOAT_VALUE)) {
@@ -2889,11 +2975,11 @@ yyreduce:
         float right = ((yyvsp[0].expr).expr_return_type == FLOAT_VALUE) ? (yyvsp[0].expr).expr_value.float_value : (yyvsp[0].expr).expr_value.int_value;
         (yyval.expr).expr_value.int_value = (left >= right);
     }
-#line 2893 "parser.tab.c"
+#line 2979 "parser.tab.c"
     break;
 
   case 98: /* boolean_expr: expression GREATER_OR_EQUAL function_call  */
-#line 1352 "parser.y"
+#line 1432 "parser.y"
                                                 {
         if (((yyvsp[-2].expr).expr_return_type != INT_VALUE && (yyvsp[-2].expr).expr_return_type != FLOAT_VALUE) ||
             ((yyvsp[0].expr).expr_return_type != INT_VALUE && (yyvsp[0].expr).expr_return_type != FLOAT_VALUE)) {
@@ -2908,11 +2994,11 @@ yyreduce:
         float right = ((yyvsp[0].expr).expr_return_type == FLOAT_VALUE) ? (yyvsp[0].expr).expr_value.float_value : (yyvsp[0].expr).expr_value.int_value;
         (yyval.expr).expr_value.int_value = (left >= right);
     }
-#line 2912 "parser.tab.c"
+#line 2998 "parser.tab.c"
     break;
 
   case 99: /* boolean_expr: expression LESS_OR_EQUAL arithmetic_expr  */
-#line 1366 "parser.y"
+#line 1446 "parser.y"
                                                {
         if (((yyvsp[-2].expr).expr_return_type != INT_VALUE && (yyvsp[-2].expr).expr_return_type != FLOAT_VALUE) ||
             ((yyvsp[0].expr).expr_return_type != INT_VALUE && (yyvsp[0].expr).expr_return_type != FLOAT_VALUE)) {
@@ -2927,11 +3013,11 @@ yyreduce:
         float right = ((yyvsp[0].expr).expr_return_type == FLOAT_VALUE) ? (yyvsp[0].expr).expr_value.float_value : (yyvsp[0].expr).expr_value.int_value;
         (yyval.expr).expr_value.int_value = (left <= right);
     }
-#line 2931 "parser.tab.c"
+#line 3017 "parser.tab.c"
     break;
 
   case 100: /* boolean_expr: expression LESS_OR_EQUAL function_call  */
-#line 1380 "parser.y"
+#line 1460 "parser.y"
                                              {
         if (((yyvsp[-2].expr).expr_return_type != INT_VALUE && (yyvsp[-2].expr).expr_return_type != FLOAT_VALUE) ||
             ((yyvsp[0].expr).expr_return_type != INT_VALUE && (yyvsp[0].expr).expr_return_type != FLOAT_VALUE)) {
@@ -2946,11 +3032,11 @@ yyreduce:
         float right = ((yyvsp[0].expr).expr_return_type == FLOAT_VALUE) ? (yyvsp[0].expr).expr_value.float_value : (yyvsp[0].expr).expr_value.int_value;
         (yyval.expr).expr_value.int_value = (left <= right);
     }
-#line 2950 "parser.tab.c"
+#line 3036 "parser.tab.c"
     break;
 
   case 101: /* boolean_expr: expression GREATER arithmetic_expr  */
-#line 1394 "parser.y"
+#line 1474 "parser.y"
                                          {
         if (((yyvsp[-2].expr).expr_return_type != INT_VALUE && (yyvsp[-2].expr).expr_return_type != FLOAT_VALUE) ||
             ((yyvsp[0].expr).expr_return_type != INT_VALUE && (yyvsp[0].expr).expr_return_type != FLOAT_VALUE)) {
@@ -2965,11 +3051,11 @@ yyreduce:
         float right = ((yyvsp[0].expr).expr_return_type == FLOAT_VALUE) ? (yyvsp[0].expr).expr_value.float_value : (yyvsp[0].expr).expr_value.int_value;
         (yyval.expr).expr_value.int_value = (left > right);
     }
-#line 2969 "parser.tab.c"
+#line 3055 "parser.tab.c"
     break;
 
   case 102: /* boolean_expr: expression GREATER function_call  */
-#line 1408 "parser.y"
+#line 1488 "parser.y"
                                        {
         if (((yyvsp[-2].expr).expr_return_type != INT_VALUE && (yyvsp[-2].expr).expr_return_type != FLOAT_VALUE) ||
             ((yyvsp[0].expr).expr_return_type != INT_VALUE && (yyvsp[0].expr).expr_return_type != FLOAT_VALUE)) {
@@ -2984,11 +3070,11 @@ yyreduce:
         float right = ((yyvsp[0].expr).expr_return_type == FLOAT_VALUE) ? (yyvsp[0].expr).expr_value.float_value : (yyvsp[0].expr).expr_value.int_value;
         (yyval.expr).expr_value.int_value = (left > right);
     }
-#line 2988 "parser.tab.c"
+#line 3074 "parser.tab.c"
     break;
 
   case 103: /* boolean_expr: expression LESS arithmetic_expr  */
-#line 1422 "parser.y"
+#line 1502 "parser.y"
                                       {
         if (((yyvsp[-2].expr).expr_return_type != INT_VALUE && (yyvsp[-2].expr).expr_return_type != FLOAT_VALUE) ||
             ((yyvsp[0].expr).expr_return_type != INT_VALUE && (yyvsp[0].expr).expr_return_type != FLOAT_VALUE)) {
@@ -3003,11 +3089,11 @@ yyreduce:
         float right = ((yyvsp[0].expr).expr_return_type == FLOAT_VALUE) ? (yyvsp[0].expr).expr_value.float_value : (yyvsp[0].expr).expr_value.int_value;
         (yyval.expr).expr_value.int_value = (left < right);
     }
-#line 3007 "parser.tab.c"
+#line 3093 "parser.tab.c"
     break;
 
   case 104: /* boolean_expr: expression LESS function_call  */
-#line 1436 "parser.y"
+#line 1516 "parser.y"
                                     {
         if (((yyvsp[-2].expr).expr_return_type != INT_VALUE && (yyvsp[-2].expr).expr_return_type != FLOAT_VALUE) ||
             ((yyvsp[0].expr).expr_return_type != INT_VALUE && (yyvsp[0].expr).expr_return_type != FLOAT_VALUE)) {
@@ -3022,23 +3108,23 @@ yyreduce:
         float right = ((yyvsp[0].expr).expr_return_type == FLOAT_VALUE) ? (yyvsp[0].expr).expr_value.float_value : (yyvsp[0].expr).expr_value.int_value;
         (yyval.expr).expr_value.int_value = (left < right);
     }
-#line 3026 "parser.tab.c"
+#line 3112 "parser.tab.c"
     break;
 
   case 105: /* arithmetic_expr: binary_expr  */
-#line 1452 "parser.y"
+#line 1532 "parser.y"
                               { (yyval.expr) = (yyvsp[0].expr); }
-#line 3032 "parser.tab.c"
+#line 3118 "parser.tab.c"
     break;
 
   case 106: /* arithmetic_expr: unary_expr  */
-#line 1453 "parser.y"
+#line 1533 "parser.y"
                              { (yyval.expr) = (yyvsp[0].expr); }
-#line 3038 "parser.tab.c"
+#line 3124 "parser.tab.c"
     break;
 
   case 107: /* binary_expr: binary_expr PLUS arithmetic_term  */
-#line 1456 "parser.y"
+#line 1536 "parser.y"
                                                {
                 if ((yyvsp[-2].expr).expr_return_type != INT_VALUE && (yyvsp[-2].expr).expr_return_type != FLOAT_VALUE ||
                     (yyvsp[0].expr).expr_return_type != INT_VALUE && (yyvsp[0].expr).expr_return_type != FLOAT_VALUE) {
@@ -3058,11 +3144,11 @@ yyreduce:
                     (yyval.expr).expr_value.int_value = (yyvsp[-2].expr).expr_value.int_value + (yyvsp[0].expr).expr_value.int_value;
                 }
             }
-#line 3062 "parser.tab.c"
+#line 3148 "parser.tab.c"
     break;
 
   case 108: /* binary_expr: binary_expr MINUS arithmetic_term  */
-#line 1475 "parser.y"
+#line 1555 "parser.y"
                                                 {
                 if ((yyvsp[-2].expr).expr_return_type != INT_VALUE && (yyvsp[-2].expr).expr_return_type != FLOAT_VALUE ||
                     (yyvsp[0].expr).expr_return_type != INT_VALUE && (yyvsp[0].expr).expr_return_type != FLOAT_VALUE) {
@@ -3082,17 +3168,17 @@ yyreduce:
                     (yyval.expr).expr_value.int_value = (yyvsp[-2].expr).expr_value.int_value - (yyvsp[0].expr).expr_value.int_value;
                 }
             }
-#line 3086 "parser.tab.c"
+#line 3172 "parser.tab.c"
     break;
 
   case 109: /* binary_expr: arithmetic_term  */
-#line 1494 "parser.y"
+#line 1574 "parser.y"
                               { (yyval.expr) = (yyvsp[0].expr); }
-#line 3092 "parser.tab.c"
+#line 3178 "parser.tab.c"
     break;
 
   case 110: /* arithmetic_term: arithmetic_term ASTRISK arithmetic_factor  */
-#line 1497 "parser.y"
+#line 1577 "parser.y"
                                                             {
                     if ((yyvsp[-2].expr).expr_return_type != INT_VALUE && (yyvsp[-2].expr).expr_return_type != FLOAT_VALUE ||
                         (yyvsp[0].expr).expr_return_type != INT_VALUE && (yyvsp[0].expr).expr_return_type != FLOAT_VALUE) {
@@ -3112,11 +3198,11 @@ yyreduce:
                         (yyval.expr).expr_value.int_value = (yyvsp[-2].expr).expr_value.int_value * (yyvsp[0].expr).expr_value.int_value;
                     }
                 }
-#line 3116 "parser.tab.c"
+#line 3202 "parser.tab.c"
     break;
 
   case 111: /* arithmetic_term: arithmetic_term DIVIDE arithmetic_factor  */
-#line 1516 "parser.y"
+#line 1596 "parser.y"
                                                            {
                     if ((yyvsp[-2].expr).expr_return_type != INT_VALUE && (yyvsp[-2].expr).expr_return_type != FLOAT_VALUE ||
                         (yyvsp[0].expr).expr_return_type != INT_VALUE && (yyvsp[0].expr).expr_return_type != FLOAT_VALUE) {
@@ -3142,11 +3228,11 @@ yyreduce:
                         (yyval.expr).expr_value.int_value = (yyvsp[-2].expr).expr_value.int_value / (yyvsp[0].expr).expr_value.int_value;
                     }
                 }
-#line 3146 "parser.tab.c"
+#line 3232 "parser.tab.c"
     break;
 
   case 112: /* arithmetic_term: arithmetic_term MODULO INTEGER_LITERAL  */
-#line 1541 "parser.y"
+#line 1621 "parser.y"
                                                          {
                     if ((yyvsp[-2].expr).expr_return_type != INT_VALUE) {
                         fprintf(stderr, "Modulo requires integer operand at line %d\n", yylineno);
@@ -3163,11 +3249,11 @@ yyreduce:
                     (yyval.expr).expr_value.int_value = (yyvsp[-2].expr).expr_value.int_value % (yyvsp[0].ival);
                     (yyval.expr).associated_identifier = NULL;
                 }
-#line 3167 "parser.tab.c"
+#line 3253 "parser.tab.c"
     break;
 
   case 113: /* arithmetic_term: arithmetic_term MODULO OPENING_PARENTHESIS expression CLOSING_PARENTHESIS  */
-#line 1557 "parser.y"
+#line 1637 "parser.y"
                                                                                             {
                     if ((yyvsp[-4].expr).expr_return_type != INT_VALUE || (yyvsp[-1].expr).expr_return_type != INT_VALUE) {
                         fprintf(stderr, "Modulo requires integer operands at line %d\n", yylineno);
@@ -3184,40 +3270,40 @@ yyreduce:
                     (yyval.expr).expr_value.int_value = (yyvsp[-4].expr).expr_value.int_value % (yyvsp[-1].expr).expr_value.int_value;
                     (yyval.expr).associated_identifier = NULL;
                 }
-#line 3188 "parser.tab.c"
+#line 3274 "parser.tab.c"
     break;
 
   case 114: /* arithmetic_term: arithmetic_factor  */
-#line 1573 "parser.y"
+#line 1653 "parser.y"
                                     { (yyval.expr) = (yyvsp[0].expr); }
-#line 3194 "parser.tab.c"
+#line 3280 "parser.tab.c"
     break;
 
   case 115: /* arithmetic_factor: bitwise_expr  */
-#line 1576 "parser.y"
+#line 1656 "parser.y"
                                  { (yyval.expr) = (yyvsp[0].expr); }
-#line 3200 "parser.tab.c"
+#line 3286 "parser.tab.c"
     break;
 
   case 116: /* arithmetic_factor: FLOAT_LITERAL  */
-#line 1577 "parser.y"
+#line 1657 "parser.y"
                                   {
                       (yyval.expr).expr_type = FLOAT_EXPR;
                       (yyval.expr).expr_value.float_value = (yyvsp[0].fval);
                       (yyval.expr).expr_return_type = FLOAT_VALUE;
                       (yyval.expr).associated_identifier = NULL;
                   }
-#line 3211 "parser.tab.c"
+#line 3297 "parser.tab.c"
     break;
 
   case 117: /* arithmetic_factor: OPENING_PARENTHESIS expression CLOSING_PARENTHESIS  */
-#line 1583 "parser.y"
+#line 1663 "parser.y"
                                                                        { (yyval.expr) = (yyvsp[-1].expr); }
-#line 3217 "parser.tab.c"
+#line 3303 "parser.tab.c"
     break;
 
   case 118: /* bitwise_expr: bitwise_expr BITWISE_OR bitwise_xor_expr  */
-#line 1586 "parser.y"
+#line 1666 "parser.y"
                                                         {
                  if ((yyvsp[-2].expr).expr_return_type != INT_VALUE || (yyvsp[0].expr).expr_return_type != INT_VALUE) {
                      fprintf(stderr, "Bitwise OR requires integer operands at line %d\n", yylineno);
@@ -3229,17 +3315,17 @@ yyreduce:
                  (yyval.expr).expr_value.int_value = (yyvsp[-2].expr).expr_value.int_value | (yyvsp[0].expr).expr_value.int_value;
                  (yyval.expr).associated_identifier = NULL;
              }
-#line 3233 "parser.tab.c"
+#line 3319 "parser.tab.c"
     break;
 
   case 119: /* bitwise_expr: bitwise_xor_expr  */
-#line 1597 "parser.y"
+#line 1677 "parser.y"
                                 { (yyval.expr) = (yyvsp[0].expr); }
-#line 3239 "parser.tab.c"
+#line 3325 "parser.tab.c"
     break;
 
   case 120: /* bitwise_xor_expr: bitwise_xor_expr BITWISE_XOR bitwise_and_expr  */
-#line 1600 "parser.y"
+#line 1680 "parser.y"
                                                                  {
                      if ((yyvsp[-2].expr).expr_return_type != INT_VALUE || (yyvsp[0].expr).expr_return_type != INT_VALUE) {
                          fprintf(stderr, "Bitwise XOR requires integer operands at line %d\n", yylineno);
@@ -3251,17 +3337,17 @@ yyreduce:
                      (yyval.expr).expr_value.int_value = (yyvsp[-2].expr).expr_value.int_value ^ (yyvsp[0].expr).expr_value.int_value;
                      (yyval.expr).associated_identifier = NULL;
                  }
-#line 3255 "parser.tab.c"
+#line 3341 "parser.tab.c"
     break;
 
   case 121: /* bitwise_xor_expr: bitwise_and_expr  */
-#line 1611 "parser.y"
+#line 1691 "parser.y"
                                     { (yyval.expr) = (yyvsp[0].expr); }
-#line 3261 "parser.tab.c"
+#line 3347 "parser.tab.c"
     break;
 
   case 122: /* bitwise_and_expr: bitwise_and_expr BITWISE_AND bitwise_not_expr  */
-#line 1614 "parser.y"
+#line 1694 "parser.y"
                                                                  {
                      if ((yyvsp[-2].expr).expr_return_type != INT_VALUE || (yyvsp[0].expr).expr_return_type != INT_VALUE) {
                          fprintf(stderr, "Bitwise AND requires integer operands at line %d\n", yylineno);
@@ -3273,17 +3359,17 @@ yyreduce:
                      (yyval.expr).expr_value.int_value = (yyvsp[-2].expr).expr_value.int_value & (yyvsp[0].expr).expr_value.int_value;
                      (yyval.expr).associated_identifier = NULL;
                  }
-#line 3277 "parser.tab.c"
+#line 3363 "parser.tab.c"
     break;
 
   case 123: /* bitwise_and_expr: bitwise_not_expr  */
-#line 1625 "parser.y"
+#line 1705 "parser.y"
                                     { (yyval.expr) = (yyvsp[0].expr); }
-#line 3283 "parser.tab.c"
+#line 3369 "parser.tab.c"
     break;
 
   case 124: /* bitwise_not_expr: BITWISE_NOT bitwise_not_expr  */
-#line 1628 "parser.y"
+#line 1708 "parser.y"
                                                 {
                      if ((yyvsp[0].expr).expr_return_type != INT_VALUE) {
                          fprintf(stderr, "Bitwise NOT requires integer operand at line %d\n", yylineno);
@@ -3295,172 +3381,173 @@ yyreduce:
                      (yyval.expr).expr_value.int_value = ~(yyvsp[0].expr).expr_value.int_value;
                      (yyval.expr).associated_identifier = NULL;
                  }
-#line 3299 "parser.tab.c"
+#line 3385 "parser.tab.c"
     break;
 
   case 125: /* bitwise_not_expr: INTEGER_LITERAL  */
-#line 1639 "parser.y"
+#line 1719 "parser.y"
                                    {
                      (yyval.expr).expr_type = INT_EXPR;
                      (yyval.expr).expr_return_type = INT_VALUE;
                      (yyval.expr).expr_value.int_value = (yyvsp[0].ival);
                      (yyval.expr).associated_identifier = NULL;
                  }
-#line 3310 "parser.tab.c"
+#line 3396 "parser.tab.c"
     break;
 
   case 126: /* unary_expr: IDENTIFIER INCREMENT  */
-#line 1647 "parser.y"
-                                  {
-               SymbolTableEntry* result = search_symbol_table(symbol_table, (yyvsp[-1].sval), scope_no);
-               if (!result) {
-                   fprintf(stderr, "Undeclared identifier '%s' at line %d\n", (yyvsp[-1].sval), yylineno);
-                   free_symbol_table(symbol_table);
-                   exit(1);
-               }
-               if (result->value_type != INT_VALUE && result->value_type != FLOAT_VALUE) {
-                   fprintf(stderr, "Increment requires numeric operand at line %d\n", yylineno);
-                   free_symbol_table(symbol_table);
-                   exit(1);
-               }
-               if (result->is_constant) {
-                   fprintf(stderr, "Cannot increment constant '%s' at line %d\n", (yyvsp[-1].sval), yylineno);
-                   free_symbol_table(symbol_table);
-                   exit(1);
-               }
-               (yyval.expr).expr_type = NUMERIC_EXPR;
-               (yyval.expr).associated_identifier = strdup((yyvsp[-1].sval));
-               if (result->value_type == INT_VALUE) {
-                   (yyval.expr).expr_return_type = INT_VALUE;
-                   (yyval.expr).expr_value.int_value = result->value.int_value++;
-               } else {
-                   (yyval.expr).expr_return_type = FLOAT_VALUE;
-                   (yyval.expr).expr_value.float_value = result->value.float_value++;
-               }
-           }
-#line 3342 "parser.tab.c"
+#line 1728 "parser.y"
+                         {
+        SymbolTableEntry* result = search_symbol_table(symbol_table, (yyvsp[-1].sval), scope_no, get_current_enclosing_function());
+        if (!result) {
+            fprintf(stderr, "Undeclared identifier '%s' at line %d\n", (yyvsp[-1].sval), yylineno);
+            free_symbol_table(symbol_table);
+            exit(1);
+        }
+        if (result->value_type != INT_VALUE && result->value_type != FLOAT_VALUE) {
+            fprintf(stderr, "Increment requires numeric operand at line %d\n", yylineno);
+            free_symbol_table(symbol_table);
+            exit(1);
+        }
+        if (result->is_constant) {
+            fprintf(stderr, "Cannot increment constant '%s' at line %d\n", (yyvsp[-1].sval), yylineno);
+            free_symbol_table(symbol_table);
+            exit(1);
+        }
+        (yyval.expr).expr_type = NUMERIC_EXPR;
+        (yyval.expr).associated_identifier = strdup((yyvsp[-1].sval));
+        if (result->value_type == INT_VALUE) {
+            (yyval.expr).expr_return_type = INT_VALUE;
+            (yyval.expr).expr_value.int_value = result->value.int_value++;
+        } else {
+            (yyval.expr).expr_return_type = FLOAT_VALUE;
+            (yyval.expr).expr_value.float_value = result->value.float_value++;
+        }
+    }
+#line 3428 "parser.tab.c"
     break;
 
   case 127: /* unary_expr: IDENTIFIER DECREMENT  */
-#line 1674 "parser.y"
-                                  {
-               SymbolTableEntry* result = search_symbol_table(symbol_table, (yyvsp[-1].sval), scope_no);
-               if (!result) {
-                   fprintf(stderr, "Undeclared identifier '%s' at line %d\n", (yyvsp[-1].sval), yylineno);
-                   free_symbol_table(symbol_table);
-                   exit(1);
-               }
-               if (result->value_type != INT_VALUE && result->value_type != FLOAT_VALUE) {
-                   fprintf(stderr, "Decrement requires numeric operand at line %d\n", yylineno);
-                   free_symbol_table(symbol_table);
-                   exit(1);
-               }
-               if (result->is_constant) {
-                   fprintf(stderr, "Cannot decrement constant '%s' at line %d\n", (yyvsp[-1].sval), yylineno);
-                   free_symbol_table(symbol_table);
-                   exit(1);
-               }
-               (yyval.expr).expr_type = NUMERIC_EXPR;
-               (yyval.expr).associated_identifier = strdup((yyvsp[-1].sval));
-               if (result->value_type == INT_VALUE) {
-                   (yyval.expr).expr_return_type = INT_VALUE;
-                   (yyval.expr).expr_value.int_value = result->value.int_value--;
-               } else {
-                   (yyval.expr).expr_return_type = FLOAT_VALUE;
-                   (yyval.expr).expr_value.float_value = result->value.float_value--;
-               }
-           }
-#line 3374 "parser.tab.c"
-    break;
-
-  case 128: /* unary_expr: MINUS IDENTIFIER  */
-#line 1701 "parser.y"
-                              {
-               SymbolTableEntry* result = search_symbol_table(symbol_table, (yyvsp[0].sval), scope_no);
-               if (!result) {
-                   fprintf(stderr, "Undeclared identifier '%s' at line %d\n", (yyvsp[0].sval), yylineno);
-                   free_symbol_table(symbol_table);
-                   exit(1);
-               }
-               if (result->value_type != INT_VALUE && result->value_type != FLOAT_VALUE) {
-                   fprintf(stderr, "Unary minus requires numeric operand at line %d\n", yylineno);
-                   free_symbol_table(symbol_table);
-                   exit(1);
-               }
-               (yyval.expr).expr_type = NUMERIC_EXPR;
-               (yyval.expr).associated_identifier = NULL;
-               if (result->value_type == INT_VALUE) {
-                   (yyval.expr).expr_return_type = INT_VALUE;
-                   (yyval.expr).expr_value.int_value = -result->value.int_value;
-               } else {
-                   (yyval.expr).expr_return_type = FLOAT_VALUE;
-                   (yyval.expr).expr_value.float_value = -result->value.float_value;
-               }
-           }
-#line 3401 "parser.tab.c"
-    break;
-
-  case 129: /* unary_expr: MINUS OPENING_PARENTHESIS expression CLOSING_PARENTHESIS  */
-#line 1723 "parser.y"
-                                                                      {
-               if ((yyvsp[-1].expr).expr_return_type != INT_VALUE && (yyvsp[-1].expr).expr_return_type != FLOAT_VALUE) {
-                   fprintf(stderr, "Unary minus requires numeric operand at line %d\n", yylineno);
-                   free_symbol_table(symbol_table);
-                   exit(1);
-               }
-               (yyval.expr).expr_type = NUMERIC_EXPR;
-               (yyval.expr).associated_identifier = NULL;
-               if ((yyvsp[-1].expr).expr_return_type == INT_VALUE) {
-                   (yyval.expr).expr_return_type = INT_VALUE;
-                   (yyval.expr).expr_value.int_value = -(yyvsp[-1].expr).expr_value.int_value;
-               } else {
-                   (yyval.expr).expr_return_type = FLOAT_VALUE;
-                   (yyval.expr).expr_value.float_value = -(yyvsp[-1].expr).expr_value.float_value;
-               }
-           }
-#line 3422 "parser.tab.c"
-    break;
-
-  case 130: /* unary_expr: OPENING_PARENTHESIS expression CLOSING_PARENTHESIS INCREMENT  */
-#line 1739 "parser.y"
-                                                                          {
-               fprintf(stderr, "Increment on expression not supported at line %d\n", yylineno);
-               free_symbol_table(symbol_table);
-               exit(1);
-           }
-#line 3432 "parser.tab.c"
-    break;
-
-  case 131: /* unary_expr: OPENING_PARENTHESIS expression CLOSING_PARENTHESIS DECREMENT  */
-#line 1744 "parser.y"
-                                                                          {
-               fprintf(stderr, "Decrement on expression not supported at line %d\n", yylineno);
-               free_symbol_table(symbol_table);
-               exit(1);
-           }
-#line 3442 "parser.tab.c"
-    break;
-
-  case 132: /* $@18: %empty  */
-#line 1753 "parser.y"
-                                                         { 
-        char* prev_enclosing_function = current_enclosing_function;
-        current_enclosing_function = strdup("main");
-    }
-#line 3451 "parser.tab.c"
-    break;
-
-  case 133: /* main_function: MAIN_KEYWORD OPENING_PARENTHESIS CLOSING_PARENTHESIS $@18 body  */
-#line 1757 "parser.y"
-         {
-        free(current_enclosing_function);
-        current_enclosing_function = prev_enclosing_function;
+#line 1755 "parser.y"
+                           {
+        SymbolTableEntry* result = search_symbol_table(symbol_table, (yyvsp[-1].sval), scope_no, get_current_enclosing_function());
+        if (!result) {
+            fprintf(stderr, "Undeclared identifier '%s' at line %d\n", (yyvsp[-1].sval), yylineno);
+            free_symbol_table(symbol_table);
+            exit(1);
+        }
+        if (result->value_type != INT_VALUE && result->value_type != FLOAT_VALUE) {
+            fprintf(stderr, "Decrement requires numeric operand at line %d\n", yylineno);
+            free_symbol_table(symbol_table);
+            exit(1);
+        }
+        if (result->is_constant) {
+            fprintf(stderr, "Cannot decrement constant '%s' at line %d\n", (yyvsp[-1].sval), yylineno);
+            free_symbol_table(symbol_table);
+            exit(1);
+        }
+        (yyval.expr).expr_type = NUMERIC_EXPR;
+        (yyval.expr).associated_identifier = strdup((yyvsp[-1].sval));
+        if (result->value_type == INT_VALUE) {
+            (yyval.expr).expr_return_type = INT_VALUE;
+            (yyval.expr).expr_value.int_value = result->value.int_value--;
+        } else {
+            (yyval.expr).expr_return_type = FLOAT_VALUE;
+            (yyval.expr).expr_value.float_value = result->value.float_value--;
+        }
     }
 #line 3460 "parser.tab.c"
     break;
 
+  case 128: /* unary_expr: MINUS IDENTIFIER  */
+#line 1782 "parser.y"
+                       {
+        SymbolTableEntry* result = search_symbol_table(symbol_table, (yyvsp[0].sval), scope_no, get_current_enclosing_function());
+        if (!result) {
+            fprintf(stderr, "Undeclared identifier '%s' at line %d\n", (yyvsp[0].sval), yylineno);
+            free_symbol_table(symbol_table);
+            exit(1);
+        }
+        if (result->value_type != INT_VALUE && result->value_type != FLOAT_VALUE) {
+            fprintf(stderr, "Unary minus requires numeric operand at line %d\n", yylineno);
+            free_symbol_table(symbol_table);
+            exit(1);
+        }
+        (yyval.expr).expr_type = NUMERIC_EXPR;
+        (yyval.expr).associated_identifier = NULL;
+        if (result->value_type == INT_VALUE) {
+            (yyval.expr).expr_return_type = INT_VALUE;
+            (yyval.expr).expr_value.int_value = -result->value.int_value;
+        } else {
+            (yyval.expr).expr_return_type = FLOAT_VALUE;
+            (yyval.expr).expr_value.float_value = -result->value.float_value;
+        }
+    }
+#line 3487 "parser.tab.c"
+    break;
 
-#line 3464 "parser.tab.c"
+  case 129: /* unary_expr: MINUS OPENING_PARENTHESIS expression CLOSING_PARENTHESIS  */
+#line 1804 "parser.y"
+                                                               {
+        if ((yyvsp[-1].expr).expr_return_type != INT_VALUE && (yyvsp[-1].expr).expr_return_type != FLOAT_VALUE) {
+            fprintf(stderr, "Unary minus requires numeric operand at line %d\n", yylineno);
+            free_symbol_table(symbol_table);
+            exit(1);
+        }
+        (yyval.expr).expr_type = NUMERIC_EXPR;
+        (yyval.expr).associated_identifier = NULL;
+        if ((yyvsp[-1].expr).expr_return_type == INT_VALUE) {
+            (yyval.expr).expr_return_type = INT_VALUE;
+            (yyval.expr).expr_value.int_value = -(yyvsp[-1].expr).expr_value.int_value;
+        } else {
+            (yyval.expr).expr_return_type = FLOAT_VALUE;
+            (yyval.expr).expr_value.float_value = -(yyvsp[-1].expr).expr_value.float_value;
+        }
+    }
+#line 3508 "parser.tab.c"
+    break;
+
+  case 130: /* unary_expr: OPENING_PARENTHESIS expression CLOSING_PARENTHESIS INCREMENT  */
+#line 1820 "parser.y"
+                                                                   {
+        fprintf(stderr, "Increment on expression not supported at line %d\n", yylineno);
+        free_symbol_table(symbol_table);
+        exit(1);
+    }
+#line 3518 "parser.tab.c"
+    break;
+
+  case 131: /* unary_expr: OPENING_PARENTHESIS expression CLOSING_PARENTHESIS DECREMENT  */
+#line 1825 "parser.y"
+                                                                   {
+        fprintf(stderr, "Decrement on expression not supported at line %d\n", yylineno);
+        free_symbol_table(symbol_table);
+        exit(1);
+    }
+#line 3528 "parser.tab.c"
+    break;
+
+  case 132: /* $@18: %empty  */
+#line 1834 "parser.y"
+                                                         { 
+        scope_no++;
+        push_function("main");
+    }
+#line 3537 "parser.tab.c"
+    break;
+
+  case 133: /* main_function: MAIN_KEYWORD OPENING_PARENTHESIS CLOSING_PARENTHESIS $@18 body  */
+#line 1838 "parser.y"
+         {
+        char* popped = pop_function();
+        if (popped) free(popped);
+        scope_no--;
+    }
+#line 3547 "parser.tab.c"
+    break;
+
+
+#line 3551 "parser.tab.c"
 
       default: break;
     }
@@ -3653,14 +3740,9 @@ yyreturnlab:
   return yyresult;
 }
 
-#line 1763 "parser.y"
+#line 1844 "parser.y"
 
 
-void yyerror(const char *s) {
-    fprintf(stderr, "Error at line %d: %s\n", yylineno, s);
-    free_symbol_table(symbol_table);
-    exit(1);
-}
 
 int main(int argc, char* argv[]) {
     if (argc != 2) {
@@ -3681,12 +3763,10 @@ int main(int argc, char* argv[]) {
     }
 
     yylineno = 1;
-    line_count = 0;
-    token_count = 0;
     int parse_result = yyparse();
     fclose(yyin);
     if (parse_result == 0) {
-        printf("Parsing successful. Tokens processed: %d, Lines: %d\n", token_count, line_count);
+        printf("Parsing successful.\n");
     } else {
         printf("Parsing failed.\n");
     }

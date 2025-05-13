@@ -9,6 +9,8 @@ extern FILE* yyin;
 extern int yylineno;
 %}
 
+%option yylineno
+
 digit                   [0-9]
 letter                  [a-zA-Z]
 
@@ -76,7 +78,7 @@ letter                  [a-zA-Z]
 "//".*                                                   { ; }
 ({letter}|_)({digit}|{letter}|_){0,63}                   { /* printf("detected token of type IDENTIFIER : %s\n", yytext); */ token_count++; yylval.sval = strdup(yytext); return IDENTIFIER; }
 [ \t]*                                                   { ; }
-[\n]                                                     { line_count++; yylineno++; }
+[\n]                                                     { /* line_count++; */ }
 .                                                        { yylval.sval = strdup(yytext); return UNRECOGNIZED_TOKEN; }
 
 %%

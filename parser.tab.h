@@ -120,7 +120,7 @@ extern int yydebug;
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 union YYSTYPE
 {
-#line 62 "parser.y"
+#line 141 "parser.y"
 
     int ival;
     float fval;
@@ -133,19 +133,10 @@ union YYSTYPE
         int array_size;
     } type_id;
     struct Instruction* instruction;
-    struct {
-        EXPRESSION_TYPE expr_type;
-        Value expr_value;
-        ValueType expr_return_type;
-        char* associated_identifier;
-        size_t array_length;
-    } expr;
-    struct {
-        struct expr* e;
-        struct expr* next_expr;
-    } expr_lst;
+    Expr expr;
+    ExprList expr_lst;
 
-#line 149 "parser.tab.h"
+#line 140 "parser.tab.h"
 
 };
 typedef union YYSTYPE YYSTYPE;
