@@ -360,13 +360,13 @@ struct yy_trans_info
 	flex_int32_t yy_verify;
 	flex_int32_t yy_nxt;
 	};
-static const flex_int16_t yy_accept[183] =
+static const flex_int16_t yy_accept[232] =
     {   0,
-       62,   62,   66,   64,   62,   63,   53,   64,   40,   51,
+       62,   62,   66,   64,   62,   63,   53,   64,   40,   50,
        64,   30,   31,   36,   37,   35,   38,   39,    1,    1,
        54,   55,   48,   43,   49,   61,   32,   33,   52,   61,
        61,   61,   61,   61,   61,   61,   61,   61,   61,   61,
-       61,   61,   61,   61,   28,   50,   29,   62,   45,    0,
+       61,   61,   61,   61,   28,   51,   29,   62,   45,    0,
        57,    0,    0,   41,   42,    0,    1,    0,   60,   34,
         0,    0,    0,    0,    1,   46,   44,   47,   61,   61,
        61,   61,   61,   61,   61,   61,   22,   61,   61,   61,
@@ -381,7 +381,13 @@ static const flex_int16_t yy_accept[183] =
        61,   20,   24,   61,   61,   61,   58,    7,   61,   61,
        61,   16,   61,   61,   61,   13,   23,    8,   17,   61,
        61,   19,   61,   21,   61,   61,   61,   61,   61,   61,
-       61,    0
+       61,   61,   61,   61,   61,   61,   61,   61,   61,   61,
+       61,   61,   61,   61,   61,   61,   61,   61,   61,   61,
+
+       61,   61,   61,   61,   61,   61,   61,   61,   61,   61,
+       61,   61,   61,   61,   61,   61,   61,   61,   61,   61,
+       61,   61,   61,   61,   61,   61,   61,   61,   61,   61,
+        0
     } ;
 
 static const YY_CHAR yy_ec[256] =
@@ -426,136 +432,168 @@ static const YY_CHAR yy_meta[56] =
         4,    4,    1,    1,    1
     } ;
 
-static const flex_int16_t yy_base[201] =
+static const flex_int16_t yy_base[299] =
     {   0,
-        0,    0,  271,  272,  268,  272,  246,   51,  272,  272,
-        0,  272,  272,  272,  256,  272,   43,   47,   49,   54,
-      272,  272,  244,  243,  242,    0,  272,  272,  272,  219,
-       31,   41,   33,  220,   51,   44,  229,  215,  213,  222,
-       36,  211,  211,  216,  272,  272,  272,  253,  272,   81,
-      272,  251,  245,  272,  272,   81,   86,  241,    0,   73,
-       94,   99,  102,  105,  111,  272,  272,  272,    0,  215,
-      204,  212,  200,  214,  201,  207,    0,  196,  200,  196,
-      194,    0,  191,  198,  189,    0,  188,  189,  194,  184,
-      192,  191,  272,  114,  119,  122,  125,  107,  130,  220,
+        0,    0,  320,  321,  317,  321,  295,   51,  321,  321,
+        0,  321,  321,  321,  305,  321,   43,   47,   49,   54,
+      321,  321,  293,  292,  291,    0,  321,  321,  321,  268,
+       31,   41,   33,  269,   51,   44,  278,  264,  262,  271,
+       36,  260,  260,  265,  321,  321,  321,  302,  321,   81,
+      321,  300,  294,  321,  321,   81,   86,  290,    0,   73,
+       94,   99,  102,  105,  111,  321,  321,  321,    0,  264,
+      253,  261,  249,  263,  250,  256,    0,  245,  249,  245,
+      243,    0,  240,  247,  238,    0,  237,  238,  243,  233,
+      241,  240,  321,  114,  119,  122,  125,  107,  130,  269,
 
-      135,    0,  135,  138,  141,  144,    0,    0,  187,  196,
-      191,  180,  115,  193,  188,  176,  190,    0,    0,  177,
-        0,  171,  179,  170,  181,  181,  173,  148,  151,  154,
-      157,  272,    0,    0,  173,    0,    0,  165,  172,  162,
-      170,  173,  160,    0,  161,  162,  171,    0,    0,  168,
-        0,    0,    0,  159,  160,  164,    0,    0,  156,  161,
-      159,    0,    0,  148,  148,    0,    0,    0,    0,    0,
-      159,    0,    0,    0,    0,    0,    0,    0,    0,    0,
-      272,  272,  175,  179,  191,  183,  187,  190,  189,  188,
-      185,  178,  146,  131,  110,  102,   98,   89,   61,   55
+      135,    0,  135,  138,  141,  144,    0,    0,  236,  245,
+      240,  229,  115,  242,  237,  225,  239,    0,    0,  226,
+        0,  220,  228,  219,  230,  230,  222,  148,  151,  154,
+      157,  321,    0,    0,  222,    0,    0,  214,  221,  211,
+      219,  222,  209,    0,  210,  211,  220,    0,    0,  217,
+        0,    0,    0,  208,  209,  213,    0,    0,  205,  210,
+      208,    0,    0,  197,  197,    0,    0,    0,    0,    0,
+      208,    0,    0,    0,    0,    0,    0,    0,    0,    0,
+        0,    0,    0,    0,    0,    0,    0,    0,    0,    0,
+        0,    0,    0,    0,    0,    0,    0,    0,    0,    0,
+
+        0,    0,    0,    0,    0,    0,    0,    0,    0,    0,
+        0,    0,    0,    0,    0,    0,    0,    0,    0,    0,
+        0,    0,    0,    0,    0,    0,    0,    0,    0,  321,
+      321,  175,  179,  240,  183,  187,  239,  238,  237,  236,
+      235,  234,  233,  232,  231,  230,  229,  228,  227,  226,
+      225,  224,  223,  222,  221,  220,  219,  218,  217,  216,
+      215,  214,  213,  212,  211,  210,  209,  208,  207,  206,
+      205,  204,  203,  202,  201,  200,  199,  198,  197,  196,
+      195,  194,  193,  192,  191,  190,  189,  188,  185,  178,
+      146,  131,  110,  102,   98,   89,   61,   55
 
     } ;
 
-static const flex_int16_t yy_def[201] =
+static const flex_int16_t yy_def[299] =
     {   0,
-      182,    1,  182,  182,  182,  182,  182,  183,  182,  182,
-      184,  182,  182,  182,  182,  182,  182,  182,  182,  182,
-      182,  182,  182,  182,  182,  185,  182,  182,  182,  185,
-      185,  185,  185,  185,  185,  185,  185,  185,  185,  185,
-      185,  185,  185,  185,  182,  182,  182,  182,  182,  183,
-      182,  183,  182,  182,  182,  182,  182,  186,  187,  182,
-      182,  182,  182,  182,  182,  182,  182,  182,  188,  188,
-      188,  188,  188,  188,  188,  188,  188,  188,  188,  188,
-      188,  188,  188,  188,  188,  188,  188,  188,  188,  188,
-      188,  188,  182,  182,  182,  182,  182,  182,  182,  186,
+      231,    1,  231,  231,  231,  231,  231,  232,  231,  231,
+      233,  231,  231,  231,  231,  231,  231,  231,  231,  231,
+      231,  231,  231,  231,  231,  234,  231,  231,  231,  234,
+      234,  234,  234,  234,  234,  234,  234,  234,  234,  234,
+      234,  234,  234,  234,  231,  231,  231,  231,  231,  232,
+      231,  232,  231,  231,  231,  231,  231,  235,  236,  231,
+      231,  231,  231,  231,  231,  231,  231,  231,  237,  237,
+      237,  237,  237,  237,  237,  237,  237,  237,  237,  237,
+      237,  237,  237,  237,  237,  237,  237,  237,  237,  237,
+      237,  237,  231,  231,  231,  231,  231,  231,  231,  235,
 
-      186,  187,  182,  182,  182,  182,  189,  189,  189,  189,
-      189,  189,  189,  189,  189,  189,  189,  189,  189,  189,
-      189,  189,  189,  189,  189,  189,  189,  182,  182,  182,
-      182,  182,  190,  190,  190,  190,  190,  190,  190,  190,
-      190,  190,  190,  190,  190,  190,  190,  190,  190,  190,
-      191,  191,  191,  191,  191,  191,  191,  191,  191,  191,
-      191,  191,  192,  192,  192,  192,  192,  192,  192,  193,
-      193,  193,  194,  194,  195,  196,  197,  198,  199,  200,
-      182,    0,  182,  182,  182,  182,  182,  182,  182,  182,
-      182,  182,  182,  182,  182,  182,  182,  182,  182,  182
+      235,  236,  231,  231,  231,  231,  238,  238,  238,  238,
+      238,  238,  238,  238,  238,  238,  238,  238,  238,  238,
+      238,  238,  238,  238,  238,  238,  238,  231,  231,  231,
+      231,  231,  239,  239,  239,  239,  239,  239,  239,  239,
+      239,  239,  239,  239,  239,  239,  239,  239,  239,  239,
+      240,  240,  240,  240,  240,  240,  240,  240,  240,  240,
+      240,  240,  241,  241,  241,  241,  241,  241,  241,  242,
+      242,  242,  243,  243,  244,  245,  246,  247,  248,  249,
+      250,  251,  252,  253,  254,  255,  256,  257,  258,  259,
+      260,  261,  262,  263,  264,  265,  266,  267,  268,  269,
+
+      270,  271,  272,  273,  274,  275,  276,  277,  278,  279,
+      280,  281,  282,  283,  284,  285,  286,  287,  288,  289,
+      290,  291,  292,  293,  294,  295,  296,  297,  298,  231,
+        0,  231,  231,  231,  231,  231,  231,  231,  231,  231,
+      231,  231,  231,  231,  231,  231,  231,  231,  231,  231,
+      231,  231,  231,  231,  231,  231,  231,  231,  231,  231,
+      231,  231,  231,  231,  231,  231,  231,  231,  231,  231,
+      231,  231,  231,  231,  231,  231,  231,  231,  231,  231,
+      231,  231,  231,  231,  231,  231,  231,  231,  231,  231,
+      231,  231,  231,  231,  231,  231,  231,  231
 
     } ;
 
-static const flex_int16_t yy_nxt[328] =
+static const flex_int16_t yy_nxt[377] =
     {   0,
         4,    5,    6,    7,    8,    9,   10,   11,   12,   13,
        14,   15,   16,   17,    4,   18,   19,   20,   20,   21,
        22,   23,   24,   25,   26,   26,   26,   27,    4,   28,
        29,   26,   30,   31,   32,   33,   34,   35,   26,   26,
        36,   26,   26,   37,   38,   39,   40,   41,   42,   26,
-       43,   44,   45,   46,   47,   51,   55,   58,  181,   56,
-       57,   57,   59,   60,  180,   61,   61,   61,   60,   76,
+       43,   44,   45,   46,   47,   51,   55,   58,  230,   56,
+       57,   57,   59,   60,  229,   61,   61,   61,   60,   76,
        65,   65,   65,   73,   62,   63,   71,   72,   77,   52,
        74,   82,   64,   79,   88,   51,   75,   89,   83,  103,
-      103,  103,  179,   80,   62,   94,   81,   95,   95,   95,
+      103,  103,  228,   80,   62,   94,   81,   95,   95,   95,
 
-       94,  178,   99,   99,   99,  177,   96,   97,   60,   52,
-       61,   61,   61,  176,   98,  104,  104,  104,  105,  105,
+       94,  227,   99,   99,   99,  226,   96,   97,   60,   52,
+       61,   61,   61,  225,   98,  104,  104,  104,  105,  105,
       105,  106,  106,  131,  131,   60,   96,   65,   65,   65,
-      128,  128,  128,   94,  175,   95,   95,   95,  129,  129,
-      129,  130,  130,  130,   94,  101,   99,   99,   99,  173,
+      128,  128,  128,   94,  224,   95,   95,   95,  129,  129,
+      129,  130,  130,  130,   94,  101,   99,   99,   99,  223,
       132,  103,  103,  103,  104,  104,  104,  105,  105,  105,
       106,  106,  138,  139,  128,  128,  128,  129,  129,  129,
       130,  130,  130,  131,  131,   50,   50,   50,   50,   53,
-       53,  170,   53,  100,  100,  100,  100,  102,  163,  102,
-      102,  151,  133,  107,   69,  174,  172,  171,  169,  168,
+       53,  222,   53,  100,  100,  100,  100,  102,  221,  102,
+      102,  220,  219,  218,  217,  216,  215,  214,  213,  212,
 
-      167,  166,  165,  164,  162,  161,  160,  159,  158,  157,
-      156,  155,  154,  153,  152,  150,  149,  148,  147,  146,
-      145,  144,  143,  142,  141,  140,  137,  136,  135,  134,
-      101,  127,  126,  125,  124,  123,  122,  121,  120,  119,
-      118,  117,  116,  115,  114,  113,  112,  111,  110,  109,
-      108,  101,   93,  182,   48,   92,   91,   90,   87,   86,
-       85,   84,   78,   70,   68,   67,   66,   54,   49,   48,
-      182,    3,  182,  182,  182,  182,  182,  182,  182,  182,
-      182,  182,  182,  182,  182,  182,  182,  182,  182,  182,
-      182,  182,  182,  182,  182,  182,  182,  182,  182,  182,
+      211,  210,  209,  208,  207,  206,  205,  204,  203,  202,
+      201,  200,  199,  198,  197,  196,  195,  194,  193,  192,
+      191,  190,  189,  188,  187,  186,  185,  184,  183,  182,
+      181,  180,  179,  178,  177,  176,  175,  173,  170,  163,
+      151,  133,  107,   69,  174,  172,  171,  169,  168,  167,
+      166,  165,  164,  162,  161,  160,  159,  158,  157,  156,
+      155,  154,  153,  152,  150,  149,  148,  147,  146,  145,
+      144,  143,  142,  141,  140,  137,  136,  135,  134,  101,
+      127,  126,  125,  124,  123,  122,  121,  120,  119,  118,
+      117,  116,  115,  114,  113,  112,  111,  110,  109,  108,
 
-      182,  182,  182,  182,  182,  182,  182,  182,  182,  182,
-      182,  182,  182,  182,  182,  182,  182,  182,  182,  182,
-      182,  182,  182,  182,  182,  182,  182
+      101,   93,  231,   48,   92,   91,   90,   87,   86,   85,
+       84,   78,   70,   68,   67,   66,   54,   49,   48,  231,
+        3,  231,  231,  231,  231,  231,  231,  231,  231,  231,
+      231,  231,  231,  231,  231,  231,  231,  231,  231,  231,
+      231,  231,  231,  231,  231,  231,  231,  231,  231,  231,
+      231,  231,  231,  231,  231,  231,  231,  231,  231,  231,
+      231,  231,  231,  231,  231,  231,  231,  231,  231,  231,
+      231,  231,  231,  231,  231,  231
     } ;
 
-static const flex_int16_t yy_chk[328] =
+static const flex_int16_t yy_chk[377] =
     {   0,
         1,    1,    1,    1,    1,    1,    1,    1,    1,    1,
         1,    1,    1,    1,    1,    1,    1,    1,    1,    1,
         1,    1,    1,    1,    1,    1,    1,    1,    1,    1,
         1,    1,    1,    1,    1,    1,    1,    1,    1,    1,
         1,    1,    1,    1,    1,    1,    1,    1,    1,    1,
-        1,    1,    1,    1,    1,    8,   17,   18,  200,   17,
-       17,   17,   18,   19,  199,   19,   19,   19,   20,   33,
+        1,    1,    1,    1,    1,    8,   17,   18,  298,   17,
+       17,   17,   18,   19,  297,   19,   19,   19,   20,   33,
        20,   20,   20,   32,   19,   19,   31,   31,   33,    8,
        32,   36,   19,   35,   41,   50,   32,   41,   36,   60,
-       60,   60,  198,   35,   19,   56,   35,   56,   56,   56,
+       60,   60,  296,   35,   19,   56,   35,   56,   56,   56,
 
-       57,  197,   57,   57,   57,  196,   56,   56,   61,   50,
-       61,   61,   61,  195,   56,   62,   62,   62,   63,   63,
+       57,  295,   57,   57,   57,  294,   56,   56,   61,   50,
+       61,   61,   61,  293,   56,   62,   62,   62,   63,   63,
        63,   64,   64,   98,   98,   65,   56,   65,   65,   65,
-       94,   94,   94,   95,  194,   95,   95,   95,   96,   96,
-       96,   97,   97,   97,   99,  101,   99,   99,   99,  193,
+       94,   94,   94,   95,  292,   95,   95,   95,   96,   96,
+       96,   97,   97,   97,   99,  101,   99,   99,   99,  291,
       101,  103,  103,  103,  104,  104,  104,  105,  105,  105,
       106,  106,  113,  113,  128,  128,  128,  129,  129,  129,
-      130,  130,  130,  131,  131,  183,  183,  183,  183,  184,
-      184,  192,  184,  186,  186,  186,  186,  187,  191,  187,
-      187,  190,  189,  188,  185,  171,  165,  164,  161,  160,
+      130,  130,  130,  131,  131,  232,  232,  232,  232,  233,
+      233,  290,  233,  235,  235,  235,  235,  236,  289,  236,
+      236,  288,  287,  286,  285,  284,  283,  282,  281,  280,
 
-      159,  156,  155,  154,  150,  147,  146,  145,  143,  142,
-      141,  140,  139,  138,  135,  127,  126,  125,  124,  123,
-      122,  120,  117,  116,  115,  114,  112,  111,  110,  109,
-      100,   92,   91,   90,   89,   88,   87,   85,   84,   83,
-       81,   80,   79,   78,   76,   75,   74,   73,   72,   71,
-       70,   58,   53,   52,   48,   44,   43,   42,   40,   39,
-       38,   37,   34,   30,   25,   24,   23,   15,    7,    5,
-        3,  182,  182,  182,  182,  182,  182,  182,  182,  182,
-      182,  182,  182,  182,  182,  182,  182,  182,  182,  182,
-      182,  182,  182,  182,  182,  182,  182,  182,  182,  182,
+      279,  278,  277,  276,  275,  274,  273,  272,  271,  270,
+      269,  268,  267,  266,  265,  264,  263,  262,  261,  260,
+      259,  258,  257,  256,  255,  254,  253,  252,  251,  250,
+      249,  248,  247,  246,  245,  244,  243,  242,  241,  240,
+      239,  238,  237,  234,  171,  165,  164,  161,  160,  159,
+      156,  155,  154,  150,  147,  146,  145,  143,  142,  141,
+      140,  139,  138,  135,  127,  126,  125,  124,  123,  122,
+      120,  117,  116,  115,  114,  112,  111,  110,  109,  100,
+       92,   91,   90,   89,   88,   87,   85,   84,   83,   81,
+       80,   79,   78,   76,   75,   74,   73,   72,   71,   70,
 
-      182,  182,  182,  182,  182,  182,  182,  182,  182,  182,
-      182,  182,  182,  182,  182,  182,  182,  182,  182,  182,
-      182,  182,  182,  182,  182,  182,  182
+       58,   53,   52,   48,   44,   43,   42,   40,   39,   38,
+       37,   34,   30,   25,   24,   23,   15,    7,    5,    3,
+      231,  231,  231,  231,  231,  231,  231,  231,  231,  231,
+      231,  231,  231,  231,  231,  231,  231,  231,  231,  231,
+      231,  231,  231,  231,  231,  231,  231,  231,  231,  231,
+      231,  231,  231,  231,  231,  231,  231,  231,  231,  231,
+      231,  231,  231,  231,  231,  231,  231,  231,  231,  231,
+      231,  231,  231,  231,  231,  231
     } ;
 
 static yy_state_type yy_last_accepting_state;
@@ -576,13 +614,14 @@ char *yytext;
 #line 2 "lexer.l"
 #include <stdio.h>
 #include "parser.tab.h"
+#include <string.h>
 
 int line_count = 0;
 int token_count = 0;
 extern FILE* yyin;
 extern int yylineno;
-#line 585 "lex.yy.c"
-#line 586 "lex.yy.c"
+#line 624 "lex.yy.c"
+#line 625 "lex.yy.c"
 
 #define INITIAL 0
 
@@ -801,7 +840,8 @@ YY_DECL
 	{
 #line 15 "lexer.l"
 
-#line 805 "lex.yy.c"
+
+#line 845 "lex.yy.c"
 
 	while ( /*CONSTCOND*/1 )		/* loops until end-of-file is reached */
 		{
@@ -828,13 +868,13 @@ yy_match:
 			while ( yy_chk[yy_base[yy_current_state] + yy_c] != yy_current_state )
 				{
 				yy_current_state = (int) yy_def[yy_current_state];
-				if ( yy_current_state >= 183 )
+				if ( yy_current_state >= 232 )
 					yy_c = yy_meta[yy_c];
 				}
 			yy_current_state = yy_nxt[yy_base[yy_current_state] + yy_c];
 			++yy_cp;
 			}
-		while ( yy_base[yy_current_state] != 272 );
+		while ( yy_base[yy_current_state] != 321 );
 
 yy_find_action:
 		yy_act = yy_accept[yy_current_state];
@@ -860,334 +900,334 @@ do_action:	/* This label is used only to access EOF actions. */
 
 case 1:
 YY_RULE_SETUP
-#line 16 "lexer.l"
-{ printf("detected token of type INTEGER_LITERAL : %s\n", yytext); token_count++; return INTEGER_LITERAL; }
+#line 17 "lexer.l"
+{ /* printf("detected token of type INTEGER_LITERAL : %s\n", yytext); */ token_count++; yylval.ival = atoi(yytext); return INTEGER_LITERAL; }
 	YY_BREAK
 case 2:
 YY_RULE_SETUP
-#line 17 "lexer.l"
-{ printf("detected token of type INTEGER_LITERAL : %s\n", yytext); token_count++; return INTEGER_LITERAL; }
+#line 18 "lexer.l"
+{ /* printf("detected token of type INTEGER_LITERAL : %s\n", yytext); */ token_count++; yylval.ival = atoi(yytext); return INTEGER_LITERAL; }
 	YY_BREAK
 case 3:
 YY_RULE_SETUP
-#line 18 "lexer.l"
-{ printf("detected token of type INTEGER_LITERAL : %s\n", yytext); token_count++; return INTEGER_LITERAL; }
+#line 19 "lexer.l"
+{ /* printf("detected token of type INTEGER_LITERAL : %s\n", yytext); */ token_count++; yylval.ival = atoi(yytext); return INTEGER_LITERAL; }
 	YY_BREAK
 case 4:
 YY_RULE_SETUP
-#line 19 "lexer.l"
-{ printf("detected token of type INTEGER_LITERAL : %s\n", yytext); token_count++; return INTEGER_LITERAL; }
+#line 20 "lexer.l"
+{ /* printf("detected token of type INTEGER_LITERAL : %s\n", yytext); */ token_count++; yylval.ival = atoi(yytext); return INTEGER_LITERAL; }
 	YY_BREAK
 case 5:
 YY_RULE_SETUP
-#line 20 "lexer.l"
-{ printf("detected token of type INT_TYPE_KEYWORD : %s\n", yytext); token_count++; return INT_TYPE_KEYWORD; }
+#line 21 "lexer.l"
+{ /* printf("detected token of type INT_TYPE_KEYWORD : %s\n", yytext); */ token_count++; yylval.sval = strdup(yytext); return INT_TYPE_KEYWORD; }
 	YY_BREAK
 case 6:
 YY_RULE_SETUP
-#line 21 "lexer.l"
-{ printf("detected token of type MAIN_KEYWORD : %s\n", yytext); token_count++; return MAIN_KEYWORD; }
+#line 22 "lexer.l"
+{ /* printf("detected token of type MAIN_KEYWORD : %s\n", yytext); */ token_count++; yylval.sval = strdup(yytext); return MAIN_KEYWORD; }
 	YY_BREAK
 case 7:
 YY_RULE_SETUP
-#line 22 "lexer.l"
-{ printf("detected token of type FLOAT_TYPE_KEYWORD : %s\n", yytext); token_count++; return FLOAT_TYPE_KEYWORD; }
+#line 23 "lexer.l"
+{ /* printf("detected token of type FLOAT_TYPE_KEYWORD : %s\n", yytext); */ token_count++; yylval.sval = strdup(yytext); return FLOAT_TYPE_KEYWORD; }
 	YY_BREAK
 case 8:
 YY_RULE_SETUP
-#line 23 "lexer.l"
-{ printf("detected token of type STRING_TYPE_KEYWORD : %s\n", yytext); token_count++; return STRING_TYPE_KEYWORD; }
+#line 24 "lexer.l"
+{ /* printf("detected token of type STRING_TYPE_KEYWORD : %s\n", yytext); */ token_count++; yylval.sval = strdup(yytext); return STRING_TYPE_KEYWORD; }
 	YY_BREAK
 case 9:
 YY_RULE_SETUP
-#line 24 "lexer.l"
-{ printf("detected token of type CHAR_TYPE_KEYWORD : %s\n", yytext); token_count++; return CHAR_TYPE_KEYWORD; }
+#line 25 "lexer.l"
+{ /* printf("detected token of type CHAR_TYPE_KEYWORD : %s\n", yytext); */ token_count++; yylval.sval = strdup(yytext); return CHAR_TYPE_KEYWORD; }
 	YY_BREAK
 case 10:
 YY_RULE_SETUP
-#line 25 "lexer.l"
-{ printf("detected token of type BOOL_TYPE_KEYWORD : %s\n", yytext); token_count++; return BOOL_TYPE_KEYWORD; }
+#line 26 "lexer.l"
+{ /* printf("detected token of type BOOL_TYPE_KEYWORD : %s\n", yytext); */ token_count++; yylval.sval = strdup(yytext); return BOOL_TYPE_KEYWORD; }
 	YY_BREAK
 case 11:
 YY_RULE_SETUP
-#line 26 "lexer.l"
-{ printf("detected token of type VOID_TYPE_KEYWORD : %s\n", yytext); token_count++; return VOID_TYPE_KEYWORD; }
+#line 27 "lexer.l"
+{ /* printf("detected token of type VOID_TYPE_KEYWORD : %s\n", yytext); */ token_count++; yylval.sval = strdup(yytext); return VOID_TYPE_KEYWORD; }
 	YY_BREAK
 case 12:
 YY_RULE_SETUP
-#line 27 "lexer.l"
-{ printf("detected token of type IF_KEYWORD : %s\n", yytext); token_count++; return IF_KEYWORD; }
+#line 28 "lexer.l"
+{ /* printf("detected token of type IF_KEYWORD : %s\n", yytext); */ token_count++; return IF_KEYWORD; }
 	YY_BREAK
 case 13:
 YY_RULE_SETUP
-#line 28 "lexer.l"
-{ printf("detected token of type ELSEIF_KEYWORD : %s\n", yytext); token_count++; return ELSEIF_KEYWORD; }
+#line 29 "lexer.l"
+{ /* printf("detected token of type ELSEIF_KEYWORD : %s\n", yytext); */ token_count++; return ELSEIF_KEYWORD; }
 	YY_BREAK
 case 14:
 YY_RULE_SETUP
-#line 29 "lexer.l"
-{ printf("detected token of type ELSE_KEYWORD : %s\n", yytext); token_count++; return ELSE_KEYWORD; }
+#line 30 "lexer.l"
+{ /* printf("detected token of type ELSE_KEYWORD : %s\n", yytext); */ token_count++; return ELSE_KEYWORD; }
 	YY_BREAK
 case 15:
 YY_RULE_SETUP
-#line 30 "lexer.l"
-{ printf("detected token of type FOR_KEYWORD : %s\n", yytext); token_count++; return FOR_KEYWORD; }
+#line 31 "lexer.l"
+{ /* printf("detected token of type FOR_KEYWORD : %s\n", yytext); */ token_count++; return FOR_KEYWORD; }
 	YY_BREAK
 case 16:
 YY_RULE_SETUP
-#line 31 "lexer.l"
-{ printf("detected token of type WHILE_KEYWORD : %s\n", yytext); token_count++; return WHILE_KEYWORD; }
+#line 32 "lexer.l"
+{ /* printf("detected token of type WHILE_KEYWORD : %s\n", yytext); */ token_count++; return WHILE_KEYWORD; }
 	YY_BREAK
 case 17:
 YY_RULE_SETUP
-#line 32 "lexer.l"
-{ printf("detected token of type SWITCH_KEYWORD : %s\n", yytext); token_count++; return SWITCH_KEYWORD; }
+#line 33 "lexer.l"
+{ /* printf("detected token of type SWITCH_KEYWORD : %s\n", yytext); */ token_count++; return SWITCH_KEYWORD; }
 	YY_BREAK
 case 18:
 YY_RULE_SETUP
-#line 33 "lexer.l"
-{ printf("detected token of type CASE_KEYWORD : %s\n", yytext); token_count++; return CASE_KEYWORD; }
+#line 34 "lexer.l"
+{ /* printf("detected token of type CASE_KEYWORD : %s\n", yytext); */ token_count++; return CASE_KEYWORD; }
 	YY_BREAK
 case 19:
 YY_RULE_SETUP
-#line 34 "lexer.l"
-{ printf("detected token of type DEFAULT_KEYWORD : %s\n", yytext); token_count++; return DEFAULT_KEYWORD; }
+#line 35 "lexer.l"
+{ /* printf("detected token of type DEFAULT_KEYWORD : %s\n", yytext); */ token_count++; return DEFAULT_KEYWORD; }
 	YY_BREAK
 case 20:
 YY_RULE_SETUP
-#line 35 "lexer.l"
-{ printf("detected token of type BREAK_KEYWORD : %s\n", yytext); token_count++; return BREAK_KEYWORD; }
+#line 36 "lexer.l"
+{ /* printf("detected token of type BREAK_KEYWORD : %s\n", yytext); */ token_count++; return BREAK_KEYWORD; }
 	YY_BREAK
 case 21:
 YY_RULE_SETUP
-#line 36 "lexer.l"
-{ printf("detected token of type CONTINUE_KEYWORD : %s\n", yytext); token_count++; return CONTINUE_KEYWORD; }
+#line 37 "lexer.l"
+{ /* printf("detected token of type CONTINUE_KEYWORD : %s\n", yytext); */ token_count++; return CONTINUE_KEYWORD; }
 	YY_BREAK
 case 22:
 YY_RULE_SETUP
-#line 37 "lexer.l"
-{ printf("detected token of type DO_KEYWORD : %s\n", yytext); token_count++; return DO_KEYWORD; }
+#line 38 "lexer.l"
+{ /* printf("detected token of type DO_KEYWORD : %s\n", yytext); */ token_count++; return DO_KEYWORD; }
 	YY_BREAK
 case 23:
 YY_RULE_SETUP
-#line 38 "lexer.l"
-{ printf("detected token of type RETURN_KEYWORD : %s\n", yytext); token_count++; return RETURN_KEYWORD; }
+#line 39 "lexer.l"
+{ /* printf("detected token of type RETURN_KEYWORD : %s\n", yytext); */ token_count++; return RETURN_KEYWORD; }
 	YY_BREAK
 case 24:
 YY_RULE_SETUP
-#line 39 "lexer.l"
-{ printf("detected token of type CONST_KEYWORD : %s\n", yytext); token_count++; return CONST_KEYWORD; }
+#line 40 "lexer.l"
+{ /* printf("detected token of type CONST_KEYWORD : %s\n", yytext); */ token_count++; return CONST_KEYWORD; }
 	YY_BREAK
 case 25:
 YY_RULE_SETUP
-#line 40 "lexer.l"
-{ printf("detected token of type AND_KEYWORD : %s\n", yytext); token_count++; return AND_KEYWORD; }
+#line 41 "lexer.l"
+{ /* printf("detected token of type AND_KEYWORD : %s\n", yytext); */ token_count++; return AND_KEYWORD; }
 	YY_BREAK
 case 26:
 YY_RULE_SETUP
-#line 41 "lexer.l"
-{ printf("detected token of type OR_KEYWORD : %s\n", yytext); token_count++; return OR_KEYWORD; }
+#line 42 "lexer.l"
+{ /* printf("detected token of type OR_KEYWORD : %s\n", yytext); */ token_count++; return OR_KEYWORD; }
 	YY_BREAK
 case 27:
 YY_RULE_SETUP
-#line 42 "lexer.l"
-{ printf("detected token of type NOT_KEYWORD : %s\n", yytext); token_count++; return NOT_KEYWORD; }
+#line 43 "lexer.l"
+{ /* printf("detected token of type NOT_KEYWORD : %s\n", yytext); */ token_count++; return NOT_KEYWORD; }
 	YY_BREAK
 case 28:
 YY_RULE_SETUP
-#line 43 "lexer.l"
-{ printf("detected token of type OPENING_CURLY_BRACE : %s\n", yytext); token_count++; return OPENING_CURLY_BRACE; }
+#line 44 "lexer.l"
+{ /* printf("detected token of type OPENING_CURLY_BRACE : %s\n", yytext); */ token_count++; return OPENING_CURLY_BRACE; }
 	YY_BREAK
 case 29:
 YY_RULE_SETUP
-#line 44 "lexer.l"
-{ printf("detected token of type CLOSING_CURLY_BRACE : %s\n", yytext); token_count++; return CLOSING_CURLY_BRACE; }
+#line 45 "lexer.l"
+{ /* printf("detected token of type CLOSING_CURLY_BRACE : %s\n", yytext); */ token_count++; return CLOSING_CURLY_BRACE; }
 	YY_BREAK
 case 30:
 YY_RULE_SETUP
-#line 45 "lexer.l"
-{ printf("detected token of type OPENING_PARENTHESIS : %s\n", yytext); token_count++; return OPENING_PARENTHESIS; }
+#line 46 "lexer.l"
+{ /* printf("detected token of type OPENING_PARENTHESIS : %s\n", yytext); */ token_count++; return OPENING_PARENTHESIS; }
 	YY_BREAK
 case 31:
 YY_RULE_SETUP
-#line 46 "lexer.l"
-{ printf("detected token of type CLOSING_PARENTHESIS : %s\n", yytext); token_count++; return CLOSING_PARENTHESIS; }
+#line 47 "lexer.l"
+{ /* printf("detected token of type CLOSING_PARENTHESIS : %s\n", yytext); */ token_count++; return CLOSING_PARENTHESIS; }
 	YY_BREAK
 case 32:
 YY_RULE_SETUP
-#line 47 "lexer.l"
-{ printf("detected token of type OPENING_SQUARE_BRACKETS : %s\n", yytext); token_count++; return OPENING_SQUARE_BRACKETS; }
+#line 48 "lexer.l"
+{ /* printf("detected token of type OPENING_SQUARE_BRACKETS : %s\n", yytext); */ token_count++; return OPENING_SQUARE_BRACKETS; }
 	YY_BREAK
 case 33:
 YY_RULE_SETUP
-#line 48 "lexer.l"
-{ printf("detected token of type CLOSING_SQUARE_BRACKETS : %s\n", yytext); token_count++; return CLOSING_SQUARE_BRACKETS; }
+#line 49 "lexer.l"
+{ /* printf("detected token of type CLOSING_SQUARE_BRACKETS : %s\n", yytext); */ token_count++; return CLOSING_SQUARE_BRACKETS; }
 	YY_BREAK
 case 34:
 YY_RULE_SETUP
-#line 49 "lexer.l"
-{ printf("detected token of type FLOAT_LITERAL : %s\n", yytext); token_count++; return FLOAT_LITERAL; }
+#line 50 "lexer.l"
+{ /* printf("detected token of type FLOAT_LITERAL : %s\n", yytext); */ token_count++; yylval.fval = atof(yytext); return FLOAT_LITERAL; }
 	YY_BREAK
 case 35:
 YY_RULE_SETUP
-#line 50 "lexer.l"
-{ printf("detected token of type COMMA : %s\n", yytext); token_count++; return COMMA; }
+#line 51 "lexer.l"
+{ /* printf("detected token of type COMMA : %s\n", yytext); */ token_count++; return COMMA; }
 	YY_BREAK
 case 36:
 YY_RULE_SETUP
-#line 51 "lexer.l"
-{ printf("detected token of type ASTRISK : %s\n", yytext); token_count++; return ASTRISK; }
+#line 52 "lexer.l"
+{ /* printf("detected token of type ASTRISK : %s\n", yytext); */ token_count++; return ASTRISK; }
 	YY_BREAK
 case 37:
 YY_RULE_SETUP
-#line 52 "lexer.l"
-{ printf("detected token of type PLUS : %s\n", yytext); token_count++; return PLUS; }
+#line 53 "lexer.l"
+{ /* printf("detected token of type PLUS : %s\n", yytext); */ token_count++; return PLUS; }
 	YY_BREAK
 case 38:
 YY_RULE_SETUP
-#line 53 "lexer.l"
-{ printf("detected token of type MINUS : %s\n", yytext); token_count++; return MINUS; }
+#line 54 "lexer.l"
+{ /* printf("detected token of type MINUS : %s\n", yytext); */ token_count++; return MINUS; }
 	YY_BREAK
 case 39:
 YY_RULE_SETUP
-#line 54 "lexer.l"
-{ printf("detected token of type DIVIDE : %s\n", yytext); token_count++; return DIVIDE; }
+#line 55 "lexer.l"
+{ /* printf("detected token of type DIVIDE : %s\n", yytext); */ token_count++; return DIVIDE; }
 	YY_BREAK
 case 40:
 YY_RULE_SETUP
-#line 55 "lexer.l"
-{ printf("detected token of type MODULO : %s\n", yytext); token_count++; return MODULO; }
+#line 56 "lexer.l"
+{ /* printf("detected token of type MODULO : %s\n", yytext); */ token_count++; return MODULO; }
 	YY_BREAK
 case 41:
 YY_RULE_SETUP
-#line 56 "lexer.l"
-{ printf("detected token of type INCREMENT : %s\n", yytext); token_count++; return INCREMENT; }
+#line 57 "lexer.l"
+{ /* printf("detected token of type INCREMENT : %s\n", yytext); */ token_count++; return INCREMENT; }
 	YY_BREAK
 case 42:
 YY_RULE_SETUP
-#line 57 "lexer.l"
-{ printf("detected token of type DECREMENT : %s\n", yytext); token_count++; return DECREMENT; }
+#line 58 "lexer.l"
+{ /* printf("detected token of type DECREMENT : %s\n", yytext); */ token_count++; return DECREMENT; }
 	YY_BREAK
 case 43:
 YY_RULE_SETUP
-#line 58 "lexer.l"
-{ printf("detected token of type ASSIGNMENT : %s\n", yytext); token_count++; return ASSIGNMENT; }
+#line 59 "lexer.l"
+{ /* printf("detected token of type ASSIGNMENT : %s\n", yytext); */ token_count++; return ASSIGNMENT; }
 	YY_BREAK
 case 44:
 YY_RULE_SETUP
-#line 59 "lexer.l"
-{ printf("detected token of type EQUAL : %s\n", yytext); token_count++; return EQUAL; }
+#line 60 "lexer.l"
+{ /* printf("detected token of type EQUAL : %s\n", yytext); */ token_count++; return EQUAL; }
 	YY_BREAK
 case 45:
 YY_RULE_SETUP
-#line 60 "lexer.l"
-{ printf("detected token of type NOT_EQUAL : %s\n", yytext); token_count++; return NOT_EQUAL; }
+#line 61 "lexer.l"
+{ /* printf("detected token of type NOT_EQUAL : %s\n", yytext); */ token_count++; return NOT_EQUAL; }
 	YY_BREAK
 case 46:
 YY_RULE_SETUP
-#line 61 "lexer.l"
-{ printf("detected token of type LESS_OR_EQUAL : %s\n", yytext); token_count++; return LESS_OR_EQUAL; }
+#line 62 "lexer.l"
+{ /* printf("detected token of type LESS_OR_EQUAL : %s\n", yytext); */ token_count++; return LESS_OR_EQUAL; }
 	YY_BREAK
 case 47:
 YY_RULE_SETUP
-#line 62 "lexer.l"
-{ printf("detected token of type GREATER_OR_EQUAL : %s\n", yytext); token_count++; return GREATER_OR_EQUAL; }
+#line 63 "lexer.l"
+{ /* printf("detected token of type GREATER_OR_EQUAL : %s\n", yytext); */ token_count++; return GREATER_OR_EQUAL; }
 	YY_BREAK
 case 48:
 YY_RULE_SETUP
-#line 63 "lexer.l"
-{ printf("detected token of type LESS : %s\n", yytext); token_count++; return LESS; }
+#line 64 "lexer.l"
+{ /* printf("detected token of type LESS : %s\n", yytext); */ token_count++; return LESS; }
 	YY_BREAK
 case 49:
 YY_RULE_SETUP
-#line 64 "lexer.l"
-{ printf("detected token of type GREATER : %s\n", yytext); token_count++; return GREATER; }
+#line 65 "lexer.l"
+{ /* printf("detected token of type GREATER : %s\n", yytext); */ token_count++; return GREATER; }
 	YY_BREAK
 case 50:
 YY_RULE_SETUP
-#line 65 "lexer.l"
-{ printf("detected token of type BITWISE_AND : %s\n", yytext); token_count++; return BITWISE_AND; }
+#line 66 "lexer.l"
+{ /* printf("detected token of type BITWISE_AND : %s\n", yytext); */ token_count++; return BITWISE_AND; }
 	YY_BREAK
 case 51:
 YY_RULE_SETUP
-#line 66 "lexer.l"
-{ printf("detected token of type BITWISE_OR : %s\n", yytext); token_count++; return BITWISE_OR; }
+#line 67 "lexer.l"
+{ /* printf("detected token of type BITWISE_OR : %s\n", yytext); */ token_count++; return BITWISE_OR; }
 	YY_BREAK
 case 52:
 YY_RULE_SETUP
-#line 67 "lexer.l"
-{ printf("detected token of type BITWISE_XOR : %s\n", yytext); token_count++; return BITWISE_XOR; }
+#line 68 "lexer.l"
+{ /* printf("detected token of type BITWISE_XOR : %s\n", yytext); */ token_count++; return BITWISE_XOR; }
 	YY_BREAK
 case 53:
 YY_RULE_SETUP
-#line 68 "lexer.l"
-{ printf("detected token of type BITWISE_NOT : %s\n", yytext); token_count++; return BITWISE_NOT; }
+#line 69 "lexer.l"
+{ /* printf("detected token of type BITWISE_NOT : %s\n", yytext); */ token_count++; return BITWISE_NOT; }
 	YY_BREAK
 case 54:
 YY_RULE_SETUP
-#line 69 "lexer.l"
-{ printf("detected token of type COLON : %s\n", yytext); token_count++; return COLON; }
+#line 70 "lexer.l"
+{ /* printf("detected token of type COLON : %s\n", yytext); */ token_count++; return COLON; }
 	YY_BREAK
 case 55:
 YY_RULE_SETUP
-#line 70 "lexer.l"
-{ printf("detected token of type SEMICOLON : %s\n", yytext); token_count++; return SEMICOLON; }
+#line 71 "lexer.l"
+{ /* printf("detected token of type SEMICOLON : %s\n", yytext); */ token_count++; return SEMICOLON; }
 	YY_BREAK
 case 56:
 /* rule 56 can match eol */
 YY_RULE_SETUP
-#line 71 "lexer.l"
-{ printf("detected token of type CHARACTER_LITERAL : %s\n", yytext); token_count++; return CHARACTER_LITERAL; }
+#line 72 "lexer.l"
+{ /* printf("detected token of type CHARACTER_LITERAL : %s\n", yytext); */ token_count++; yylval.cval = yytext[0]; return CHARACTER_LITERAL; }
 	YY_BREAK
 case 57:
 /* rule 57 can match eol */
 YY_RULE_SETUP
-#line 72 "lexer.l"
-{ printf("detected token of type STRING_LITERAL : %s\n", yytext); token_count++; return STRING_LITERAL; }
+#line 73 "lexer.l"
+{ /* printf("detected token of type STRING_LITERAL : %s\n", yytext); */ token_count++; yylval.sval = strdup(yytext); return STRING_LITERAL; }
 	YY_BREAK
 case 58:
 YY_RULE_SETUP
-#line 73 "lexer.l"
-{ printf("detected token of type BOOLEAN_LITERAL : %s\n", yytext); token_count++; return BOOLEAN_LITERAL; }
+#line 74 "lexer.l"
+{ /* printf("detected token of type BOOLEAN_LITERAL : %s\n", yytext); */ token_count++; if(strcmp(yytext, "true") == 0){ yylval.ival = 1; }else{ yylval.ival = 0; } return BOOLEAN_LITERAL; }
 	YY_BREAK
 case 59:
 /* rule 59 can match eol */
 YY_RULE_SETUP
-#line 74 "lexer.l"
+#line 75 "lexer.l"
 { ; }
 	YY_BREAK
 case 60:
 YY_RULE_SETUP
-#line 75 "lexer.l"
+#line 76 "lexer.l"
 { ; }
 	YY_BREAK
 case 61:
 YY_RULE_SETUP
-#line 76 "lexer.l"
-{ printf("detected token of type IDENTIFIER : %s\n", yytext);   token_count++; return IDENTIFIER; }
+#line 77 "lexer.l"
+{ /* printf("detected token of type IDENTIFIER : %s\n", yytext); */ token_count++; yylval.sval = strdup(yytext); return IDENTIFIER; }
 	YY_BREAK
 case 62:
 YY_RULE_SETUP
-#line 77 "lexer.l"
+#line 78 "lexer.l"
 { ; }
 	YY_BREAK
 case 63:
 /* rule 63 can match eol */
 YY_RULE_SETUP
-#line 78 "lexer.l"
+#line 79 "lexer.l"
 { line_count++; yylineno++; }
 	YY_BREAK
 case 64:
 YY_RULE_SETUP
-#line 79 "lexer.l"
-{ return UNRECOGNIZED_TOKEN; }
+#line 80 "lexer.l"
+{ yylval.sval = strdup(yytext); return UNRECOGNIZED_TOKEN; }
 	YY_BREAK
 case 65:
 YY_RULE_SETUP
-#line 81 "lexer.l"
+#line 82 "lexer.l"
 ECHO;
 	YY_BREAK
-#line 1191 "lex.yy.c"
+#line 1231 "lex.yy.c"
 case YY_STATE_EOF(INITIAL):
 	yyterminate();
 
@@ -1484,7 +1524,7 @@ static int yy_get_next_buffer (void)
 		while ( yy_chk[yy_base[yy_current_state] + yy_c] != yy_current_state )
 			{
 			yy_current_state = (int) yy_def[yy_current_state];
-			if ( yy_current_state >= 183 )
+			if ( yy_current_state >= 232 )
 				yy_c = yy_meta[yy_c];
 			}
 		yy_current_state = yy_nxt[yy_base[yy_current_state] + yy_c];
@@ -1512,11 +1552,11 @@ static int yy_get_next_buffer (void)
 	while ( yy_chk[yy_base[yy_current_state] + yy_c] != yy_current_state )
 		{
 		yy_current_state = (int) yy_def[yy_current_state];
-		if ( yy_current_state >= 183 )
+		if ( yy_current_state >= 232 )
 			yy_c = yy_meta[yy_c];
 		}
 	yy_current_state = yy_nxt[yy_base[yy_current_state] + yy_c];
-	yy_is_jam = (yy_current_state == 182);
+	yy_is_jam = (yy_current_state == 231);
 
 		return yy_is_jam ? 0 : yy_current_state;
 }
@@ -2192,24 +2232,24 @@ void yyfree (void * ptr )
 
 #define YYTABLES_NAME "yytables"
 
-#line 81 "lexer.l"
+#line 82 "lexer.l"
 
 
-
-  /* "\."                                                    { printf("detected token of type DOT : %s\n", yytext); token_count++; return DOT; } */
-  /* "null"                                                   { printf("detected token of type NULL_LITERAL : %s\n", yytext); token_count++; return NULL_LITERAL; } */
-  /* "delete"                                                 { printf("detected token of type DELETE_KEYWORD : %s\n", yytext); token_count++; return DELETE_KEYWORD; } */
-  /* "new"                                                    { printf("detected token of type NEW_KEYWORD : %s\n", yytext); token_count++; return NEW_KEYWORD; } */
-  /* "?"                                                      { printf("detected token of type QUESTION_MARK : %s\n", yytext); token_count++; return QUESTION_MARK; } */
-  /* "try"                                                   { printf("detected token of type TRY_KEYWORD : %s\n", yytext); token_count++; return TRY_KEYWORD; }  */
-  /* "catch"                                                 { printf("detected token of type CATCH_KEYWORD : %s\n", yytext); token_count++; return CATCH_KEYWORD; } */
-  /* "throw"                                                 { printf("detected token of type THROW_KEYWORD : %s\n", yytext); token_count++; return THROW_KEYWORD; } */
-  /* "global"                                                 { printf("detected token of type GLOBAL_KEYWORD : %s\n", yytext); token_count++; return GLOBAL_KEYWORD; } */
-  /* "is"                                                     { printf("detected token of type IS_KEYWORD : %s\n", yytext); token_count++; return IS_KEYWORD; } */ 
-  /* "import"                                                 { printf("detected token of type IMPORT_KEYWORD : %s\n", yytext); token_count++; return IMPORT_KEYWORD; } */
+/* Commented out additional token rules (already commented in original) */
+/* "\."                                                    { printf("detected token of type DOT : %s\n", yytext); token_count++; return DOT; } */
+/* "null"                                                   { printf("detected token of type NULL_LITERAL : %s\n", yytext); token_count++; return NULL_LITERAL; } */
+/* "delete"                                                 { printf("detected token of type DELETE_KEYWORD : %s\n", yytext); token_count++; return DELETE_KEYWORD; } */
+/* "new"                                                    { printf("detected token of type NEW_KEYWORD : %s\n", yytext); token_count++; return NEW_KEYWORD; } */
+/* "?"                                                      { printf("detected token of type QUESTION_MARK : %s\n", yytext); token_count++; return QUESTION_MARK; } */
+/* "try"                                                   { printf("detected token of type TRY_KEYWORD : %s\n", yytext); token_count++; return TRY_KEYWORD; }  */
+/* "catch"                                                 { printf("detected token of type CATCH_KEYWORD : %s\n", yytext); token_count++; return CATCH_KEYWORD; } */
+/* "throw"                                                 { printf("detected token of type THROW_KEYWORD : %s\n", yytext); token_count++; return THROW_KEYWORD; } */
+/* "global"                                                 { printf("detected token of type GLOBAL_KEYWORD : %s\n", yytext); token_count++; return GLOBAL_KEYWORD; } */
+/* "is"                                                     { printf("detected token of type IS_KEYWORD : %s\n", yytext); token_count++; return IS_KEYWORD; } */ 
+/* "import"                                                 { printf("detected token of type IMPORT_KEYWORD : %s\n", yytext); token_count++; return IMPORT_KEYWORD; } */
 
 int yywrap(void){
-    printf("lexer : number of tokens detected : %d\n", token_count);
-    printf("lexer : number of lines read : %d\n", line_count);
+    /* printf("lexer : number of tokens detected : %d\n", token_count); */
+    /* printf("lexer : number of lines read : %d\n", line_count); */
     return 1;
 }

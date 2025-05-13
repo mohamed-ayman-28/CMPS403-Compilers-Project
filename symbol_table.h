@@ -104,7 +104,7 @@ Parameter* create_parameter(const char *name, const char *type) {
     return param;
 }
 
-SymbolTableEntry* insert_symbol(SymbolTable* table, const char* name, const char* type, Value value, ValueType value_type, int scope_no, int is_function, int is_constant, int no_explicit_array, Parameter* parameters, int line_no, size_t array_length) {
+SymbolTableEntry* insert_symbol(SymbolTable* table, const char* name, const char* type, Value value, ValueType value_type, int scope_no, int is_function, int is_constant, int no_explicit_array, Parameter* parameters, int line_no, size_t array_length, const char* enclosing_function_name) {
     // Check for reserved keywords
     const char *keywords[] = {"if", "while", "for", "return", "int", "double", "char", NULL};
     for (int i = 0; keywords[i]; i++) {
@@ -117,10 +117,14 @@ SymbolTableEntry* insert_symbol(SymbolTable* table, const char* name, const char
     // Hash the name
     unsigned long index = hash(name, table->table_size);
 
-    // Check for redeclaration in the same scope
+    // Check for redeclaration in the same scope and enclosing_function_name
     SymbolTableEntry *current = table->buckets[index];
     while (current) {
-        if (strcmp(current->name, name) == 0 && current->scope_no == scope_no) {
+        int same_scope = current->scope_no == scope_no;
+        int same_enclosing = (current->enclosing_function_name == NULL && enclosing_function_name == NULL) ||
+                             (current->enclosing_function_name && enclosing_function_name &&
+                              strcmp(current->enclosing_function_name, enclosing_function_name) == 0);
+        if (strcmp(current->name, name) == 0 && same_scope && same_enclosing) {
             fprintf(stderr, "Error at line %d: Identifier '%s' redeclared in scope %d (previously declared at line %d)\n",
                     line_no, name, scope_no, current->line_no);
             return NULL;
@@ -148,6 +152,17 @@ SymbolTableEntry* insert_symbol(SymbolTable* table, const char* name, const char
     entry->parameters = parameters;
     entry->next_entry = NULL;
     entry->array_length = array_length;
+    // Set enclosing_function_name
+    if (enclosing_function_name) {
+        entry->enclosing_function_name = strdup(enclosing_function_name);
+        if (!entry->enclosing_function_name) {
+            free(entry);
+            fprintf(stderr, "Memory allocation for enclosing_function_name failed at line %d\n", line_no);
+            return NULL;
+        }
+    } else {
+        entry->enclosing_function_name = NULL;
+    }
 
     // Handle value based on value_type
     switch (value_type) {
@@ -166,6 +181,7 @@ SymbolTableEntry* insert_symbol(SymbolTable* table, const char* name, const char
                 size_t string_length = strlen(value.char_array);
                 entry->value.char_array = (char*)malloc(string_length + 1);
                 if (!entry->value.char_array) {
+                    free(entry->enclosing_function_name);
                     free(entry);
                     fprintf(stderr, "Memory allocation for string failed at line %d\n", line_no);
                     return NULL;
@@ -179,6 +195,7 @@ SymbolTableEntry* insert_symbol(SymbolTable* table, const char* name, const char
             if (array_length > 0) {
                 entry->value.char_array = (char*)malloc(array_length);
                 if (!entry->value.char_array) {
+                    free(entry->enclosing_function_name);
                     free(entry);
                     fprintf(stderr, "Memory allocation for char array failed at line %d\n", line_no);
                     return NULL;
@@ -195,6 +212,7 @@ SymbolTableEntry* insert_symbol(SymbolTable* table, const char* name, const char
             if (array_length > 0) {
                 entry->value.int_array = (int*)malloc(array_length * sizeof(int));
                 if (!entry->value.int_array) {
+                    free(entry->enclosing_function_name);
                     free(entry);
                     fprintf(stderr, "Memory allocation for int array failed at line %d\n", line_no);
                     return NULL;
@@ -210,6 +228,7 @@ SymbolTableEntry* insert_symbol(SymbolTable* table, const char* name, const char
             if (array_length > 0) {
                 entry->value.float_array = (double*)malloc(array_length * sizeof(double));
                 if (!entry->value.float_array) {
+                    free(entry->enclosing_function_name);
                     free(entry);
                     fprintf(stderr, "Memory allocation for float array failed at line %d\n", line_no);
                     return NULL;
@@ -225,6 +244,7 @@ SymbolTableEntry* insert_symbol(SymbolTable* table, const char* name, const char
             if(array_length > 0) {
                 entry->value.string_array = (char**)malloc(array_length * sizeof(char*));
                 if (!entry->value.string_array) {
+                    free(entry->enclosing_function_name);
                     free(entry);
                     fprintf(stderr, "Memory allocation for string array failed at line %d\n", line_no);
                     return NULL;
@@ -235,11 +255,13 @@ SymbolTableEntry* insert_symbol(SymbolTable* table, const char* name, const char
             } else {
                 entry->value.string_array = NULL;
             }
+            break;
         case FUNCTION:
             entry->value.function = value.function;
             break;
         default:
             fprintf(stderr, "Error at line %d: Invalid value type for '%s'\n", line_no, name);
+            free(entry->enclosing_function_name);
             free(entry);
             exit(1);
             return NULL;
@@ -248,7 +270,7 @@ SymbolTableEntry* insert_symbol(SymbolTable* table, const char* name, const char
     // Insert into hash table and maintain scope descending order among linked list elements
     if (!table->buckets[index]) {
         table->buckets[index] = entry;
-    } else if (table->buckets[index]->scope_no <= entry->scope_no) { // in order to maintain the order of insertion in case 
+    } else if (table->buckets[index]->scope_no <= entry->scope_no) {
         entry->next_entry = table->buckets[index];
         table->buckets[index] = entry;
     } else {
