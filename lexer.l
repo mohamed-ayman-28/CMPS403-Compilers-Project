@@ -1,5 +1,6 @@
 %{
 #include <stdio.h>
+#include "types.h"
 #include "parser.tab.h"
 #include <string.h>
 
