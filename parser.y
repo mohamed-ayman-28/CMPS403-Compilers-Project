@@ -1966,8 +1966,8 @@ int main(int argc, char* argv[]) {
     char* base_name = strtok(argv[1], ".");
     char symbol_table_filename[256];
     char symbol_table_changes_filename[256];
-    snprintf(symbol_table_filename, sizeof(symbol_table_filename), "%s_symbol_table.text", base_name);
-    snprintf(symbol_table_changes_filename, sizeof(symbol_table_changes_filename), "%s_symbol_table_changes.text", base_name);
+    snprintf(symbol_table_filename, sizeof(symbol_table_filename), "%s_symbol_table.txt", base_name);
+    snprintf(symbol_table_changes_filename, sizeof(symbol_table_changes_filename), "%s_symbol_table_changes.txt", base_name);
 
     // Open symbol_table_file for writing
     symbol_table_file = fopen(symbol_table_filename, "w");
