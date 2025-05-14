@@ -231,7 +231,7 @@ void yyerror(const char *s) {
 %%
 
 program:
-    { scope_no++; } functions main_function { delete_scope(symbol_table, scope_no); scope_no--;}            
+    { scope_no++; } functions main_function { print_unused_variables(symbol_table, stdout); delete_scope(symbol_table, scope_no); scope_no--;}            
     ;
 
 functions:
@@ -384,7 +384,8 @@ function_arguments:
             free_symbol_table(symbol_table);
             exit(1);
         }
-        insert_symbol(symbol_table, $1.name, $1.type, val, param_type, scope_no, 0, 0, param_size > 0, NULL, yylineno, param_size, get_current_enclosing_function());
+        result = insert_symbol(symbol_table, $1.name, $1.type, val, param_type, scope_no, 0, 0, param_size > 0, NULL, yylineno, param_size, get_current_enclosing_function());
+        result->is_used = 1;
         free($1.name);
         free($1.type);
         $$ = curr_function_parameter_list;
@@ -456,6 +457,7 @@ body:{
     CLOSING_CURLY_BRACE { 
         if(!inside_a_function_declaration_body) {
             printf("boom\n");
+            print_unused_variables(symbol_table, stdout);
             delete_scope(symbol_table, scope_no); 
         }
         scope_no--; 
@@ -506,6 +508,7 @@ loop_start              :   IDENTIFIER ASSIGNMENT expression {
                                 free_symbol_table(symbol_table);
                                 exit(1);
                             }
+                            result->is_used = 1;
                             if (result->is_constant) {
                                 fprintf(stderr, "Cannot assign to constant '%s' at line %d\n", $1, yylineno);
                                 free_symbol_table(symbol_table);
@@ -599,6 +602,7 @@ loop_update:
             free_symbol_table(symbol_table);
             exit(1);
         }
+        result->is_used = 1;
         if (result->is_function) {
             fprintf(stderr, "Cannot use function '%s' at line %d as a loop variable\n", $1, yylineno);
             free_symbol_table(symbol_table);
@@ -622,6 +626,7 @@ loop_update:
             free_symbol_table(symbol_table);
             exit(1);
         }
+        result->is_used = 1;
         if (result->is_function) {
             fprintf(stderr, "Cannot use function '%s' at line %d as a loop variable\n", $1, yylineno);
             free_symbol_table(symbol_table);
@@ -650,6 +655,7 @@ loop_update:
             free_symbol_table(symbol_table);
             exit(1);
         }
+        result->is_used = 1;
         if (result->is_function) {
             fprintf(stderr, "Cannot use function '%s' at line %d as a loop variable\n", $1, yylineno);
             free_symbol_table(symbol_table);
@@ -690,6 +696,7 @@ switch_statement:
             free_symbol_table(symbol_table);
             exit(1);
         }
+        result->is_used = 1;
         if (result->value_type != INT_VALUE) {
             fprintf(stderr, "Cannot use non-integer '%s' at line %d as a switch statement variable\n", $3, yylineno);
             free_symbol_table(symbol_table);
@@ -697,7 +704,7 @@ switch_statement:
         }
     }
     CLOSING_PARENTHESIS OPENING_CURLY_BRACE {scope_no++;}
-    case_list default_case CLOSING_CURLY_BRACE { delete_scope(symbol_table, scope_no); scope_no--;}
+    case_list default_case CLOSING_CURLY_BRACE { print_unused_variables(symbol_table, stdout);delete_scope(symbol_table, scope_no); scope_no--;}
     ;
 
 default_case            : DEFAULT_KEYWORD COLON statements
@@ -741,6 +748,7 @@ initialization:
             case INT_VALUE:
             case BOOL_VALUE:
                 val.int_value = $3.expr_value.int_value;
+                printf("+++++++++++++++Expression assigned value: %d\n", $3.expr_value.int_value);
                 break;
             case FLOAT_VALUE:
                 val.float_value = $3.expr_value.float_value;
@@ -1009,6 +1017,7 @@ assignment:
             free_symbol_table(symbol_table);
             exit(1);
         }
+        result->is_used = 1;
         if (result->is_constant) {
             fprintf(stderr, "Cannot assign to constant '%s' at line %d\n", $1, yylineno);
             free_symbol_table(symbol_table);
@@ -1054,6 +1063,7 @@ assignment:
             free_symbol_table(symbol_table);
             exit(1);
         }
+        result->is_used = 1;
         if (result->is_constant) {
             fprintf(stderr, "Cannot assign to constant '%s' at line %d\n", $1, yylineno);
             free_symbol_table(symbol_table);
@@ -1065,7 +1075,7 @@ assignment:
             free_symbol_table(symbol_table);
             exit(1);
         }
-        if (result->value_type != $3.expr_return_type) {
+        if (result->value_type != $6.expr_return_type) {
             fprintf(stderr, "Type mismatch in assignment at line %d\n", yylineno);
             free_symbol_table(symbol_table);
             exit(1);
@@ -1073,17 +1083,17 @@ assignment:
         switch (result->value_type) {
             case INT_ARRAY_VALUE:
             case BOOL_ARRAY_VALUE:
-                result->value.int_value = $3.expr_value.int_value;
+                result->value.int_value = $6.expr_value.int_value;
                 break;
             case FLOAT_ARRAY_VALUE:
-                result->value.float_value = $3.expr_value.float_value;
+                result->value.float_value = $6.expr_value.float_value;
                 break;
             case CHAR_ARRAY_VALUE:
-                result->value.char_value = $3.expr_value.char_value;
+                result->value.char_value = $6.expr_value.char_value;
                 break;
             case STRING_ARRAY_VALUE:
                 if (result->value.char_array) free(result->value.char_array);
-                result->value.char_array = strdup($3.expr_value.char_array);
+                result->value.char_array = strdup($6.expr_value.char_array);
                 break;
             default:
                 fprintf(stderr, "Unsupported type in assignment at line %d\n", yylineno);
@@ -1102,6 +1112,7 @@ array_assignment:
             free_symbol_table(symbol_table);
             exit(1);
         }
+        result->is_used = 1;
         if (result->is_constant) {
             fprintf(stderr, "Cannot assign to constant array '%s' at line %d\n", $1, yylineno);
             free_symbol_table(symbol_table);
@@ -1191,6 +1202,7 @@ array_assignment:
                 }
                 break;
         }
+        result->is_used = 1;
     }
     SEMICOLON
 ;
@@ -1228,6 +1240,7 @@ array_element:
             free_symbol_table(symbol_table);
             exit(1);
         }
+        result->is_used = 1;
         if (result->value_type != INT_ARRAY_VALUE && result->value_type != FLOAT_ARRAY_VALUE &&
             result->value_type != CHAR_ARRAY_VALUE && result->value_type != STRING_ARRAY_VALUE) {
             fprintf(stderr, "'%s' is not an array at line %d\n", $1, yylineno);
@@ -1295,6 +1308,7 @@ function_call:
             free_symbol_table(symbol_table);
             exit(1);
         }
+        result->is_used = 1;
         if (!result->is_function) {
             fprintf(stderr, "'%s' is not a function at line %d\n", $1, yylineno);
             free_symbol_table(symbol_table);
@@ -1303,6 +1317,10 @@ function_call:
         Parameter* param = result->parameters;
         ExprList* arg = &($3);
         while (param && arg && arg->e) {
+            SymbolTableEntry* res = search_symbol_table(symbol_table, param->name, scope_no, get_current_enclosing_function());
+            if(res){
+                res->is_used = 1;
+            }
             ValueType param_type;
             size_t param_size = param->array_length;
             if (param_size > 0) {
@@ -1346,6 +1364,7 @@ function_call:
             free_symbol_table(symbol_table);
             exit(1);
         }
+        result->is_used = 1;
         if (!result->is_function) {
             fprintf(stderr, "'%s' is not a function at line %d\n", $1, yylineno);
             free_symbol_table(symbol_table);
@@ -1535,6 +1554,7 @@ boolean_expr:
         float left = ($1.expr_return_type == FLOAT_VALUE) ? $1.expr_value.float_value : $1.expr_value.int_value;
         float right = ($3.expr_return_type == FLOAT_VALUE) ? $3.expr_value.float_value : $3.expr_value.int_value;
         $$.expr_value.int_value = (left > right);
+        printf("=================Result of boolean expression %d\n", $$.expr_value.int_value);
     }
     | expression GREATER function_call {
         printf("Function call within a > boolean expression\n");
@@ -1785,6 +1805,7 @@ unary_expr:
             free_symbol_table(symbol_table);
             exit(1);
         }
+        result->is_used = 1;
         $$.expr_type = IDENTIFIER_EXPR;
         $$.associated_identifier = strdup($1);
         $$.expr_return_type = result->value_type;
@@ -1839,6 +1860,7 @@ unary_expr:
             free_symbol_table(symbol_table);
             exit(1);
         }
+        result->is_used = 1;
         if (result->value_type != INT_VALUE && result->value_type != FLOAT_VALUE) {
             fprintf(stderr, "Increment requires numeric operand at line %d\n", yylineno);
             free_symbol_table(symbol_table);
@@ -1866,6 +1888,7 @@ unary_expr:
             free_symbol_table(symbol_table);
             exit(1);
         }
+        result->is_used = 1;
         if (result->value_type != INT_VALUE && result->value_type != FLOAT_VALUE) {
             fprintf(stderr, "Decrement requires numeric operand at line %d\n", yylineno);
             free_symbol_table(symbol_table);
@@ -1893,6 +1916,7 @@ unary_expr:
             free_symbol_table(symbol_table);
             exit(1);
         }
+        result->is_used = 1;
         if (result->value_type != INT_VALUE && result->value_type != FLOAT_VALUE) {
             fprintf(stderr, "Unary minus requires numeric operand at line %d\n", yylineno);
             free_symbol_table(symbol_table);
@@ -1977,6 +2001,9 @@ int main(int argc, char* argv[]) {
         return 1;
     }
 
+    int l = strlen("output.txt");
+    strncpy(symbol_table_changes_filename, "output.txt", 256);
+    printf("file : %s\n", symbol_table_changes_filename);
     // Open symbol_table_changes_file for writing
     symbol_table_changes_file = fopen(symbol_table_changes_filename, "w");
     if (!symbol_table_changes_file) {

@@ -165,6 +165,7 @@ SymbolTableEntry* insert_symbol(SymbolTable* table, const char* name, const char
     entry->parameters = parameters;
     entry->next_entry = NULL;
     entry->array_length = array_length;
+    entry->is_used = 0;
     // Set enclosing_function_name
     if (enclosing_function_name) {
         entry->enclosing_function_name = strdup(enclosing_function_name);
@@ -492,6 +493,44 @@ SymbolTableEntry* search_symbol_table(SymbolTable* table, const char* name, int 
         current = current->next_entry;
     }
     return fallback;
+}
+
+void print_unused_variables(SymbolTable* table, FILE *log_file) {
+    if (!table || !log_file) {
+        return;
+    }
+
+    fprintf(log_file, "\n=== Unused Variable Report ===\n");
+    fprintf(log_file, "Checking for variables declared but never used...\n");
+
+    int unused_count = 0;
+
+    for (int i = 0; i < table->table_size; i++) {
+        SymbolTableEntry *current = table->buckets[i];
+        while (current) {
+            // Check if it's a variable (not a function) that hasn't been used
+            if (!current->is_used) {
+                fprintf(log_file, "WARNING: Variable '%s' (type '%s') declared at line %d in scope %d",
+                        current->name, current->type, current->line_no, current->scope_no);
+                
+                if (current->enclosing_function_name) {
+                    fprintf(log_file, " (in function '%s')", current->enclosing_function_name);
+                }
+                
+                fprintf(log_file, " was never used\n");
+                unused_count++;
+            }
+            current = current->next_entry;
+        }
+    }
+
+    if (unused_count == 0) {
+        fprintf(log_file, "No unused variables found\n");
+    } else {
+        fprintf(log_file, "Found %d unused variable%s\n", unused_count, unused_count == 1 ? "" : "s");
+    }
+
+    fprintf(log_file, "================================\n\n");
 }
 
 #endif

@@ -1,5 +1,4 @@
 
-=== Symbol Table State (Entry Count: 1) ===
-Present Symbol: name='x', type='string', scope=1, line=4, value_type=STRING_VALUE (NULL), is_function=0, is_constant=0, array_length=0, enclosing_function=print
+=== Symbol Table State (Entry Count: 0) ===
 ====================================
 

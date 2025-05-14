@@ -1,6 +1,7 @@
 #ifndef TYPES_H_
 #define TYPES_H_
 
+#include <stdlib.h>
 
 #define TAB_SIZE 1000
 #define MAX_IDENTIFIER_NAME_LENGTH 64
@@ -102,6 +103,7 @@ typedef struct SymbolTableEntry {
     ValueType value_type;
     int is_function;
     int is_constant;
+    int is_used;
     int array_length;
     Parameter* parameters;
     struct SymbolTableEntry* next_entry;

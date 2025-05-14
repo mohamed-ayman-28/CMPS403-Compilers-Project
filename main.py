@@ -131,14 +131,13 @@ class CompilerApp:
                 
             # Run the compiler executable with the selected path
             try:
-                result = subprocess.run([self.executable_path, input_filename], 
-                                       capture_output=True, text=True)
+                os.system(f'.{self.executable_path} input.txt')
                 
                 # Check if the process completed successfully
-                if result.returncode != 0:
-                    self.status_label.config(text="Compilation failed")
-                    messagebox.showerror("Error", f"Compilation failed:\n{result.stderr}")
-                    return
+                # if result.returncode != 0:
+                #     self.status_label.config(text="Compilation failed")
+                #     messagebox.showerror("Error", f"Compilation failed:\n{result.stderr}")
+                #     return
                 
                 # Read the output files
                 self.display_output_files()
