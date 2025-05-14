@@ -8,6 +8,7 @@ int line_count = 0;
 int token_count = 0;
 extern FILE* yyin;
 extern int yylineno;
+extern char* yytext;
 %}
 
 %option yylineno
@@ -48,8 +49,8 @@ letter                  [a-zA-Z]
 \}                                                       { /* printf("detected token of type CLOSING_CURLY_BRACE : %s\n", yytext); */ token_count++; return CLOSING_CURLY_BRACE; }
 \(                                                       { /* printf("detected token of type OPENING_PARENTHESIS : %s\n", yytext); */ token_count++; return OPENING_PARENTHESIS; }
 \)                                                       { /* printf("detected token of type CLOSING_PARENTHESIS : %s\n", yytext); */ token_count++; return CLOSING_PARENTHESIS; }
-\[                                                       { /* printf("detected token of type OPENING_SQUARE_BRACKETS : %s\n", yytext); */ token_count++; return OPENING_SQUARE_BRACKETS; }
-\]                                                       { /* printf("detected token of type CLOSING_SQUARE_BRACKETS : %s\n", yytext); */ token_count++; return CLOSING_SQUARE_BRACKETS; }
+\[                                                       { /* printf("detected token of type OPENING_SQUARE_BRACKETS : %s\n", yytext); */ printf("Lex: OPENING_SQUARE_BRACKETS\n"); token_count++; return OPENING_SQUARE_BRACKETS; }
+\]                                                       { /* printf("detected token of type CLOSING_SQUARE_BRACKETS : %s\n", yytext); */ printf("Lex: CLOSING_SQUARE_BRACKETS\n"); token_count++; return CLOSING_SQUARE_BRACKETS; }
 {digit}+\.{digit}*|-{digit}+\.{digit}*                   { /* printf("detected token of type FLOAT_LITERAL : %s\n", yytext); */ token_count++; yylval.fval = atof(yytext); return FLOAT_LITERAL; }
 ","                                                      { /* printf("detected token of type COMMA : %s\n", yytext); */ token_count++; return COMMA; }
 "*"                                                      { /* printf("detected token of type ASTRISK : %s\n", yytext); */ token_count++; return ASTRISK; }

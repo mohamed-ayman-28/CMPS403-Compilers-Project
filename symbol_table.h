@@ -118,7 +118,8 @@ Parameter* create_parameter(const char *name, const char *type) {
 
 SymbolTableEntry* insert_symbol(SymbolTable* table, const char* name, const char* type, Value value, ValueType value_type, int scope_no, int is_function, int is_constant, int no_explicit_array, Parameter* parameters, int line_no, size_t array_length, const char* enclosing_function_name) {
     // Check for reserved keywords
-    const char *keywords[] = {"if", "while", "for", "return", "int", "double", "char", NULL};
+    printf("inserting %s\n", name);
+    const char *keywords[] = {"if", "while", "for", "return", "int", "char", "string", "and", "or", "not", "do", "bool", "float", "break", "continue", "switch", "case", NULL};
     for (int i = 0; keywords[i]; i++) {
         if (strcmp(name, keywords[i]) == 0) {
             fprintf(stderr, "Error at line %d: '%s' is a reserved keyword\n", line_no, name);

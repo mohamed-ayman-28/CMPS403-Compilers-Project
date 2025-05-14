@@ -1,0 +1,46 @@
+/* Comprehensive Test Source File */
+
+void print(string s) {
+    /* Prints a string */
+}
+
+int add(int a, int b) {
+    return a + b;    
+}
+
+main() {
+    int x = 5;
+    float y = 3.14;
+    string name = "Test";
+    const int const_var = 100;
+
+    /* Control structures */
+    if (x > 0) {
+        print("x is positive");
+    } else {
+        print("x is non-positive");
+    }
+
+    for (int i = 0; i < 10; i++) {
+        print("Loop iteration");
+    }
+
+    /* Function call and assignment */
+    int sum = add(x, 10);
+    print("Sum is computed");
+
+    /* Array handling */
+    int [5] arr;
+    arr[0] = 1;
+    arr[1] = x;  /* Non-constant expression */
+    print("Array element set");
+
+    /* Nested function */
+    void nested() {
+        int nested_var = 20;
+        print("Nested function");
+    }
+    nested();
+
+    return 0;
+}

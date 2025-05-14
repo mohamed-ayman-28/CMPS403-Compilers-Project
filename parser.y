@@ -9,6 +9,7 @@ void yyerror(const char *s);
 int yylex(void);
 extern FILE* yyin;
 extern int yylineno;
+extern char* yytext;
 extern FILE* symbol_table_file;
 extern FILE* symbol_table_changes_file;
 
@@ -44,6 +45,7 @@ char* concat_strings(const char* s1, const char* s2) {
     return result;
 }
 
+
 ValueType string_to_value_type(const char* type_str) {
     if (strcmp(type_str, "int") == 0) return INT_VALUE;
     else if (strcmp(type_str, "float") == 0) return FLOAT_VALUE;
@@ -59,11 +61,11 @@ ValueType string_to_value_type(const char* type_str) {
 }
 
 ValueType keyword_to_array_value_type(const char* keyword) {
-    if (strncmp(keyword, "int", 3) == 0) return INT_ARRAY_VALUE;
-    if (strncmp(keyword, "float", 5) == 0) return FLOAT_ARRAY_VALUE;
-    if (strncmp(keyword, "string", 6) == 0) return STRING_ARRAY_VALUE;
-    if (strncmp(keyword, "char", 4) == 0) return CHAR_ARRAY_VALUE;
-    if (strncmp(keyword, "bool", 4) == 0) return BOOL_ARRAY_VALUE;
+    if (strncmp(keyword, "aint", 3) == 0) return INT_ARRAY_VALUE;
+    if (strncmp(keyword, "afloat", 5) == 0) return FLOAT_ARRAY_VALUE;
+    if (strncmp(keyword, "astring", 6) == 0) return STRING_ARRAY_VALUE;
+    if (strncmp(keyword, "achar", 4) == 0) return CHAR_ARRAY_VALUE;
+    if (strncmp(keyword, "abool", 4) == 0) return BOOL_ARRAY_VALUE;
     fprintf(stderr, "Invalid array type '%s' at line %d\n", keyword, yylineno);
     free_symbol_table(symbol_table);
     exit(1);
@@ -130,8 +132,9 @@ void cleanup_compiler(void) {
     free_function_stack();
 }
 
+
 void yyerror(const char *s) {
-    fprintf(stderr, "Error at line %d: %s\n", yylineno, s);
+    fprintf(stderr, "Error at line %d: %s (token: '%s')\n", yylineno, s, yytext);
     free_function_stack();
     free_symbol_table(symbol_table);
     exit(1);
@@ -139,6 +142,7 @@ void yyerror(const char *s) {
 
 %}
 %start program
+
 
 %union {
     int ival;
@@ -156,6 +160,7 @@ void yyerror(const char *s) {
     ExprList expr_lst;
 }
 
+%define parse.error verbose
 
 %token <ival> INTEGER_LITERAL
 %token <fval> FLOAT_LITERAL
@@ -217,8 +222,7 @@ void yyerror(const char *s) {
 %token RESERVED_IDENTIFIER
 %type <sval> type
 %type <type_id> type_identifier
-%type <instruction> statement 
-%type <instruction> statements body
+ /* %type <instruction> statement  %type <instruction> statements body */
 %type <param_list> function_arguments
 %type <expr> expression boolean_expr arithmetic_expr binary_expr arithmetic_term arithmetic_factor
 %type <expr> bitwise_expr bitwise_xor_expr bitwise_and_expr bitwise_not_expr unary_expr
@@ -239,6 +243,8 @@ functions:
 
 function:
     type IDENTIFIER OPENING_PARENTHESIS {
+        printf("function match %s\n", $2);
+        fflush(stdout);
         scope_no++;
         curr_function_parameter_list = NULL;
         push_function($2);
@@ -246,26 +252,38 @@ function:
     function_arguments CLOSING_PARENTHESIS {
         inside_a_function_declaration_body = 1;
         curr_function_instructions_list = NULL;
-    }
-    body {
+        printf("Entering the body of %s\n", $2);
+        fflush(stdout);
         Value val;
-        val.function = $8;
-        ValueType return_type = string_to_value_type($1);
+        val.function = NULL;
         size_t array_size = 0;
+        ValueType return_type;
+        printf("checking array return type of %s\n", $2);
         if ($1[0] == 'a') {
-            return_type = keyword_to_array_value_type($1 + 1);
+            return_type = keyword_to_array_value_type($1);
             char* size_str = strchr($1, '[') + 1;
             array_size = atoi(size_str);
+        }else{
+            printf("checking return type of %s which is %s t\n", $2, $1);
+            return_type = string_to_value_type($1);
         }
-        insert_symbol(symbol_table, $2, $1, val, return_type, scope_no, 1, 0, array_size > 0, $5, yylineno, array_size, get_prev_enclosing_function());
+
+        printf("found return type of %s\n", $2);
+        printf("%s entering insert\n", $2);
+        fflush(stdout);
+        insert_symbol(symbol_table, $2, $1, val, return_type, scope_no - 1, 1, 0, array_size > 0, $5, yylineno, array_size, get_prev_enclosing_function());
         inside_a_function_declaration_body = 0;
         curr_function_parameter_list = NULL;
         curr_function_parameter_list_ptr = NULL;
         curr_function_instructions_list = NULL;
+    }
+    body {
         char* popped = pop_function();
         if (popped) free(popped);
         scope_no--;
         free($1);
+        printf("Exiting the body of %s\n", $2);
+        fflush(stdout);
     }
     | VOID_TYPE_KEYWORD IDENTIFIER OPENING_PARENTHESIS {
         scope_no++;
@@ -275,16 +293,16 @@ function:
     function_arguments CLOSING_PARENTHESIS {
         inside_a_function_declaration_body = 1;
         curr_function_instructions_list = NULL;
-    }
-    body {
         Value val;
-        val.function = $8;
+        val.function = NULL;
         ValueType return_type = string_to_value_type("void");
-        insert_symbol(symbol_table, $2, "void", val, return_type, scope_no, 1, 0, 0, $5, yylineno, 0, get_prev_enclosing_function());
+        insert_symbol(symbol_table, $2, "void", val, return_type, scope_no-1, 1, 0, 0, $5, yylineno, 0, get_prev_enclosing_function());
         inside_a_function_declaration_body = 0;
         curr_function_parameter_list = NULL;
         curr_function_parameter_list_ptr = NULL;
         curr_function_instructions_list = NULL;
+    }
+    body {
         char* popped = pop_function();
         if (popped) free(popped);
         scope_no--;
@@ -294,20 +312,22 @@ function:
         inside_a_function_declaration_body = 1;
         curr_function_instructions_list = NULL;
         push_function($2);
-    }
-    body {
         Value val;
-        val.function = $6;
-        ValueType return_type = string_to_value_type($1);
+        val.function = NULL;
+        ValueType return_type;
         size_t array_size = 0;
         if ($1[0] == 'a') {
-            return_type = keyword_to_array_value_type($1 + 1);
+            return_type = keyword_to_array_value_type($1);
             char* size_str = strchr($1, '[') + 1;
             array_size = atoi(size_str);
+        }else{
+            return_type = string_to_value_type($1);
         }
-        insert_symbol(symbol_table, $2, $1, val, return_type, scope_no, 1, 0, array_size > 0, NULL, yylineno, array_size, get_prev_enclosing_function());
+        insert_symbol(symbol_table, $2, $1, val, return_type, scope_no - 1, 1, 0, array_size > 0, NULL, yylineno, array_size, get_prev_enclosing_function());
         inside_a_function_declaration_body = 0;
         curr_function_instructions_list = NULL;
+    }
+    body {
         char* popped = pop_function();
         if (popped) free(popped);
         scope_no--;
@@ -318,14 +338,14 @@ function:
         inside_a_function_declaration_body = 1;
         curr_function_instructions_list = NULL;
         push_function($2);
-    }
-    body {
         Value val;
-        val.function = $6;
+        val.function = NULL;
         ValueType return_type = string_to_value_type("void");
-        insert_symbol(symbol_table, $2, "void", val, return_type, scope_no, 1, 0, 0, NULL, yylineno, 0, get_prev_enclosing_function());
+        insert_symbol(symbol_table, $2, "void", val, return_type, scope_no - 1, 1, 0, 0, NULL, yylineno, 0, get_prev_enclosing_function());
         inside_a_function_declaration_body = 0;
         curr_function_instructions_list = NULL;
+    }
+    body {
         char* popped = pop_function();
         if (popped) free(popped);
         scope_no--;
@@ -344,7 +364,7 @@ function_arguments:
         curr_function_parameter_list_ptr->array_length = $1.array_size;
         Value val;
         memset(&val, 0, sizeof(Value));
-        ValueType param_type = string_to_value_type($1.type);
+        ValueType param_type;
         if(param_type == VOID){
             fprintf(stderr, "Can't have a function parameter of type 'void' at line %d\n", yylineno);
             free_symbol_table(symbol_table);
@@ -353,6 +373,8 @@ function_arguments:
         size_t param_size = $1.array_size;
         if ($1.array_size > 0) {
             param_type = keyword_to_array_value_type($1.type);
+        }else{
+            param_type = string_to_value_type($1.type);
         }
         SymbolTableEntry* result = search_symbol_table(symbol_table, $1.name, scope_no, get_current_enclosing_function());
         if (result && (!result->enclosing_function_name || 
@@ -372,7 +394,7 @@ function_arguments:
         curr_function_parameter_list_ptr = curr_function_parameter_list_ptr->next;
         Value val;
         memset(&val, 0, sizeof(Value));
-        ValueType param_type = string_to_value_type($3.type);
+        ValueType param_type;
         if(param_type == VOID){
             fprintf(stderr, "Can't have a function parameter of type 'void' at line %d\n", yylineno);
             free_symbol_table(symbol_table);
@@ -382,6 +404,8 @@ function_arguments:
         curr_function_parameter_list_ptr->array_length = $3.array_size;
         if ($3.array_size > 0) {
             param_type = keyword_to_array_value_type($3.type);
+        }else{
+            param_type = string_to_value_type($3.type);
         }
         SymbolTableEntry* result = search_symbol_table(symbol_table, $3.name, scope_no, get_current_enclosing_function());
         if (result && (!result->enclosing_function_name || 
@@ -399,17 +423,19 @@ function_arguments:
 ;
 
 type_identifier:
-    type IDENTIFIER {
-        $$.type = $1;
-        $$.name = $2;
-        $$.array_size = 0; // Default for scalar types
+    type OPENING_SQUARE_BRACKETS INTEGER_LITERAL CLOSING_SQUARE_BRACKETS IDENTIFIER {
+        asprintf(&($$.type), "a%s[%d]", $1, $3);  
+        $$.name = strdup($5);                    
+        $$.array_size = $3;                      
+        printf("Found array type: %s %s\n", $$.type, $$.name);
     }
-    | type OPENING_SQUARE_BRACKETS INTEGER_LITERAL CLOSING_SQUARE_BRACKETS IDENTIFIER {
-        $$.type = concat_strings("a", $1);
-        $$.name = $5;
-        $$.array_size = $3;
+    | type IDENTIFIER {
+        $$.type = strdup($1);  
+        $$.name = strdup($2);  
+        $$.array_size = 0;      // Not an array
     }
-    ;
+;
+
 
 type:
     INT_TYPE_KEYWORD   { $$ = strdup("int"); }
@@ -422,42 +448,44 @@ type:
 
 
 body:{ 
+       printf("entering body\n");
         scope_no++;
     }
     OPENING_CURLY_BRACE  
     statements 
     CLOSING_CURLY_BRACE { 
         if(!inside_a_function_declaration_body) {
+            printf("boom\n");
             delete_scope(symbol_table, scope_no); 
         }
-        scope_no--;
-        $$ = $3; 
+        scope_no--; 
+        printf("Exiting body\n");
     }
     ;
 
-statements:
-    statement 
-    statements {$$ = NULL;}
-    | /* empty */ {$$ = NULL;}
+statements: {printf("inside statements\n");}
+    statement {printf("found a statement\n");}
+    statements {printf("inside statements again\n");}
+    | /* empty */ {printf("empty statement");}
     ;
 
-statement: body SEMICOLON {$$ = NULL;}
-         | assignment {$$ = NULL;}
-         | array_assignment {$$ = NULL;}
-         | return_statement {$$ = NULL;}
-         | expression SEMICOLON {$$ = NULL;}
-         | initialization {$$ = NULL;}
-         | variable_declaration {$$ = NULL;}
-         | const_initialization {$$ = NULL;}
-         | if_statement {$$ = NULL;}
-         | for_statement {$$ = NULL;}
-         | while_statement {$$ = NULL;}
-         | do_while_statement {$$ = NULL;}
-         | switch_statement {$$ = NULL;}
-         | function {$$ = NULL;}
+statement: body SEMICOLON {printf("a body statement\n");}
+         | array_assignment {printf("an array assignment statement\n");}
+         | assignment {printf("an assignment statement\n");}
+         | return_statement {printf("a return statement\n");}
+         | expression SEMICOLON {printf("an expression statement\n");}
+         | initialization {printf("an initialization statement\n");}
+         | variable_declaration {printf("a variable declaration statement\n");}
+         | const_initialization {printf("a const initialization statement\n");}
+         | if_statement {printf("an if statement\n");}
+         | for_statement {printf("a for statement\n");}
+         | while_statement {printf("a while statement\n");}
+         | do_while_statement {printf("a do while statement\n");}
+         | switch_statement {printf("a switch statement\n");}
+         | function {printf("a function declaration statement\n");}
          ;
 
-if_statement            : IF_KEYWORD OPENING_PARENTHESIS  boolean_expr CLOSING_PARENTHESIS body elseif_statement else_statement 
+if_statement            : IF_KEYWORD OPENING_PARENTHESIS {printf("entering if\n");} boolean_expr CLOSING_PARENTHESIS body elseif_statement else_statement {printf("exiting if\n");} 
                         ;
 
 elseif_statement        : ELSEIF_KEYWORD OPENING_PARENTHESIS boolean_expr CLOSING_PARENTHESIS body
@@ -468,7 +496,7 @@ else_statement          : ELSE_KEYWORD body
                         |
                         ;
 
-for_statement           : FOR_KEYWORD OPENING_PARENTHESIS loop_start SEMICOLON boolean_expr SEMICOLON loop_update CLOSING_PARENTHESIS body
+for_statement           : FOR_KEYWORD OPENING_PARENTHESIS {printf("entering for\n");} loop_start SEMICOLON boolean_expr SEMICOLON loop_update CLOSING_PARENTHESIS body {printf("entering for\n");}
                         ;
 
 loop_start              :   IDENTIFIER ASSIGNMENT expression {
@@ -524,21 +552,19 @@ loop_start              :   IDENTIFIER ASSIGNMENT expression {
                                 free_symbol_table(symbol_table);
                                 exit(1);
                             }
-                            ValueType declared_type = string_to_value_type($1.type);
+                            ValueType declared_type;
                             if(declared_type == VOID){
                                 fprintf(stderr, "Can't declare a non-function of type 'void' at line %d\n", yylineno);
                                 free_symbol_table(symbol_table);
                                 exit(1);
                             }
                             size_t declared_size = $1.array_size;
-                            if ($1.array_size > 0) {
-                                declared_type = keyword_to_array_value_type($1.type);
-                            }
-                            if (declared_type != $3.expr_return_type || 
-                                (declared_type >= INT_ARRAY_VALUE && declared_size != $3.array_length)) {
-                                fprintf(stderr, "Type or size mismatch in initialization at line %d\n", yylineno);
+                            if ($1.type[0] =='a') {
+                                fprintf(stderr, "Loop variable can't be an array at line %d\n", yylineno);
                                 free_symbol_table(symbol_table);
                                 exit(1);
+                            }else{
+                                declared_type = string_to_value_type($1.type);
                             }
                             Value val;
                             switch (declared_type) {
@@ -555,29 +581,7 @@ loop_start              :   IDENTIFIER ASSIGNMENT expression {
                                 case STRING_VALUE:
                                     val.char_array = strdup($3.expr_value.char_array);
                                     break;
-                                case INT_ARRAY_VALUE:
-                                    val.int_array = (int*)calloc(declared_size, sizeof(int));
-                                    for (size_t i = 0; i < declared_size; i++) {
-                                        val.int_array[i] = $3.expr_value.int_array[i];
-                                    }
-                                    break;
-                                case FLOAT_ARRAY_VALUE:
-                                    val.float_array = (double*)calloc(declared_size, sizeof(double));
-                                    for (size_t i = 0; i < declared_size; i++) {
-                                        val.float_array[i] = $3.expr_value.float_array[i];
-                                    }
-                                    break;
-                                case CHAR_ARRAY_VALUE:
-                                    val.char_array = (char*)calloc(declared_size, sizeof(char));
-                                    for (size_t i = 0; i < declared_size; i++) {
-                                        val.char_array[i] = $3.expr_value.char_array[i];
-                                    }
-                                    break;
-                                case STRING_ARRAY_VALUE:
-                                    val.string_array = (char**)malloc(declared_size * sizeof(char*));
-                                    for (size_t i = 0; i < declared_size; i++) {
-                                        val.string_array[i] = strdup($3.expr_value.string_array[i]);
-                                    }
+                                default:
                                     break;
                             }
                             insert_symbol(symbol_table, $1.name, $1.type, val, declared_type, scope_no, 0, 0, declared_size > 0, NULL, yylineno, declared_size, get_current_enclosing_function());
@@ -671,14 +675,15 @@ loop_update:
     |
     ;
 
-while_statement         : WHILE_KEYWORD OPENING_PARENTHESIS boolean_expr CLOSING_PARENTHESIS body
+while_statement         : WHILE_KEYWORD OPENING_PARENTHESIS {printf("entering a while statement\n");} boolean_expr CLOSING_PARENTHESIS body
                         ;
 
-do_while_statement      : DO_KEYWORD body WHILE_KEYWORD OPENING_PARENTHESIS boolean_expr CLOSING_PARENTHESIS SEMICOLON
+do_while_statement      : DO_KEYWORD body WHILE_KEYWORD {printf("entering a do-while statement\n");} OPENING_PARENTHESIS boolean_expr CLOSING_PARENTHESIS SEMICOLON
                         ;
 
 switch_statement:
     SWITCH_KEYWORD OPENING_PARENTHESIS IDENTIFIER {
+        printf("entering a switch statement\n");
         SymbolTableEntry* result = search_symbol_table(symbol_table, $3, scope_no, get_current_enclosing_function());
         if (!result) {
             fprintf(stderr, "Undeclared identifier '%s' at line %d\n", $3, yylineno);
@@ -708,6 +713,7 @@ case_statement          : CASE_KEYWORD INTEGER_LITERAL COLON statements
 
 initialization:
     type_identifier ASSIGNMENT expression {
+        printf("entering an initialization statement\n");
         SymbolTableEntry* result = search_symbol_table(symbol_table, $1.name, scope_no, get_current_enclosing_function());
         if (result && (!result->enclosing_function_name || 
                        (get_current_enclosing_function() && 
@@ -716,21 +722,19 @@ initialization:
             free_symbol_table(symbol_table);
             exit(1);
         }
-        ValueType declared_type = string_to_value_type($1.type);
+        ValueType declared_type;
         if(declared_type == VOID){
             fprintf(stderr, "Can't declare a non-function of type 'void' at line %d\n", yylineno);
             free_symbol_table(symbol_table);
             exit(1);
         }
         size_t declared_size = $1.array_size;
-        if ($1.array_size > 0) {
-            declared_type = keyword_to_array_value_type($1.type);
-        }
-        if (declared_type != $3.expr_return_type || 
-            (declared_type >= INT_ARRAY_VALUE && declared_size != $3.array_length)) {
-            fprintf(stderr, "Type or size mismatch in initialization at line %d\n", yylineno);
+        if ($1.type[0] == 'a') {
+            fprintf(stderr, "Array size must be specified at line %d\n", yylineno);
             free_symbol_table(symbol_table);
             exit(1);
+        }else{
+            declared_type = string_to_value_type($1.type);
         }
         Value val;
         switch (declared_type) {
@@ -747,37 +751,19 @@ initialization:
             case STRING_VALUE:
                 val.char_array = strdup($3.expr_value.char_array);
                 break;
-            case INT_ARRAY_VALUE:
-                val.int_array = (int*)calloc(declared_size, sizeof(int));
-                for (size_t i = 0; i < declared_size; i++) {
-                    val.int_array[i] = $3.expr_value.int_array[i];
-                }
-                break;
-            case FLOAT_ARRAY_VALUE:
-                val.float_array = (double*)calloc(declared_size, sizeof(double));
-                for (size_t i = 0; i < declared_size; i++) {
-                    val.float_array[i] = $3.expr_value.float_array[i];
-                }
-                break;
-            case CHAR_ARRAY_VALUE:
-                val.char_array = (char*)calloc(declared_size, sizeof(char));
-                for (size_t i = 0; i < declared_size; i++) {
-                    val.char_array[i] = $3.expr_value.char_array[i];
-                }
-                break;
-            case STRING_ARRAY_VALUE:
-                val.string_array = (char**)malloc(declared_size * sizeof(char*));
-                for (size_t i = 0; i < declared_size; i++) {
-                    val.string_array[i] = strdup($3.expr_value.string_array[i]);
-                }
-                break;
+            default:
+                fprintf(stderr, "Unsupported array type at line %d\n", yylineno);
+                free_symbol_table(symbol_table);
+                exit(1);
         }
         insert_symbol(symbol_table, $1.name, $1.type, val, declared_type, scope_no, 0, 0, declared_size > 0, NULL, yylineno, declared_size, get_current_enclosing_function());
         free($1.name);
         free($1.type);
     }
     SEMICOLON
-    | type_identifier OPENING_SQUARE_BRACKETS INTEGER_LITERAL CLOSING_SQUARE_BRACKETS ASSIGNMENT OPENING_SQUARE_BRACKETS expr_list CLOSING_SQUARE_BRACKETS {
+
+
+    | type_identifier ASSIGNMENT OPENING_SQUARE_BRACKETS expr_list CLOSING_SQUARE_BRACKETS {
         SymbolTableEntry* result = search_symbol_table(symbol_table, $1.name, scope_no, get_current_enclosing_function());
         if (result && (!result->enclosing_function_name || 
                        (get_current_enclosing_function() && 
@@ -786,19 +772,23 @@ initialization:
             free_symbol_table(symbol_table);
             exit(1);
         }
-        ValueType declared_type = string_to_value_type($1.type);
+        ValueType declared_type;
         if(declared_type == VOID){
             fprintf(stderr, "Can't declare a non-function of type 'void' at line %d\n", yylineno);
             free_symbol_table(symbol_table);
             exit(1);
         }
         ValueType element_type = declared_type;
-        size_t declared_size = $3;
+        size_t declared_size = $1.array_size;
         if ($1.type[0] == 'a') {
-            declared_type = keyword_to_array_value_type($1.type + 1);
+            declared_type = keyword_to_array_value_type($1.type);
+        }else{
+            fprintf(stderr, "Wrong array initialization at line %d\n", yylineno);
+            free_symbol_table(symbol_table);
+            exit(1);
         }
         size_t provided_size = 0;
-        ExprList* current = &($7);
+        ExprList* current = &($4);
         while (current && current->e) {
             provided_size++;
             if (current->e->expr_return_type != element_type) {
@@ -817,7 +807,7 @@ initialization:
         switch (declared_type) {
             case INT_ARRAY_VALUE:
                 val.int_array = (int*)calloc(declared_size, sizeof(int));
-                current = &$7;
+                current = &($4);
                 for (size_t i = 0; i < provided_size && current && current->e; i++) {
                     val.int_array[i] = current->e->expr_value.int_value;
                     current = current->next_expr;
@@ -825,7 +815,7 @@ initialization:
                 break;
             case FLOAT_ARRAY_VALUE:
                 val.float_array = (double*)calloc(declared_size, sizeof(double));
-                current = &$7;
+                current = &($4);
                 for (size_t i = 0; i < provided_size && current && current->e; i++) {
                     val.float_array[i] = current->e->expr_value.float_value;
                     current = current->next_expr;
@@ -833,7 +823,7 @@ initialization:
                 break;
             case CHAR_ARRAY_VALUE:
                 val.char_array = (char*)calloc(declared_size, sizeof(char));
-                current = &$7;
+                current = &($4);
                 for (size_t i = 0; i < provided_size && current && current->e; i++) {
                     val.char_array[i] = current->e->expr_value.char_value;
                     current = current->next_expr;
@@ -844,7 +834,7 @@ initialization:
                 for (size_t i = 0; i < declared_size; i++) {
                     val.string_array[i] = strdup("");
                 }
-                current = &$7;
+                current = &($4);
                 for (size_t i = 0; i < provided_size && current && current->e; i++) {
                     free(val.string_array[i]);
                     val.string_array[i] = strdup(current->e->expr_value.char_array);
@@ -864,165 +854,52 @@ initialization:
 ;
 
 const_initialization:
-    CONST_KEYWORD type_identifier {
-        SymbolTableEntry* result = search_symbol_table(symbol_table, $2.name, scope_no, get_current_enclosing_function());
+    CONST_KEYWORD type IDENTIFIER{
+        SymbolTableEntry* result = search_symbol_table(symbol_table, $3, scope_no, get_current_enclosing_function());
         if (result && (!result->enclosing_function_name || 
                        (get_current_enclosing_function() && 
                         strcmp(result->enclosing_function_name, get_current_enclosing_function()) == 0))) {
-            fprintf(stderr, "Cannot re-declare identifier '%s' at line %d\n", $2.name, yylineno);
+            fprintf(stderr, "Cannot re-declare identifier '%s' at line %d\n", $3, yylineno);
             free_symbol_table(symbol_table);
             exit(1);
         }
     }
     ASSIGNMENT expression SEMICOLON {
-        ValueType declared_type = string_to_value_type($2.type);
+        ValueType declared_type;
         if(declared_type == VOID){
             fprintf(stderr, "Can't declare a non-function of type 'void' at line %d\n", yylineno);
             free_symbol_table(symbol_table);
             exit(1);
         }
-        size_t declared_size = $2.array_size;
-        if ($2.array_size > 0) {
-            declared_type = keyword_to_array_value_type($2.type);
-        }
-        if (declared_type != $5.expr_return_type || 
-            (declared_type >= INT_ARRAY_VALUE && declared_size != $5.array_length)) {
-            fprintf(stderr, "Type mismatch in constant initialization at line %d\n", yylineno);
+        size_t declared_size = 0;
+        if ($2[0] == 'a') {
+            fprintf(stderr, "Array size must be specified at line %d\n", yylineno);
             free_symbol_table(symbol_table);
             exit(1);
+        }else{
+            declared_type = string_to_value_type($2);
         }
         Value val;
         switch (declared_type) {
             case INT_VALUE:
             case BOOL_VALUE:
-                val.int_value = $5.expr_value.int_value;
+                val.int_value = $6.expr_value.int_value;
                 break;
             case FLOAT_VALUE:
-                val.float_value = $5.expr_value.float_value;
+                val.float_value = $6.expr_value.float_value;
                 break;
             case CHAR_VALUE:
-                val.char_value = $5.expr_value.char_value;
+                val.char_value = $6.expr_value.char_value;
                 break;
             case STRING_VALUE:
-                val.char_array = strdup($5.expr_value.char_array);
-                break;
-            case INT_ARRAY_VALUE:
-                val.int_array = (int*)calloc(declared_size, sizeof(int));
-                for (size_t i = 0; i < declared_size; i++) {
-                    val.int_array[i] = $5.expr_value.int_array[i];
-                }
-                break;
-            case FLOAT_ARRAY_VALUE:
-                val.float_array = (double*)calloc(declared_size, sizeof(double));
-                for (size_t i = 0; i < declared_size; i++) {
-                    val.float_array[i] = $5.expr_value.float_array[i];
-                }
-                break;
-            case CHAR_ARRAY_VALUE:
-                val.char_array = (char*)calloc(declared_size, sizeof(char));
-                for (size_t i = 0; i < declared_size; i++) {
-                    val.char_array[i] = $5.expr_value.char_array[i];
-                }
-                break;
-            case STRING_ARRAY_VALUE:
-                val.string_array = (char**)malloc(declared_size * sizeof(char*));
-                for (size_t i = 0; i < declared_size; i++) {
-                    val.string_array[i] = strdup($5.expr_value.string_array[i]);
-                }
+                val.char_array = strdup($6.expr_value.char_array);
                 break;
             default:
                 fprintf(stderr, "Unsupported type in constant initialization at line %d\n", yylineno);
                 free_symbol_table(symbol_table);
                 exit(1);
         }
-        insert_symbol(symbol_table, $2.name, $2.type, val, declared_type, scope_no, 0, 1, declared_size > 0, NULL, yylineno, declared_size, get_current_enclosing_function());
-        free($2.name);
-        free($2.type);
-    }
-    | CONST_KEYWORD type_identifier {
-        SymbolTableEntry* result = search_symbol_table(symbol_table, $2.name, scope_no, get_current_enclosing_function());
-        if (result && (!result->enclosing_function_name || 
-                       (get_current_enclosing_function() && 
-                        strcmp(result->enclosing_function_name, get_current_enclosing_function()) == 0))) {
-            fprintf(stderr, "Cannot re-declare identifier '%s' at line %d\n", $2.name, yylineno);
-            free_symbol_table(symbol_table);
-            exit(1);
-        }
-    }
-    OPENING_SQUARE_BRACKETS INTEGER_LITERAL CLOSING_SQUARE_BRACKETS ASSIGNMENT OPENING_SQUARE_BRACKETS expr_list CLOSING_SQUARE_BRACKETS SEMICOLON {
-        ValueType declared_type = string_to_value_type($2.type);
-        if(declared_type == VOID){
-            fprintf(stderr, "Can't declare a non-function of type 'void' at line %d\n", yylineno);
-            free_symbol_table(symbol_table);
-            exit(1);
-        }
-        ValueType element_type = declared_type;
-        size_t declared_size = $5;
-        if ($2.array_size > 0) {
-            declared_type = keyword_to_array_value_type($2.type);
-        }
-        size_t provided_size = 0;
-        ExprList* current = &($9);
-        while (current && current->e) {
-            provided_size++;
-            if (current->e->expr_return_type != element_type) {
-                fprintf(stderr, "Type mismatch in constant array initialization at line %d\n", yylineno);
-                free_symbol_table(symbol_table);
-                exit(1);
-            }
-            current = current->next_expr;
-        }
-        if (provided_size > declared_size) {
-            fprintf(stderr, "Too many initializers for constant array '%s' at line %d\n", $2.name, yylineno);
-            free_symbol_table(symbol_table);
-            exit(1);
-        }
-        Value val;
-        switch (declared_type) {
-            case INT_ARRAY_VALUE:
-                val.int_array = (int*)calloc(declared_size, sizeof(int));
-                current = &$9;
-                for (size_t i = 0; i < provided_size && current && current->e; i++) {
-                    val.int_array[i] = current->e->expr_value.int_value;
-                    current = current->next_expr;
-                }
-                break;
-            case FLOAT_ARRAY_VALUE:
-                val.float_array = (double*)calloc(declared_size, sizeof(double));
-                current = &$9;
-                for (size_t i = 0; i < provided_size && current && current->e; i++) {
-                    val.float_array[i] = current->e->expr_value.float_value;
-                    current = current->next_expr;
-                }
-                break;
-            case CHAR_ARRAY_VALUE:
-                val.char_array = (char*)calloc(declared_size, sizeof(char));
-                current = &$9;
-                for (size_t i = 0; i < provided_size && current && current->e; i++) {
-                    val.char_array[i] = current->e->expr_value.char_value;
-                    current = current->next_expr;
-                }
-                break;
-            case STRING_ARRAY_VALUE:
-                val.string_array = (char**)malloc(declared_size * sizeof(char*));
-                for (size_t i = 0; i < declared_size; i++) {
-                    val.string_array[i] = strdup("");
-                }
-                current = &$9;
-                for (size_t i = 0; i < provided_size && current && current->e; i++) {
-                    free(val.string_array[i]);
-                    val.string_array[i] = strdup(current->e->expr_value.char_array);
-                    current = current->next_expr;
-                }
-                break;
-            default:
-                fprintf(stderr, "Unsupported array type at line %d\n", yylineno);
-                free_symbol_table(symbol_table);
-                exit(1);
-        }
-        insert_symbol(symbol_table, $2.name, $2.type, val, declared_type, scope_no, 0, 1, declared_size > 0, NULL, yylineno, declared_size, get_current_enclosing_function());
-        free($2.name);
-        free($2.type);
+        insert_symbol(symbol_table, $3, $2, val, declared_type, scope_no, 0, 1, declared_size > 0, NULL, yylineno, declared_size, get_current_enclosing_function());
     }
 ;
 
@@ -1036,18 +913,20 @@ variable_declaration:
             free_symbol_table(symbol_table);
             exit(1);
         }
-        ValueType declared_type = string_to_value_type($1.type);
-        if(declared_type == VOID){
-            fprintf(stderr, "Can't declare a non-function of type 'void' at line %d\n", yylineno);
-            free_symbol_table(symbol_table);
-            exit(1);
-        }
+        ValueType declared_type;
         size_t declared_size = $1.array_size;
-        if ($1.array_size > 0) {
+        if ($1.type[0] == 'a') {
             declared_type = keyword_to_array_value_type($1.type);
+        }else{
+            declared_type = string_to_value_type($1.type);
         }
         if (declared_size > 0 && declared_size <= 0) {
             fprintf(stderr, "Array size must be positive at line %d\n", yylineno);
+            free_symbol_table(symbol_table);
+            exit(1);
+        }
+        if(declared_type == VOID){
+            fprintf(stderr, "Can't declare a non-function of type 'void' at line %d\n", yylineno);
             free_symbol_table(symbol_table);
             exit(1);
         }
@@ -1089,23 +968,27 @@ variable_declaration:
     SEMICOLON
 ;
 
-return_statement:
-    RETURN_KEYWORD expression SEMICOLON {
+return_statement: 
+    RETURN_KEYWORD  expression SEMICOLON {
+        printf("entering return statement\n");
         if (!get_current_enclosing_function()) {
             fprintf(stderr, "Return statement outside function at line %d\n", yylineno);
             free_symbol_table(symbol_table);
             exit(1);
         }
-        SymbolTableEntry* func = search_symbol_table(symbol_table, get_current_enclosing_function(), scope_no, get_current_enclosing_function());
+        SymbolTableEntry* func = search_symbol_table(symbol_table, get_current_enclosing_function(), scope_no, get_prev_enclosing_function());
+        printf("current ecnlosing func : %s\n", get_current_enclosing_function());
+        printf("prev enclosing func : %s\n", get_prev_enclosing_function());
         if (!func) {
             fprintf(stderr, "Function '%s' not found at line %d\n", get_current_enclosing_function(), yylineno);
             free_symbol_table(symbol_table);
             exit(1);
         }
         ValueType return_type = string_to_value_type(func->type);
+        printf("turns out return type is %s\n", func->type);
         size_t return_size = 0;
-        if (func->type[0] == 'a') {
-            return_type = keyword_to_array_value_type(func->type + 1);
+        if (func->array_length > 0) {
+            return_type = keyword_to_array_value_type(func->type);
             char* size_str = strchr(func->type, '[') + 1;
             return_size = atoi(size_str);
         }
@@ -1154,6 +1037,51 @@ assignment:
                 result->value.char_value = $3.expr_value.char_value;
                 break;
             case STRING_VALUE:
+                if (result->value.char_array) free(result->value.char_array);
+                result->value.char_array = strdup($3.expr_value.char_array);
+                break;
+            default:
+                fprintf(stderr, "Unsupported type in assignment at line %d\n", yylineno);
+                free_symbol_table(symbol_table);
+                exit(1);
+        }
+    }
+    SEMICOLON
+    |   IDENTIFIER OPENING_SQUARE_BRACKETS INTEGER_LITERAL CLOSING_SQUARE_BRACKETS ASSIGNMENT expression {
+        SymbolTableEntry* result = search_symbol_table(symbol_table, $1, scope_no, get_current_enclosing_function());
+        if (!result) {
+            fprintf(stderr, "Undeclared identifier '%s' at line %d\n", $1, yylineno);
+            free_symbol_table(symbol_table);
+            exit(1);
+        }
+        if (result->is_constant) {
+            fprintf(stderr, "Cannot assign to constant '%s' at line %d\n", $1, yylineno);
+            free_symbol_table(symbol_table);
+            exit(1);
+        }
+        if (result->value_type == INT_VALUE || result->value_type == FLOAT_VALUE ||
+            result->value_type == CHAR_VALUE || result->value_type == STRING_VALUE || result->value_type == BOOL_VALUE) {
+            fprintf(stderr, "Cannot index a non-array '%s' directly at line %d\n", $1, yylineno);
+            free_symbol_table(symbol_table);
+            exit(1);
+        }
+        if (result->value_type != $3.expr_return_type) {
+            fprintf(stderr, "Type mismatch in assignment at line %d\n", yylineno);
+            free_symbol_table(symbol_table);
+            exit(1);
+        }
+        switch (result->value_type) {
+            case INT_ARRAY_VALUE:
+            case BOOL_ARRAY_VALUE:
+                result->value.int_value = $3.expr_value.int_value;
+                break;
+            case FLOAT_ARRAY_VALUE:
+                result->value.float_value = $3.expr_value.float_value;
+                break;
+            case CHAR_ARRAY_VALUE:
+                result->value.char_value = $3.expr_value.char_value;
+                break;
+            case STRING_ARRAY_VALUE:
                 if (result->value.char_array) free(result->value.char_array);
                 result->value.char_array = strdup($3.expr_value.char_array);
                 break;
@@ -1290,48 +1218,6 @@ expression:
         $$.associated_identifier = NULL;
     }
     | array_element { $$ = $1; }
-    | IDENTIFIER {
-        SymbolTableEntry* result = search_symbol_table(symbol_table, $1, scope_no, get_current_enclosing_function());
-        if (!result) {
-            fprintf(stderr, "Undeclared identifier '%s' at line %d\n", $1, yylineno);
-            free_symbol_table(symbol_table);
-            exit(1);
-        }
-        $$.expr_type = IDENTIFIER_EXPR;
-        $$.associated_identifier = strdup($1);
-        $$.expr_return_type = result->value_type;
-        switch (result->value_type) {
-            case INT_VALUE:
-            case BOOL_VALUE:
-                $$.expr_value.int_value = result->value.int_value;
-                break;
-            case FLOAT_VALUE:
-                $$.expr_value.float_value = result->value.float_value;
-                break;
-            case CHAR_VALUE:
-                $$.expr_value.char_value = result->value.char_value;
-                break;
-            case STRING_VALUE:
-                $$.expr_value.char_array = strdup(result->value.char_array);
-                break;
-            case INT_ARRAY_VALUE:
-                $$.expr_value.int_array = result->value.int_array;
-                break;
-            case FLOAT_ARRAY_VALUE:
-                $$.expr_value.float_array = result->value.float_array;
-                break;
-            case CHAR_ARRAY_VALUE:
-                $$.expr_value.char_array = result->value.char_array;
-                break;
-            case STRING_ARRAY_VALUE:
-                $$.expr_value.string_array = result->value.string_array;
-                break;
-            default:
-                fprintf(stderr, "Unsupported type for identifier '%s' at line %d\n", $1, yylineno);
-                free_symbol_table(symbol_table);
-                exit(1);
-        }
-    }
 ;
 
 array_element:
@@ -1384,8 +1270,10 @@ expr_list:
     expression {
         $$.e = &$1;
         $$.next_expr = NULL;
+        printf("Inside a single expression within an expression list\n");
     }
     | expr_list COMMA expression {
+        printf("Inside an expression within an expression list\n");
         ExprList* new_node = (ExprList*)malloc(sizeof(ExprList));
         new_node->e = &$3;
         new_node->next_expr = NULL;
@@ -1400,6 +1288,7 @@ expr_list:
 
 function_call:
     IDENTIFIER OPENING_PARENTHESIS expr_list CLOSING_PARENTHESIS {
+        printf("Inside a function call with arguments\n");
         SymbolTableEntry* result = search_symbol_table(symbol_table, $1, scope_no, get_current_enclosing_function());
         if (!result) {
             fprintf(stderr, "Undeclared identifier '%s' at line %d\n", $1, yylineno);
@@ -1414,10 +1303,12 @@ function_call:
         Parameter* param = result->parameters;
         ExprList* arg = &($3);
         while (param && arg && arg->e) {
-            ValueType param_type = string_to_value_type(param->type);
+            ValueType param_type;
             size_t param_size = param->array_length;
             if (param_size > 0) {
                 param_type = keyword_to_array_value_type(param->type);
+            }else{
+                param_type = string_to_value_type(param->type);
             }
             if (param_type != arg->e->expr_return_type || 
                 (param_type >= INT_ARRAY_VALUE && param_size != arg->e->array_length)) {
@@ -1437,16 +1328,18 @@ function_call:
         scope_no = result->scope_no + 1;
         $$.expr_type = FUNCTION_CALL_EXPR;
         $$.associated_identifier = strdup($1);
-        $$.expr_return_type = string_to_value_type(result->type);
         $$.array_length = result->array_length;
-        if (result->type[0] == 'a') {
-            $$.expr_return_type = keyword_to_array_value_type(result->type + 1);
+        if (result->array_length > 0) {
+            $$.expr_return_type = keyword_to_array_value_type(result->type);
             char* size_str = strchr(result->type, '[') + 1;
             $$.array_length = atoi(size_str);
+        }else{
+            $$.expr_return_type = string_to_value_type(result->type);
         }
         scope_no = prev_scope_no;
     }
     | IDENTIFIER OPENING_PARENTHESIS CLOSING_PARENTHESIS {
+        printf("Inside a function call without arguments\n");
         SymbolTableEntry* result = search_symbol_table(symbol_table, $1, scope_no, get_current_enclosing_function());
         if (!result) {
             fprintf(stderr, "Undeclared identifier '%s' at line %d\n", $1, yylineno);
@@ -1467,12 +1360,13 @@ function_call:
         scope_no = result->scope_no + 1;
         $$.expr_type = FUNCTION_CALL_EXPR;
         $$.associated_identifier = strdup($1);
-        $$.expr_return_type = string_to_value_type(result->type);
         $$.array_length = result->array_length;
-        if (result->type[0] == 'a') {
-            $$.expr_return_type = keyword_to_array_value_type(result->type + 1);
+        if (result->array_length > 0) {
+            $$.expr_return_type = keyword_to_array_value_type(result->type);
             char* size_str = strchr(result->type, '[') + 1;
             $$.array_length = atoi(size_str);
+        }else{
+            $$.expr_return_type = string_to_value_type(result->type);
         }
         scope_no = prev_scope_no;
     }
@@ -1480,6 +1374,7 @@ function_call:
 
 boolean_expr:
     expression EQUAL arithmetic_expr {
+        printf("Arithmetic expression within an == boolean expression\n");
         if ($1.expr_return_type != $3.expr_return_type &&
             !($1.expr_return_type == INT_VALUE && $3.expr_return_type == FLOAT_VALUE) &&
             !($1.expr_return_type == FLOAT_VALUE && $3.expr_return_type == INT_VALUE)) {
@@ -1501,6 +1396,7 @@ boolean_expr:
         }
     }
     | expression EQUAL function_call {
+        printf("Function call within an == boolean expression\n");
         if ($1.expr_return_type != $3.expr_return_type &&
             !($1.expr_return_type == INT_VALUE && $3.expr_return_type == FLOAT_VALUE) &&
             !($1.expr_return_type == FLOAT_VALUE && $3.expr_return_type == INT_VALUE)) {
@@ -1522,6 +1418,7 @@ boolean_expr:
         }
     }
     | expression NOT_EQUAL arithmetic_expr {
+        printf("Arithmetic within an != boolean expression\n");
         if ($1.expr_return_type != $3.expr_return_type &&
             !($1.expr_return_type == INT_VALUE && $3.expr_return_type == FLOAT_VALUE) &&
             !($1.expr_return_type == FLOAT_VALUE && $3.expr_return_type == INT_VALUE)) {
@@ -1543,6 +1440,7 @@ boolean_expr:
         }
     }
     | expression NOT_EQUAL function_call {
+        printf("function call within an != boolean expression\n");
         if ($1.expr_return_type != $3.expr_return_type &&
             !($1.expr_return_type == INT_VALUE && $3.expr_return_type == FLOAT_VALUE) &&
             !($1.expr_return_type == FLOAT_VALUE && $3.expr_return_type == INT_VALUE)) {
@@ -1564,6 +1462,7 @@ boolean_expr:
         }
     }
     | expression GREATER_OR_EQUAL arithmetic_expr {
+        printf("Arithmetic within an >= boolean expression\n");
         if (($1.expr_return_type != INT_VALUE && $1.expr_return_type != FLOAT_VALUE) ||
             ($3.expr_return_type != INT_VALUE && $3.expr_return_type != FLOAT_VALUE)) {
             fprintf(stderr, "Invalid types for >= at line %d\n", yylineno);
@@ -1578,6 +1477,7 @@ boolean_expr:
         $$.expr_value.int_value = (left >= right);
     }
     | expression GREATER_OR_EQUAL function_call {
+        printf("Function call within an >= boolean expression\n");
         if (($1.expr_return_type != INT_VALUE && $1.expr_return_type != FLOAT_VALUE) ||
             ($3.expr_return_type != INT_VALUE && $3.expr_return_type != FLOAT_VALUE)) {
             fprintf(stderr, "Invalid types for >= at line %d\n", yylineno);
@@ -1592,6 +1492,7 @@ boolean_expr:
         $$.expr_value.int_value = (left >= right);
     }
     | expression LESS_OR_EQUAL arithmetic_expr {
+        printf("Arithmetic within an <= boolean expression\n");
         if (($1.expr_return_type != INT_VALUE && $1.expr_return_type != FLOAT_VALUE) ||
             ($3.expr_return_type != INT_VALUE && $3.expr_return_type != FLOAT_VALUE)) {
             fprintf(stderr, "Invalid types for <= at line %d\n", yylineno);
@@ -1606,6 +1507,7 @@ boolean_expr:
         $$.expr_value.int_value = (left <= right);
     }
     | expression LESS_OR_EQUAL function_call {
+        printf("Function call within an <= boolean expression\n");
         if (($1.expr_return_type != INT_VALUE && $1.expr_return_type != FLOAT_VALUE) ||
             ($3.expr_return_type != INT_VALUE && $3.expr_return_type != FLOAT_VALUE)) {
             fprintf(stderr, "Invalid types for <= at line %d\n", yylineno);
@@ -1620,6 +1522,7 @@ boolean_expr:
         $$.expr_value.int_value = (left <= right);
     }
     | expression GREATER arithmetic_expr {
+        printf("Arithmetic within a > boolean expression\n");
         if (($1.expr_return_type != INT_VALUE && $1.expr_return_type != FLOAT_VALUE) ||
             ($3.expr_return_type != INT_VALUE && $3.expr_return_type != FLOAT_VALUE)) {
             fprintf(stderr, "Invalid types for > at line %d\n", yylineno);
@@ -1634,6 +1537,7 @@ boolean_expr:
         $$.expr_value.int_value = (left > right);
     }
     | expression GREATER function_call {
+        printf("Function call within a > boolean expression\n");
         if (($1.expr_return_type != INT_VALUE && $1.expr_return_type != FLOAT_VALUE) ||
             ($3.expr_return_type != INT_VALUE && $3.expr_return_type != FLOAT_VALUE)) {
             fprintf(stderr, "Invalid types for > at line %d\n", yylineno);
@@ -1648,6 +1552,7 @@ boolean_expr:
         $$.expr_value.int_value = (left > right);
     }
     | expression LESS arithmetic_expr {
+        printf("Arithmetic within a < boolean expression\n");
         if (($1.expr_return_type != INT_VALUE && $1.expr_return_type != FLOAT_VALUE) ||
             ($3.expr_return_type != INT_VALUE && $3.expr_return_type != FLOAT_VALUE)) {
             fprintf(stderr, "Invalid types for < at line %d\n", yylineno);
@@ -1662,6 +1567,7 @@ boolean_expr:
         $$.expr_value.int_value = (left < right);
     }
     | expression LESS function_call {
+        printf("Function call within an < boolean expression\n");
         if (($1.expr_return_type != INT_VALUE && $1.expr_return_type != FLOAT_VALUE) ||
             ($3.expr_return_type != INT_VALUE && $3.expr_return_type != FLOAT_VALUE)) {
             fprintf(stderr, "Invalid types for < at line %d\n", yylineno);
@@ -1677,11 +1583,11 @@ boolean_expr:
     }
     ;
 
-arithmetic_expr : binary_expr { $$ = $1; }
-                | unary_expr { $$ = $1; }
+arithmetic_expr : binary_expr { $$ = $1; printf("Outside arithmetic expression\n"); }
                 ;
 
 binary_expr : binary_expr PLUS arithmetic_term {
+                printf("Arithmetic term with an + arithmetic expression\n");
                 if ($1.expr_return_type != INT_VALUE && $1.expr_return_type != FLOAT_VALUE ||
                     $3.expr_return_type != INT_VALUE && $3.expr_return_type != FLOAT_VALUE) {
                     fprintf(stderr, "Invalid types for + at line %d\n", yylineno);
@@ -1701,6 +1607,7 @@ binary_expr : binary_expr PLUS arithmetic_term {
                 }
             }
             | binary_expr MINUS arithmetic_term {
+                printf("Arithmetic term with a - arithmetic expression\n");
                 if ($1.expr_return_type != INT_VALUE && $1.expr_return_type != FLOAT_VALUE ||
                     $3.expr_return_type != INT_VALUE && $3.expr_return_type != FLOAT_VALUE) {
                     fprintf(stderr, "Invalid types for - at line %d\n", yylineno);
@@ -1719,10 +1626,11 @@ binary_expr : binary_expr PLUS arithmetic_term {
                     $$.expr_value.int_value = $1.expr_value.int_value - $3.expr_value.int_value;
                 }
             }
-            | arithmetic_term { $$ = $1; }
+            | arithmetic_term { printf("Arithmetic term with an arithmetic expression\n"); $$ = $1; }
             ;
 
 arithmetic_term : arithmetic_term ASTRISK arithmetic_factor {
+                    printf("Arithmetic factor with an * arithmetic term\n");
                     if ($1.expr_return_type != INT_VALUE && $1.expr_return_type != FLOAT_VALUE ||
                         $3.expr_return_type != INT_VALUE && $3.expr_return_type != FLOAT_VALUE) {
                         fprintf(stderr, "Invalid types for * at line %d\n", yylineno);
@@ -1742,6 +1650,7 @@ arithmetic_term : arithmetic_term ASTRISK arithmetic_factor {
                     }
                 }
                 | arithmetic_term DIVIDE arithmetic_factor {
+                    printf("Arithmetic factor with an / arithmetic term\n");
                     if ($1.expr_return_type != INT_VALUE && $1.expr_return_type != FLOAT_VALUE ||
                         $3.expr_return_type != INT_VALUE && $3.expr_return_type != FLOAT_VALUE) {
                         fprintf(stderr, "Invalid types for / at line %d\n", yylineno);
@@ -1767,6 +1676,7 @@ arithmetic_term : arithmetic_term ASTRISK arithmetic_factor {
                     }
                 }
                 | arithmetic_term MODULO INTEGER_LITERAL {
+                    printf("INTEGER_LITERAL with an mod arithmetic term\n");
                     if ($1.expr_return_type != INT_VALUE) {
                         fprintf(stderr, "Modulo requires integer operand at line %d\n", yylineno);
                         free_symbol_table(symbol_table);
@@ -1783,6 +1693,7 @@ arithmetic_term : arithmetic_term ASTRISK arithmetic_factor {
                     $$.associated_identifier = NULL;
                 }
                 | arithmetic_term MODULO OPENING_PARENTHESIS expression CLOSING_PARENTHESIS {
+                    printf("(expression) with a mod arithmetic term\n");
                     if ($1.expr_return_type != INT_VALUE || $4.expr_return_type != INT_VALUE) {
                         fprintf(stderr, "Modulo requires integer operands at line %d\n", yylineno);
                         free_symbol_table(symbol_table);
@@ -1798,20 +1709,15 @@ arithmetic_term : arithmetic_term ASTRISK arithmetic_factor {
                     $$.expr_value.int_value = $1.expr_value.int_value % $4.expr_value.int_value;
                     $$.associated_identifier = NULL;
                 }
-                | arithmetic_factor { $$ = $1; }
+                | arithmetic_factor { $$ = $1;printf("Arithmetic factor within n arithmetic term\n"); }
                 ;
 
-arithmetic_factor : bitwise_expr { $$ = $1; }
-                  | FLOAT_LITERAL {
-                      $$.expr_type = FLOAT_EXPR;
-                      $$.expr_value.float_value = $1;
-                      $$.expr_return_type = FLOAT_VALUE;
-                      $$.associated_identifier = NULL;
-                  }
+arithmetic_factor : bitwise_expr { $$ = $1; printf("Bitwise expression within a * arithmetic factor\n"); }
                   | OPENING_PARENTHESIS expression CLOSING_PARENTHESIS { $$ = $2; }
                   ;
 
 bitwise_expr : bitwise_expr BITWISE_OR bitwise_xor_expr {
+                 printf("Bitwise xor expression within a or bitwise expr\n");
                  if ($1.expr_return_type != INT_VALUE || $3.expr_return_type != INT_VALUE) {
                      fprintf(stderr, "Bitwise OR requires integer operands at line %d\n", yylineno);
                      free_symbol_table(symbol_table);
@@ -1822,10 +1728,11 @@ bitwise_expr : bitwise_expr BITWISE_OR bitwise_xor_expr {
                  $$.expr_value.int_value = $1.expr_value.int_value | $3.expr_value.int_value;
                  $$.associated_identifier = NULL;
              }
-             | bitwise_xor_expr { $$ = $1; }
+             | bitwise_xor_expr { $$ = $1; printf("Bitwise xor expression within a bitwise expr\n");}
              ;
 
 bitwise_xor_expr : bitwise_xor_expr BITWISE_XOR bitwise_and_expr {
+                    printf("Bitwise and expression within an xor bitwise xor expr\n");
                      if ($1.expr_return_type != INT_VALUE || $3.expr_return_type != INT_VALUE) {
                          fprintf(stderr, "Bitwise XOR requires integer operands at line %d\n", yylineno);
                          free_symbol_table(symbol_table);
@@ -1836,10 +1743,11 @@ bitwise_xor_expr : bitwise_xor_expr BITWISE_XOR bitwise_and_expr {
                      $$.expr_value.int_value = $1.expr_value.int_value ^ $3.expr_value.int_value;
                      $$.associated_identifier = NULL;
                  }
-                 | bitwise_and_expr { $$ = $1; }
+                 | bitwise_and_expr { $$ = $1; printf("Bitwise and expression within a bitwise xor expr\n");}
                  ;
 
 bitwise_and_expr : bitwise_and_expr BITWISE_AND bitwise_not_expr {
+                     printf("Bitwise not expression within an and bitwise and expr\n");
                      if ($1.expr_return_type != INT_VALUE || $3.expr_return_type != INT_VALUE) {
                          fprintf(stderr, "Bitwise AND requires integer operands at line %d\n", yylineno);
                          free_symbol_table(symbol_table);
@@ -1850,10 +1758,11 @@ bitwise_and_expr : bitwise_and_expr BITWISE_AND bitwise_not_expr {
                      $$.expr_value.int_value = $1.expr_value.int_value & $3.expr_value.int_value;
                      $$.associated_identifier = NULL;
                  }
-                 | bitwise_not_expr { $$ = $1; }
+                 | bitwise_not_expr { $$ = $1; printf("Bitwise not expression within a bitwise and expr\n"); }
                  ;
 
 bitwise_not_expr : BITWISE_NOT bitwise_not_expr {
+                     printf("Bitwise not expression within a not bitwise not expr\n");
                      if ($2.expr_return_type != INT_VALUE) {
                          fprintf(stderr, "Bitwise NOT requires integer operand at line %d\n", yylineno);
                          free_symbol_table(symbol_table);
@@ -1864,16 +1773,66 @@ bitwise_not_expr : BITWISE_NOT bitwise_not_expr {
                      $$.expr_value.int_value = ~$2.expr_value.int_value;
                      $$.associated_identifier = NULL;
                  }
-                 | INTEGER_LITERAL {
+                 | unary_expr 
+                 ;
+
+unary_expr:
+    IDENTIFIER {
+        printf("Identifier withing a unary expression\n");
+        SymbolTableEntry* result = search_symbol_table(symbol_table, $1, scope_no, get_current_enclosing_function());
+        if (!result) {
+            fprintf(stderr, "Undeclared identifier '%s' at line %d\n", $1, yylineno);
+            free_symbol_table(symbol_table);
+            exit(1);
+        }
+        $$.expr_type = IDENTIFIER_EXPR;
+        $$.associated_identifier = strdup($1);
+        $$.expr_return_type = result->value_type;
+        switch (result->value_type) {
+            case INT_VALUE:
+            case BOOL_VALUE:
+                $$.expr_value.int_value = result->value.int_value;
+                break;
+            case FLOAT_VALUE:
+                $$.expr_value.float_value = result->value.float_value;
+                break;
+            case CHAR_VALUE:
+                $$.expr_value.char_value = result->value.char_value;
+                break;
+            case STRING_VALUE:
+                $$.expr_value.char_array = strdup(result->value.char_array);
+                break;
+            case INT_ARRAY_VALUE:
+                $$.expr_value.int_array = result->value.int_array;
+                break;
+            case FLOAT_ARRAY_VALUE:
+                $$.expr_value.float_array = result->value.float_array;
+                break;
+            case CHAR_ARRAY_VALUE:
+                $$.expr_value.char_array = result->value.char_array;
+                break;
+            case STRING_ARRAY_VALUE:
+                $$.expr_value.string_array = result->value.string_array;
+                break;
+            default:
+                fprintf(stderr, "Unsupported type for identifier '%s' at line %d\n", $1, yylineno);
+                free_symbol_table(symbol_table);
+                exit(1);
+        }
+    }
+    | INTEGER_LITERAL {
                      $$.expr_type = INT_EXPR;
                      $$.expr_return_type = INT_VALUE;
                      $$.expr_value.int_value = $1;
                      $$.associated_identifier = NULL;
                  }
-                 ;
-
-unary_expr:
-    IDENTIFIER INCREMENT {
+    | FLOAT_LITERAL {
+                      $$.expr_type = FLOAT_EXPR;
+                      $$.expr_value.float_value = $1;
+                      $$.expr_return_type = FLOAT_VALUE;
+                      $$.associated_identifier = NULL;
+                  }
+    | IDENTIFIER INCREMENT {
         SymbolTableEntry* result = search_symbol_table(symbol_table, $1, scope_no, get_current_enclosing_function());
         if (!result) {
             fprintf(stderr, "Undeclared identifier '%s' at line %d\n", $1, yylineno);

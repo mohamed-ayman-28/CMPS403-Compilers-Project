@@ -648,8 +648,9 @@ int line_count = 0;
 int token_count = 0;
 extern FILE* yyin;
 extern int yylineno;
-#line 652 "lex.yy.c"
+extern char* yytext;
 #line 653 "lex.yy.c"
+#line 654 "lex.yy.c"
 
 #define INITIAL 0
 
@@ -866,10 +867,10 @@ YY_DECL
 		}
 
 	{
-#line 18 "lexer.l"
+#line 19 "lexer.l"
 
 
-#line 873 "lex.yy.c"
+#line 874 "lex.yy.c"
 
 	while ( /*CONSTCOND*/1 )		/* loops until end-of-file is reached */
 		{
@@ -938,334 +939,334 @@ do_action:	/* This label is used only to access EOF actions. */
 
 case 1:
 YY_RULE_SETUP
-#line 20 "lexer.l"
+#line 21 "lexer.l"
 { /* printf("detected token of type INTEGER_LITERAL : %s\n", yytext); */ token_count++; yylval.ival = atoi(yytext); return INTEGER_LITERAL; }
 	YY_BREAK
 case 2:
 YY_RULE_SETUP
-#line 21 "lexer.l"
+#line 22 "lexer.l"
 { /* printf("detected token of type INTEGER_LITERAL : %s\n", yytext); */ token_count++; yylval.ival = atoi(yytext); return INTEGER_LITERAL; }
 	YY_BREAK
 case 3:
 YY_RULE_SETUP
-#line 22 "lexer.l"
+#line 23 "lexer.l"
 { /* printf("detected token of type INTEGER_LITERAL : %s\n", yytext); */ token_count++; yylval.ival = atoi(yytext); return INTEGER_LITERAL; }
 	YY_BREAK
 case 4:
 YY_RULE_SETUP
-#line 23 "lexer.l"
+#line 24 "lexer.l"
 { /* printf("detected token of type INTEGER_LITERAL : %s\n", yytext); */ token_count++; yylval.ival = atoi(yytext); return INTEGER_LITERAL; }
 	YY_BREAK
 case 5:
 YY_RULE_SETUP
-#line 24 "lexer.l"
+#line 25 "lexer.l"
 { /* printf("detected token of type INT_TYPE_KEYWORD : %s\n", yytext); */ token_count++; yylval.sval = strdup(yytext); return INT_TYPE_KEYWORD; }
 	YY_BREAK
 case 6:
 YY_RULE_SETUP
-#line 25 "lexer.l"
+#line 26 "lexer.l"
 { /* printf("detected token of type MAIN_KEYWORD : %s\n", yytext); */ token_count++; yylval.sval = strdup(yytext); return MAIN_KEYWORD; }
 	YY_BREAK
 case 7:
 YY_RULE_SETUP
-#line 26 "lexer.l"
+#line 27 "lexer.l"
 { /* printf("detected token of type FLOAT_TYPE_KEYWORD : %s\n", yytext); */ token_count++; yylval.sval = strdup(yytext); return FLOAT_TYPE_KEYWORD; }
 	YY_BREAK
 case 8:
 YY_RULE_SETUP
-#line 27 "lexer.l"
+#line 28 "lexer.l"
 { /* printf("detected token of type STRING_TYPE_KEYWORD : %s\n", yytext); */ token_count++; yylval.sval = strdup(yytext); return STRING_TYPE_KEYWORD; }
 	YY_BREAK
 case 9:
 YY_RULE_SETUP
-#line 28 "lexer.l"
+#line 29 "lexer.l"
 { /* printf("detected token of type CHAR_TYPE_KEYWORD : %s\n", yytext); */ token_count++; yylval.sval = strdup(yytext); return CHAR_TYPE_KEYWORD; }
 	YY_BREAK
 case 10:
 YY_RULE_SETUP
-#line 29 "lexer.l"
+#line 30 "lexer.l"
 { /* printf("detected token of type BOOL_TYPE_KEYWORD : %s\n", yytext); */ token_count++; yylval.sval = strdup(yytext); return BOOL_TYPE_KEYWORD; }
 	YY_BREAK
 case 11:
 YY_RULE_SETUP
-#line 30 "lexer.l"
+#line 31 "lexer.l"
 { /* printf("detected token of type VOID_TYPE_KEYWORD : %s\n", yytext); */ token_count++; yylval.sval = strdup(yytext); return VOID_TYPE_KEYWORD; }
 	YY_BREAK
 case 12:
 YY_RULE_SETUP
-#line 31 "lexer.l"
+#line 32 "lexer.l"
 { /* printf("detected token of type IF_KEYWORD : %s\n", yytext); */ token_count++; return IF_KEYWORD; }
 	YY_BREAK
 case 13:
 YY_RULE_SETUP
-#line 32 "lexer.l"
+#line 33 "lexer.l"
 { /* printf("detected token of type ELSEIF_KEYWORD : %s\n", yytext); */ token_count++; return ELSEIF_KEYWORD; }
 	YY_BREAK
 case 14:
 YY_RULE_SETUP
-#line 33 "lexer.l"
+#line 34 "lexer.l"
 { /* printf("detected token of type ELSE_KEYWORD : %s\n", yytext); */ token_count++; return ELSE_KEYWORD; }
 	YY_BREAK
 case 15:
 YY_RULE_SETUP
-#line 34 "lexer.l"
+#line 35 "lexer.l"
 { /* printf("detected token of type FOR_KEYWORD : %s\n", yytext); */ token_count++; return FOR_KEYWORD; }
 	YY_BREAK
 case 16:
 YY_RULE_SETUP
-#line 35 "lexer.l"
+#line 36 "lexer.l"
 { /* printf("detected token of type WHILE_KEYWORD : %s\n", yytext); */ token_count++; return WHILE_KEYWORD; }
 	YY_BREAK
 case 17:
 YY_RULE_SETUP
-#line 36 "lexer.l"
+#line 37 "lexer.l"
 { /* printf("detected token of type SWITCH_KEYWORD : %s\n", yytext); */ token_count++; return SWITCH_KEYWORD; }
 	YY_BREAK
 case 18:
 YY_RULE_SETUP
-#line 37 "lexer.l"
+#line 38 "lexer.l"
 { /* printf("detected token of type CASE_KEYWORD : %s\n", yytext); */ token_count++; return CASE_KEYWORD; }
 	YY_BREAK
 case 19:
 YY_RULE_SETUP
-#line 38 "lexer.l"
+#line 39 "lexer.l"
 { /* printf("detected token of type DEFAULT_KEYWORD : %s\n", yytext); */ token_count++; return DEFAULT_KEYWORD; }
 	YY_BREAK
 case 20:
 YY_RULE_SETUP
-#line 39 "lexer.l"
+#line 40 "lexer.l"
 { /* printf("detected token of type BREAK_KEYWORD : %s\n", yytext); */ token_count++; return BREAK_KEYWORD; }
 	YY_BREAK
 case 21:
 YY_RULE_SETUP
-#line 40 "lexer.l"
+#line 41 "lexer.l"
 { /* printf("detected token of type CONTINUE_KEYWORD : %s\n", yytext); */ token_count++; return CONTINUE_KEYWORD; }
 	YY_BREAK
 case 22:
 YY_RULE_SETUP
-#line 41 "lexer.l"
+#line 42 "lexer.l"
 { /* printf("detected token of type DO_KEYWORD : %s\n", yytext); */ token_count++; return DO_KEYWORD; }
 	YY_BREAK
 case 23:
 YY_RULE_SETUP
-#line 42 "lexer.l"
+#line 43 "lexer.l"
 { /* printf("detected token of type RETURN_KEYWORD : %s\n", yytext); */ token_count++; return RETURN_KEYWORD; }
 	YY_BREAK
 case 24:
 YY_RULE_SETUP
-#line 43 "lexer.l"
+#line 44 "lexer.l"
 { /* printf("detected token of type CONST_KEYWORD : %s\n", yytext); */ token_count++; return CONST_KEYWORD; }
 	YY_BREAK
 case 25:
 YY_RULE_SETUP
-#line 44 "lexer.l"
+#line 45 "lexer.l"
 { /* printf("detected token of type AND_KEYWORD : %s\n", yytext); */ token_count++; return AND_KEYWORD; }
 	YY_BREAK
 case 26:
 YY_RULE_SETUP
-#line 45 "lexer.l"
+#line 46 "lexer.l"
 { /* printf("detected token of type OR_KEYWORD : %s\n", yytext); */ token_count++; return OR_KEYWORD; }
 	YY_BREAK
 case 27:
 YY_RULE_SETUP
-#line 46 "lexer.l"
+#line 47 "lexer.l"
 { /* printf("detected token of type NOT_KEYWORD : %s\n", yytext); */ token_count++; return NOT_KEYWORD; }
 	YY_BREAK
 case 28:
 YY_RULE_SETUP
-#line 47 "lexer.l"
+#line 48 "lexer.l"
 { /* printf("detected token of type OPENING_CURLY_BRACE : %s\n", yytext); */ token_count++; return OPENING_CURLY_BRACE; }
 	YY_BREAK
 case 29:
 YY_RULE_SETUP
-#line 48 "lexer.l"
+#line 49 "lexer.l"
 { /* printf("detected token of type CLOSING_CURLY_BRACE : %s\n", yytext); */ token_count++; return CLOSING_CURLY_BRACE; }
 	YY_BREAK
 case 30:
 YY_RULE_SETUP
-#line 49 "lexer.l"
+#line 50 "lexer.l"
 { /* printf("detected token of type OPENING_PARENTHESIS : %s\n", yytext); */ token_count++; return OPENING_PARENTHESIS; }
 	YY_BREAK
 case 31:
 YY_RULE_SETUP
-#line 50 "lexer.l"
+#line 51 "lexer.l"
 { /* printf("detected token of type CLOSING_PARENTHESIS : %s\n", yytext); */ token_count++; return CLOSING_PARENTHESIS; }
 	YY_BREAK
 case 32:
 YY_RULE_SETUP
-#line 51 "lexer.l"
-{ /* printf("detected token of type OPENING_SQUARE_BRACKETS : %s\n", yytext); */ token_count++; return OPENING_SQUARE_BRACKETS; }
+#line 52 "lexer.l"
+{ /* printf("detected token of type OPENING_SQUARE_BRACKETS : %s\n", yytext); */ printf("Lex: OPENING_SQUARE_BRACKETS\n"); token_count++; return OPENING_SQUARE_BRACKETS; }
 	YY_BREAK
 case 33:
 YY_RULE_SETUP
-#line 52 "lexer.l"
-{ /* printf("detected token of type CLOSING_SQUARE_BRACKETS : %s\n", yytext); */ token_count++; return CLOSING_SQUARE_BRACKETS; }
+#line 53 "lexer.l"
+{ /* printf("detected token of type CLOSING_SQUARE_BRACKETS : %s\n", yytext); */ printf("Lex: CLOSING_SQUARE_BRACKETS\n"); token_count++; return CLOSING_SQUARE_BRACKETS; }
 	YY_BREAK
 case 34:
 YY_RULE_SETUP
-#line 53 "lexer.l"
+#line 54 "lexer.l"
 { /* printf("detected token of type FLOAT_LITERAL : %s\n", yytext); */ token_count++; yylval.fval = atof(yytext); return FLOAT_LITERAL; }
 	YY_BREAK
 case 35:
 YY_RULE_SETUP
-#line 54 "lexer.l"
+#line 55 "lexer.l"
 { /* printf("detected token of type COMMA : %s\n", yytext); */ token_count++; return COMMA; }
 	YY_BREAK
 case 36:
 YY_RULE_SETUP
-#line 55 "lexer.l"
+#line 56 "lexer.l"
 { /* printf("detected token of type ASTRISK : %s\n", yytext); */ token_count++; return ASTRISK; }
 	YY_BREAK
 case 37:
 YY_RULE_SETUP
-#line 56 "lexer.l"
+#line 57 "lexer.l"
 { /* printf("detected token of type PLUS : %s\n", yytext); */ token_count++; return PLUS; }
 	YY_BREAK
 case 38:
 YY_RULE_SETUP
-#line 57 "lexer.l"
+#line 58 "lexer.l"
 { /* printf("detected token of type MINUS : %s\n", yytext); */ token_count++; return MINUS; }
 	YY_BREAK
 case 39:
 YY_RULE_SETUP
-#line 58 "lexer.l"
+#line 59 "lexer.l"
 { /* printf("detected token of type DIVIDE : %s\n", yytext); */ token_count++; return DIVIDE; }
 	YY_BREAK
 case 40:
 YY_RULE_SETUP
-#line 59 "lexer.l"
+#line 60 "lexer.l"
 { /* printf("detected token of type MODULO : %s\n", yytext); */ token_count++; return MODULO; }
 	YY_BREAK
 case 41:
 YY_RULE_SETUP
-#line 60 "lexer.l"
+#line 61 "lexer.l"
 { /* printf("detected token of type INCREMENT : %s\n", yytext); */ token_count++; return INCREMENT; }
 	YY_BREAK
 case 42:
 YY_RULE_SETUP
-#line 61 "lexer.l"
+#line 62 "lexer.l"
 { /* printf("detected token of type DECREMENT : %s\n", yytext); */ token_count++; return DECREMENT; }
 	YY_BREAK
 case 43:
 YY_RULE_SETUP
-#line 62 "lexer.l"
+#line 63 "lexer.l"
 { /* printf("detected token of type ASSIGNMENT : %s\n", yytext); */ token_count++; return ASSIGNMENT; }
 	YY_BREAK
 case 44:
 YY_RULE_SETUP
-#line 63 "lexer.l"
+#line 64 "lexer.l"
 { /* printf("detected token of type EQUAL : %s\n", yytext); */ token_count++; return EQUAL; }
 	YY_BREAK
 case 45:
 YY_RULE_SETUP
-#line 64 "lexer.l"
+#line 65 "lexer.l"
 { /* printf("detected token of type NOT_EQUAL : %s\n", yytext); */ token_count++; return NOT_EQUAL; }
 	YY_BREAK
 case 46:
 YY_RULE_SETUP
-#line 65 "lexer.l"
+#line 66 "lexer.l"
 { /* printf("detected token of type LESS_OR_EQUAL : %s\n", yytext); */ token_count++; return LESS_OR_EQUAL; }
 	YY_BREAK
 case 47:
 YY_RULE_SETUP
-#line 66 "lexer.l"
+#line 67 "lexer.l"
 { /* printf("detected token of type GREATER_OR_EQUAL : %s\n", yytext); */ token_count++; return GREATER_OR_EQUAL; }
 	YY_BREAK
 case 48:
 YY_RULE_SETUP
-#line 67 "lexer.l"
+#line 68 "lexer.l"
 { /* printf("detected token of type LESS : %s\n", yytext); */ token_count++; return LESS; }
 	YY_BREAK
 case 49:
 YY_RULE_SETUP
-#line 68 "lexer.l"
+#line 69 "lexer.l"
 { /* printf("detected token of type GREATER : %s\n", yytext); */ token_count++; return GREATER; }
 	YY_BREAK
 case 50:
 YY_RULE_SETUP
-#line 69 "lexer.l"
+#line 70 "lexer.l"
 { /* printf("detected token of type BITWISE_AND : %s\n", yytext); */ token_count++; return BITWISE_AND; }
 	YY_BREAK
 case 51:
 YY_RULE_SETUP
-#line 70 "lexer.l"
+#line 71 "lexer.l"
 { /* printf("detected token of type BITWISE_OR : %s\n", yytext); */ token_count++; return BITWISE_OR; }
 	YY_BREAK
 case 52:
 YY_RULE_SETUP
-#line 71 "lexer.l"
+#line 72 "lexer.l"
 { /* printf("detected token of type BITWISE_XOR : %s\n", yytext); */ token_count++; return BITWISE_XOR; }
 	YY_BREAK
 case 53:
 YY_RULE_SETUP
-#line 72 "lexer.l"
+#line 73 "lexer.l"
 { /* printf("detected token of type BITWISE_NOT : %s\n", yytext); */ token_count++; return BITWISE_NOT; }
 	YY_BREAK
 case 54:
 YY_RULE_SETUP
-#line 73 "lexer.l"
+#line 74 "lexer.l"
 { /* printf("detected token of type COLON : %s\n", yytext); */ token_count++; return COLON; }
 	YY_BREAK
 case 55:
 YY_RULE_SETUP
-#line 74 "lexer.l"
+#line 75 "lexer.l"
 { /* printf("detected token of type SEMICOLON : %s\n", yytext); */ token_count++; return SEMICOLON; }
 	YY_BREAK
 case 56:
 /* rule 56 can match eol */
 YY_RULE_SETUP
-#line 75 "lexer.l"
+#line 76 "lexer.l"
 { /* printf("detected token of type CHARACTER_LITERAL : %s\n", yytext); */ token_count++; yylval.cval = yytext[0]; return CHARACTER_LITERAL; }
 	YY_BREAK
 case 57:
 /* rule 57 can match eol */
 YY_RULE_SETUP
-#line 76 "lexer.l"
+#line 77 "lexer.l"
 { /* printf("detected token of type STRING_LITERAL : %s\n", yytext); */ token_count++; yylval.sval = strdup(yytext); return STRING_LITERAL; }
 	YY_BREAK
 case 58:
 YY_RULE_SETUP
-#line 77 "lexer.l"
+#line 78 "lexer.l"
 { /* printf("detected token of type BOOLEAN_LITERAL : %s\n", yytext); */ token_count++; if(strcmp(yytext, "true") == 0){ yylval.ival = 1; }else{ yylval.ival = 0; } return BOOLEAN_LITERAL; }
 	YY_BREAK
 case 59:
 /* rule 59 can match eol */
 YY_RULE_SETUP
-#line 78 "lexer.l"
+#line 79 "lexer.l"
 { ; }
 	YY_BREAK
 case 60:
 YY_RULE_SETUP
-#line 79 "lexer.l"
+#line 80 "lexer.l"
 { ; }
 	YY_BREAK
 case 61:
 YY_RULE_SETUP
-#line 80 "lexer.l"
+#line 81 "lexer.l"
 { /* printf("detected token of type IDENTIFIER : %s\n", yytext); */ token_count++; yylval.sval = strdup(yytext); return IDENTIFIER; }
 	YY_BREAK
 case 62:
 YY_RULE_SETUP
-#line 81 "lexer.l"
+#line 82 "lexer.l"
 { ; }
 	YY_BREAK
 case 63:
 /* rule 63 can match eol */
 YY_RULE_SETUP
-#line 82 "lexer.l"
+#line 83 "lexer.l"
 { /* line_count++; */ }
 	YY_BREAK
 case 64:
 YY_RULE_SETUP
-#line 83 "lexer.l"
+#line 84 "lexer.l"
 { yylval.sval = strdup(yytext); return UNRECOGNIZED_TOKEN; }
 	YY_BREAK
 case 65:
 YY_RULE_SETUP
-#line 85 "lexer.l"
+#line 86 "lexer.l"
 ECHO;
 	YY_BREAK
-#line 1269 "lex.yy.c"
+#line 1270 "lex.yy.c"
 case YY_STATE_EOF(INITIAL):
 	yyterminate();
 
@@ -2282,7 +2283,7 @@ void yyfree (void * ptr )
 
 #define YYTABLES_NAME "yytables"
 
-#line 85 "lexer.l"
+#line 86 "lexer.l"
 
 
 /* Commented out additional token rules (already commented in original) */
